@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace GA
     {
         public int PopulationSize;
 
-        private List<ChromosomeValuePair<T>> population;
+        private List<ChromosomeFitnessPair<T>> population;
 
         private int maximumGenerations;
 
@@ -23,11 +24,11 @@ namespace GA
         public delegate float FitnessEvaluator(T x);
 
         /// <summary>
-        /// Method for selecting the offspring
+        /// Method for selecting the parents
         /// </summary>
         /// <param name="population"></param>
         /// <returns></returns>
-        public delegate List<T> OffspringSelector(List<ChromosomeValuePair<T>> population);
+        public delegate List<ChromosomeFitnessPair<T>> ParentSelector(List<ChromosomeFitnessPair<T>> population, int populationSize);
 
 
         /// <summary>
@@ -36,40 +37,68 @@ namespace GA
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public delegate T Breeder(T x, T y);
+        public delegate T RecombinationHandler(T x, T y);
 
         /// <summary>
         /// Method for handling mutation
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        public delegate T Mutate(T x);
+        public delegate T Mutator(T x);
+
+        /// <summary>
+        /// Method for selecting the new generation
+        /// </summary>
+        /// <param name="population"></param>
+        /// <returns></returns>
+        public delegate List<ChromosomeFitnessPair<T>> NewGenerationSelector(List<ChromosomeFitnessPair<T>> parents, List<ChromosomeFitnessPair<T>> offspring, int populationSize);
 
         /// <summary>
         /// Method for checking when to stop the algorithm
         /// </summary>
         /// <param name="population"></param>
         /// <returns></returns>
-        public delegate bool TerminationCriterion(List<ChromosomeValuePair<T>> population);
+        public delegate bool TerminationCriterion(List<ChromosomeFitnessPair<T>> population);
         #endregion
 
         private FitnessEvaluator fitnessEvaluator;
+        private ParentSelector parentSelector;
+        private NewGenerationSelector newGenerationSelector;
+        private RecombinationHandler breeder;
+        private Mutator mutator;
 
+        /// <summary>
+        /// Run until a solution is found
+        /// </summary>
+        /// <returns></returns>
         public T Run()
         {
-
-            return population[0].Chromosome;
+            throw new NotImplementedException();
         }
 
-        public bool RunSingle()
+        /// <summary>
+        /// Select parents, perform crossover and mutation and finally select the new generation
+        /// </summary>
+        /// <returns></returns>
+        public bool RunSingleGeneration()
         {
+            // Select parents
+            List<ChromosomeFitnessPair<T>> parents = parentSelector(population, PopulationSize);
 
-            return true;
+            // Crossover
+            List<ChromosomeFitnessPair<T>> offspring =
+
+            // Mutate
+
+            // Calculate fitness for each chromosome
+            CalculateFitnessValues(population);
+
+            throw new NotImplementedException();
         }
 
-        private List<ChromosomeValuePair<T>> CalculateFitnessValues(List<ChromosomeValuePair<T>> population)
+        private List<ChromosomeFitnessPair<T>> CalculateFitnessValues(List<ChromosomeFitnessPair<T>> population)
         {
-            foreach (ChromosomeValuePair<T> pair in population)
+            foreach (ChromosomeFitnessPair<T> pair in population)
             {
                 pair.Fitness = fitnessEvaluator(pair.Chromosome);
             }
@@ -78,12 +107,12 @@ namespace GA
 
     }
 
-    public class ChromosomeValuePair<T>
+    public class ChromosomeFitnessPair<T>
     {
         public T Chromosome;
         public float Fitness;
 
-        public ChromosomeValuePair(T value, float fitness)
+        public ChromosomeFitnessPair(T value, float fitness)
         {
             Chromosome = value;
             Fitness = fitness;
