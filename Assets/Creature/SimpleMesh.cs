@@ -26,6 +26,7 @@ public class SimpleMesh : MonoBehaviour
         newMesh.vertices = GetVertices();
 
         newMesh.triangles = GetTriangles(newMesh.vertices.Length);
+        newMesh.uv = GetUVs(newMesh.vertices);
         meshFilter.mesh = newMesh;
     }
 
@@ -91,27 +92,58 @@ public class SimpleMesh : MonoBehaviour
             int v = i * 3;
 
             // Top right
-            tris[t] = i;
-            tris[t + 1] = i + 1;
-            tris[t + 2] = i + 3;
+            tris[t] = v;
+            tris[t + 1] = v + 1;
+            tris[t + 2] = v + 3;
 
             // Top left
-            tris[t + 3] = i;
-            tris[t + 4] = i + 3;
-            tris[t + 5] = i + 2;
+            tris[t + 3] = v;
+            tris[t + 4] = v + 3;
+            tris[t + 5] = v + 2;
 
             // Bottom right
-            tris[t + 6] = i + 3;
-            tris[t + 7] = i + 1;
-            tris[t + 8] = i + 4;
+            tris[t + 6] = v + 3;
+            tris[t + 7] = v + 1;
+            tris[t + 8] = v + 4;
 
             // Bottom left
-            tris[t + 9] = i + 3;
-            tris[t + 10] = i + 5;
-            tris[t + 11] = i + 2;
+            tris[t + 9] = v + 3;
+            tris[t + 10] = v + 5;
+            tris[t + 11] = v + 2;
         }
 
         return tris;
+    }
+
+    private Vector2[] GetUVs(Vector3[] verts)
+    {
+        // Store UVs in new array
+        Vector2[] uvs = new Vector2[verts.Length];
+
+        float halfWidth = bounds.xMax;
+        float maxY = bounds.yMax;
+        float minY = bounds.yMin;
+
+        float height = maxY - minY;
+
+        for (int i = 0; i < verts.Length; i += 3)
+        {
+            // Get row of vertices
+            Vector3 center = verts[i];
+            Vector3 right = verts[i + 1];
+            Vector3 left = verts[i + 2];
+
+            // Set UVs
+            float y = (center.y - minY) / height;
+            // Center
+            uvs[i] = new Vector2(0.5f, y);
+            // Right
+            uvs[i + 1] = new Vector2(1, y);
+            // Left
+            uvs[i + 2] = new Vector2(0, y);
+
+        }
+        return uvs;
     }
 
     private void CalculateBounds()
@@ -198,9 +230,9 @@ public class SimpleMesh : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position + Vector3.up * 0.2f, transform.position + Vector3.down * 0.2f);
         Gizmos.DrawLine(transform.position + Vector3.left * 0.2f, transform.position + Vector3.right * 0.2f);
-        if (meshFilter.mesh != null)
+        if (meshFilter.sharedMesh != null)
         {
-            foreach (Vector3 vert in meshFilter.mesh.vertices)
+            foreach (Vector3 vert in meshFilter.sharedMesh.vertices)
             {
                 Gizmos.DrawCube(transform.position + vert, Vector3.one * 0.05f);
             }
