@@ -43,7 +43,7 @@ public class SimpleMesh : MonoBehaviour
             float x = GetMaxX(y);
 
             // Only add vertex if x is not 0
-            //if (x != 0)
+            if (x != 0)
             {
                 Vector3 vertex = new Vector3(x, y, 0);
                 AddVertex(vertex, vertices);
@@ -93,23 +93,23 @@ public class SimpleMesh : MonoBehaviour
 
             // Top right
             tris[t] = v;
-            tris[t + 1] = v + 1;
-            tris[t + 2] = v + 3;
+            tris[t + 1] = v + 3;
+            tris[t + 2] = v + 1;
 
             // Top left
             tris[t + 3] = v;
-            tris[t + 4] = v + 3;
-            tris[t + 5] = v + 2;
+            tris[t + 4] = v + 2;
+            tris[t + 5] = v + 3;
 
             // Bottom right
             tris[t + 6] = v + 3;
-            tris[t + 7] = v + 1;
-            tris[t + 8] = v + 4;
+            tris[t + 7] = v + 4;
+            tris[t + 8] = v + 1;
 
             // Bottom left
             tris[t + 9] = v + 3;
-            tris[t + 10] = v + 5;
-            tris[t + 11] = v + 2;
+            tris[t + 10] = v + 2;
+            tris[t + 11] = v + 5;
         }
 
         return tris;
@@ -198,15 +198,17 @@ public class SimpleMesh : MonoBehaviour
         public float GetX(float yPos)
         {
             // Relative y
-            float relativeY = Mathf.Abs(position.y - yPos);
+            float relativeY = Mathf.Abs(yPos - position.y);
 
-            // If y is outside of the lump radius, return 0
-            if (relativeY > radius)
+            if (relativeY < radius)
             {
-                return 0;
+                // If y is inside lump radius, calculate x
+                float x = Mathf.Abs(position.x) + Mathf.Sqrt(Mathf.Pow(radius, 2) - Mathf.Pow(relativeY, 2));
+                return Mathf.Abs(x);
             }
-            // If y is inside lump radius, calculate x
-            return Mathf.Sqrt(Mathf.Pow(relativeY, 2) - Mathf.Pow(radius, 2));
+            // If y is outside of the lump radius, return 0
+            return 0;
+
         }
     }
 
