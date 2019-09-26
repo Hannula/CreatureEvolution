@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae34d74020af77d47b5745231d4f960c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepsPerLump: 8
+  steps: 8
   meshLumps:
   - position: {x: 0, y: 0}
     radius: 1

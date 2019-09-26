@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SimpleMesh : MonoBehaviour
 {
-    public int stepsPerLump = 4;
+    public int steps = 4;
 
     public List<Lump> meshLumps;
 
@@ -24,7 +24,7 @@ public class SimpleMesh : MonoBehaviour
         CalculateBounds();
         Mesh newMesh = new Mesh();
         newMesh.vertices = GetVertices();
-        Debug.Log("Verts: " + VerticesToString(newMesh.vertices));
+
         newMesh.triangles = GetTriangles(newMesh.vertices.Length);
         meshFilter.mesh = newMesh;
     }
@@ -32,46 +32,25 @@ public class SimpleMesh : MonoBehaviour
     private Vector3[] GetVertices()
     {
         List<Vector3> vertices = new List<Vector3>();
-        float angleDifference = Mathf.PI / (stepsPerLump + 1);
-        foreach (Lump lump in meshLumps)
-        {
-            // For each lump add stepsPerLump amount of vertices
-            for (int i = 1; i <= stepsPerLump; i++)
-            {
-                float x = Mathf.Abs(lump.position.x) + Mathf.Sin(i * angleDifference) * lump.radius;
-                float y = lump.position.y + Mathf.Cos(i * angleDifference) * lump.radius;
+        float angleDifference = Mathf.PI / (steps + 1);
+        float stepSize = bounds.height / (steps + 1);
 
-                vertices.Add(new Vector3(x, y, 0));
+        // Create add steps times new vertices
+        for (int i = 1; i <= steps; i++)
+        {
+            float y = bounds.yMin + i * stepSize;
+            float x = GetMaxX(y);
+
+            // Only add vertex if x is not 0
+            //if (x != 0)
+            {
+                Vector3 vertex = new Vector3(x, y, 0);
+                AddVertex(vertex, vertices);
             }
+
         }
 
-        // Sort vertices by Y-value
-        vertices.Sort((a, b) => a.y.CompareTo(b.y));
-
-        List<Vector3> newVertices = new List<Vector3>();
-
-        for (int i = vertices.Count - 1; i >= 0; i--)
-        {
-            Vector3 vertex = vertices[i];
-            if (i != 0 && i != vertices.Count - 1)
-            {
-                // Only add necessary vertices
-                Vector3 prev = vertices[i - 1];
-                Vector3 next = vertices[i + 1];
-                if (!(prev.x > vertex.x && next.x > vertex.x))
-                {
-                    AddVertex(vertex, newVertices);
-                }
-            }
-            else
-            {
-                // First and last vertex are always added
-                AddVertex(vertex, newVertices);
-
-            }
-        }
-
-        return newVertices.ToArray();
+        return vertices.ToArray();
     }
 
     private void AddVertex(Vector3 vertex, List<Vector3> vertices)
@@ -82,7 +61,22 @@ public class SimpleMesh : MonoBehaviour
         vertices.Add(vertex);
         // X-mirrored vertex
         vertices.Add(new Vector3(-vertex.x, vertex.y));
+    }
 
+    private float GetMaxX(float y)
+    {
+        float x = 0;
+        // Check max x for every lump
+        foreach (Lump lump in meshLumps)
+        {
+            float lumpX = lump.GetX(y);
+            // If lump x is higher than the previous x, set is as the new x
+            if (lumpX > x)
+            {
+                x = lumpX;
+            }
+        }
+        return x;
     }
 
     private int[] GetTriangles(int numberOfVertices)
@@ -168,6 +162,20 @@ public class SimpleMesh : MonoBehaviour
     {
         public Vector2 position;
         public float radius;
+
+        public float GetX(float yPos)
+        {
+            // Relative y
+            float relativeY = Mathf.Abs(position.y - yPos);
+
+            // If y is outside of the lump radius, return 0
+            if (relativeY > radius)
+            {
+                return 0;
+            }
+            // If y is inside lump radius, calculate x
+            return Mathf.Sqrt(Mathf.Pow(relativeY, 2) - Mathf.Pow(radius, 2));
+        }
     }
 
     private void OnDrawGizmos()
