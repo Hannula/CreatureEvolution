@@ -67,6 +67,14 @@ namespace GA
         private RecombinationHandler breeder;
         private Mutator mutator;
 
+        public GeneticAlgorithm(FitnessEvaluator fitnessEvaluator, ParentSelector parentSelector, RecombinationHandler breeder, Mutator mutator)
+        {
+            this.fitnessEvaluator = fitnessEvaluator;
+            this.parentSelector = parentSelector;
+            this.breeder = breeder;
+            this.mutator = mutator;
+        }
+
         /// <summary>
         /// Run until a solution is found
         /// </summary>
@@ -86,7 +94,7 @@ namespace GA
             List<ChromosomeFitnessPair<T>> parents = parentSelector(population, PopulationSize);
 
             // Crossover
-            List<ChromosomeFitnessPair<T>> offspring =
+            //List<ChromosomeFitnessPair<T>> offspring =
 
             // Mutate
 
@@ -105,6 +113,47 @@ namespace GA
             return population;
         }
 
+        /// <summary>
+        /// Generic parent selection method
+        /// </summary>
+        /// <param name="population"></param>
+        /// <param name="populationSize"></param>
+        /// <returns></returns>
+        public List<ChromosomeFitnessPair<T>> FitnessProportionateSelection(List<ChromosomeFitnessPair<T>> parentCandidates, int populationSize)
+        {
+            List<ChromosomeFitnessPair<T>> parents = new List<ChromosomeFitnessPair<T>>();
+
+            // Calculate the sum of fitnesses
+            float totalFitness = 0;
+            foreach (ChromosomeFitnessPair<T> parentCandidate in parentCandidates)
+            {
+                totalFitness += parentCandidate.Fitness;
+            }
+
+            // Get random parents
+            for(int i = 0; i < populationSize; i++)
+            {
+                float currentFitness = 0;
+                float targetFitness = UnityEngine.Random.Range(0f, totalFitness);
+                int j = 0;
+                bool found = false;
+                // Get random parent with chance proportional to it's fitness
+                do
+                {
+                    ChromosomeFitnessPair<T> parentCandidate = parentCandidates[j++];
+                    currentFitness += Mathf.Max(0, parentCandidate.Fitness);
+                    if (targetFitness <= currentFitness)
+                    {
+                        parents.Add(parentCandidate);
+                        found = true;
+                    }
+                }
+                while (!found && j < parentCandidates.Count);
+            }
+
+            return parents;
+        }
+
     }
 
     public class ChromosomeFitnessPair<T>
@@ -118,6 +167,5 @@ namespace GA
             Fitness = fitness;
         }
     }
-
 
 }
