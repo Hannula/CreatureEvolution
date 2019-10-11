@@ -15,13 +15,21 @@ public class CreatureChromosome
         this.lumps = lumps;
     }
 
-    public static CreatureChromosome CreateRandom()
+    /// <summary>
+    /// Create new random CreatureChromosome
+    /// </summary>
+    /// <returns></returns>
+    public static CreatureChromosome CreateRandom(int lumpMin, int lumpMax, float valueRange)
     {
         List<Vector3> lumps = new List<Vector3>();
-        int lumpCount = Random.Range(1, 10);
-        for(int i = 0; i < lumpCount; i++)
+        int lumpCount = Random.Range(lumpMin, lumpMax + 1);
+        for (int i = 0; i < lumpCount; i++)
         {
-            lumps.Add(new Vector3(Random.Range(0, 10), Random.Range(-10, 10), Random.Range(0, 5)));
+            lumps.Add(new Vector3(
+                Random.Range(-valueRange, valueRange),
+                Random.Range(-valueRange, valueRange),
+                Random.Range(-valueRange, valueRange))
+                );
         }
         return new CreatureChromosome(lumps);
     }

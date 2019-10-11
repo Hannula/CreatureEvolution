@@ -8,11 +8,13 @@ namespace GA
 
     public class GeneticAlgorithm<T>
     {
-        public int PopulationSize;
+        public int populationSize;
 
         private List<ChromosomeFitnessPair<T>> population;
 
         private int maximumGenerations;
+
+        private int generation = 0;
 
         #region Delegate types
 
@@ -64,15 +66,35 @@ namespace GA
         private FitnessEvaluator fitnessEvaluator;
         private ParentSelector parentSelector;
         private NewGenerationSelector newGenerationSelector;
-        private RecombinationHandler breeder;
+        private RecombinationHandler recombinator;
         private Mutator mutator;
 
-        public GeneticAlgorithm(FitnessEvaluator fitnessEvaluator, ParentSelector parentSelector, RecombinationHandler breeder, Mutator mutator)
+        public GeneticAlgorithm(int populationSize, FitnessEvaluator fitnessEvaluator, ParentSelector parentSelector, RecombinationHandler recombinator, Mutator mutator)
         {
+            this.populationSize = populationSize;
             this.fitnessEvaluator = fitnessEvaluator;
             this.parentSelector = parentSelector;
-            this.breeder = breeder;
+            this.recombinator = recombinator;
             this.mutator = mutator;
+        }
+
+        /// <summary>
+        /// Set new population of T-type chromosomes and make them into chromosome-fitness-pairs
+        /// </summary>
+        /// <param name="newPopulation"></param>
+        public void SetPopulation(List<T> newPopulation)
+        {
+            population = new List<ChromosomeFitnessPair<T>>();
+            foreach (T chromosome in newPopulation)
+            {
+                // Wrap chromosome inside ChromosomeFitnessPair
+                population.Add(new ChromosomeFitnessPair<T>(chromosome, 1));
+            }
+
+            // Finally calculate fitness
+            CalculateFitnessValues(population);
+
+            generation = 0;
         }
 
         /// <summary>
@@ -85,23 +107,51 @@ namespace GA
         }
 
         /// <summary>
-        /// Select parents, perform crossover and mutation and finally select the new generation
+        /// Select parents, perform crossover and mutation, and finally calculate new fitness values
         /// </summary>
         /// <returns></returns>
-        public bool RunSingleGeneration()
+        public void RunSingleGeneration()
         {
+            Debug.Log("Generation " + generation);
             // Select parents
-            List<ChromosomeFitnessPair<T>> parents = parentSelector(population, PopulationSize);
+            List<ChromosomeFitnessPair<T>> parents = parentSelector(population, populationSize);
+            Debug.Log("Number of parents: " + parents.Count);
 
-            // Crossover
-            //List<ChromosomeFitnessPair<T>> offspring =
+            // Crossover and mutation
+            List<ChromosomeFitnessPair<T>> offspring = new List<ChromosomeFitnessPair<T>>();
+
+            for (int i = 0; i < parents.Count; i++)
+            {
+                // Get parents
+                ChromosomeFitnessPair<T> a = parents[i];
+                ChromosomeFitnessPair<T> b = parents[(i + 1) % parents.Count];
+
+                // Recombine
+                T chromosome = recombinator(a.Chromosome, b.Chromosome);
+
+                // Mutate
+                chromosome = mutator(chromosome);
+
+                offspring.Add(new ChromosomeFitnessPair<T>(chromosome, 1));
+            }
+
+            Debug.Log("Number of offspring: " + offspring.Count);
 
             // Mutate
-
             // Calculate fitness for each chromosome
             CalculateFitnessValues(population);
 
-            throw new NotImplementedException();
+            generation += 1;
+        }
+
+        public List<T> GetPopulation()
+        {
+            List<T> pop = new List<T>();
+            foreach (ChromosomeFitnessPair<T> pair in population)
+            {
+                pop.Add(pair.Chromosome);
+            }
+            return pop;
         }
 
         private List<ChromosomeFitnessPair<T>> CalculateFitnessValues(List<ChromosomeFitnessPair<T>> population)
@@ -119,7 +169,7 @@ namespace GA
         /// <param name="population"></param>
         /// <param name="populationSize"></param>
         /// <returns></returns>
-        public List<ChromosomeFitnessPair<T>> FitnessProportionateSelection(List<ChromosomeFitnessPair<T>> parentCandidates, int populationSize)
+        public static List<ChromosomeFitnessPair<T>> FitnessProportionateSelection(List<ChromosomeFitnessPair<T>> parentCandidates, int populationSize)
         {
             List<ChromosomeFitnessPair<T>> parents = new List<ChromosomeFitnessPair<T>>();
 
@@ -131,7 +181,7 @@ namespace GA
             }
 
             // Get random parents
-            for(int i = 0; i < populationSize; i++)
+            for (int i = 0; i < populationSize; i++)
             {
                 float currentFitness = 0;
                 float targetFitness = UnityEngine.Random.Range(0f, totalFitness);

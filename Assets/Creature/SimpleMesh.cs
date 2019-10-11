@@ -19,6 +19,18 @@ public class SimpleMesh : MonoBehaviour
         GenerateMesh();
     }
 
+    public void SetLumps(List<Vector3> lumps)
+    {
+        meshLumps.Clear();
+        foreach (Vector3 lump in lumps)
+        {
+            Lump newLump = new Lump();
+            newLump.position = new Vector2(lump.x, lump.y);
+            newLump.radius = lump.z;
+            meshLumps.Add(newLump);
+        }
+    }
+
     private void GenerateMesh()
     {
         CalculateBounds();

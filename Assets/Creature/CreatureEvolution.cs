@@ -16,24 +16,45 @@ public class CreatureEvolution : MonoBehaviour
     public ParameterValueRange lumpYRange;
     public float lumpMutationChance = 5;
 
+    [Header("Visualization")]
+    public bool update = true;
+    public SimpleMesh[] simpleMeshes;
+
+
     void Start()
     {
-        GA = new GeneticAlgorithm<CreatureChromosome>(EvaluateCreatureFitness, GeneticAlgorithm<CreatureChromosome>.FitnessProportionateSelection, SinglePointCrossover, );
+        // Create new genetic algorithm
+        GA = new GeneticAlgorithm<CreatureChromosome>(populationSize, EvaluateCreatureFitness, GeneticAlgorithm<CreatureChromosome>.FitnessProportionateSelection, SinglePointCrossover, Mutate);
+
+        // Generate the initial population
+        List<CreatureChromosome> initialPopulation = new List<CreatureChromosome>();
+        for (int i = 0; i < populationSize; i++)
+        {
+            initialPopulation.Add(CreatureChromosome.CreateRandom(1, 5, 0.5f));
+        }
+
+        GA.SetPopulation(initialPopulation);
+
+        UpdateMeshes();
     }
 
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GA.RunSingleGeneration();
+        }
     }
 
     public float EvaluateCreatureFitness(CreatureChromosome chromosome)
     {
         float fitness = 0;
         // Individual lumps
-        foreach(Vector3 lump in chromosome.lumps)
+        foreach (Vector3 lump in chromosome.lumps)
         {
             fitness += lumpXRange.Score(lump.x);
             fitness += lumpYRange.Score(lump.y);
+            // z is used for radius
             fitness += lumpRadiusRange.Score(lump.z);
         }
         fitness /= chromosome.lumps.Count;
@@ -45,32 +66,54 @@ public class CreatureEvolution : MonoBehaviour
 
     public CreatureChromosome Mutate(CreatureChromosome x)
     {
-        for(int i = x.lumps.Count - 1; i >= 0; i--)
+        float removeChance = lumpMutationChance / x.lumps.Count;
+        // Remove or move random lumps
+        for (int i = x.lumps.Count - 1; i >= 0; i--)
         {
             Vector3 lump = x.lumps[i];
-            if (Random.Range(0, 100) < lumpMutationChance)
+            if (Random.Range(0, 100) < removeChance)
             {
                 x.lumps.RemoveAt(i);
             }
             else if (Random.Range(0, 100) < lumpMutationChance)
             {
+
                 x.lumps[i] = new Vector3(lump.x + Random.Range(-0.3f, 0.3f), lump.y + Random.Range(-0.3f, 0.3f), lump.z + Random.Range(-0.3f, 0.3f));
             }
         }
-        x.lumps
+
+        if (Random.Range(0, 100) < lumpMutationChance)
+        {
+            // Add new lump
+            x.lumps.Insert(Random.Range(0, x.lumps.Count - 1), new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f)));
+        }
         return x;
     }
 
     public CreatureChromosome SinglePointCrossover(CreatureChromosome x, CreatureChromosome y)
     {
         int pointX = Random.Range(1, x.lumps.Count);
-        int pointY = Random.Range(1, y.lumps.Count - 1);
+        int pointY = Random.Range(1, y.lumps.Count);
 
         // Combine lists of vectors
         List<Vector3> lumps = x.lumps.GetRange(0, pointX);
-        lumps.AddRange(y.lumps.GetRange(pointY, y.lumps.Count));
+        if (y.lumps.Count > 0)
+        {
+            lumps.AddRange(y.lumps.GetRange(pointY, y.lumps.Count));
+        }
 
         return new CreatureChromosome(lumps);
+    }
+
+    public void UpdateMeshes()
+    {
+        int meshCount = Mathf.Min(populationSize, simpleMeshes.Length);
+        List<CreatureChromosome> chromosomes = GA.GetPopulation();
+
+        for (int i = 0; i < meshCount; i++)
+        {
+            simpleMeshes[i].SetLumps(chromosomes[i].lumps);
+        }
     }
 }
 
