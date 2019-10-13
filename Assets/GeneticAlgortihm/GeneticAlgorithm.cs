@@ -112,13 +112,14 @@ namespace GA
         /// <returns></returns>
         public void RunSingleGeneration()
         {
-            Debug.Log("Generation " + generation);
+            Debug.Log("Generation " + generation + " has population of " + population.Count);
+
             // Select parents
             List<ChromosomeFitnessPair<T>> parents = parentSelector(population, populationSize);
             Debug.Log("Number of parents: " + parents.Count);
 
             // Crossover and mutation
-            List<ChromosomeFitnessPair<T>> offspring = new List<ChromosomeFitnessPair<T>>();
+            population.Clear();
 
             for (int i = 0; i < parents.Count; i++)
             {
@@ -132,14 +133,15 @@ namespace GA
                 // Mutate
                 chromosome = mutator(chromosome);
 
-                offspring.Add(new ChromosomeFitnessPair<T>(chromosome, 1));
+                population.Add(new ChromosomeFitnessPair<T>(chromosome, 1));
             }
-
-            Debug.Log("Number of offspring: " + offspring.Count);
 
             // Mutate
             // Calculate fitness for each chromosome
             CalculateFitnessValues(population);
+
+            // Sort by fitness
+            //population.Sort((x, y) => x.Fitness.CompareTo(y.Fitness));
 
             generation += 1;
         }

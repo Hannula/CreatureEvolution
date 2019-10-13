@@ -26,9 +26,9 @@ public class CreatureChromosome
         for (int i = 0; i < lumpCount; i++)
         {
             lumps.Add(new Vector3(
+                Random.Range(0, valueRange),
                 Random.Range(-valueRange, valueRange),
-                Random.Range(-valueRange, valueRange),
-                Random.Range(-valueRange, valueRange))
+                Random.Range(0, valueRange))
                 );
         }
         return new CreatureChromosome(lumps);

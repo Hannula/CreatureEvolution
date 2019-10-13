@@ -14,6 +14,8 @@ public class CreatureEvolution : MonoBehaviour
     public ParameterValueRange lumpDistanceToNearestRange;
     public ParameterValueRange lumpXRange;
     public ParameterValueRange lumpYRange;
+    public ParameterValueRange heightRange;
+    public ParameterValueRange widthRange;
     public float lumpMutationChance = 5;
 
     [Header("Visualization")]
@@ -43,12 +45,23 @@ public class CreatureEvolution : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             GA.RunSingleGeneration();
+
+            UpdateMeshes();
         }
     }
 
     public float EvaluateCreatureFitness(CreatureChromosome chromosome)
     {
+        if (chromosome.lumps.Count == 0)
+        {
+            return 0.01f;
+        }
+
         float fitness = 0;
+        float width = 0;
+        float yMin = float.MaxValue;
+        float yMax = float.MinValue;
+
         // Individual lumps
         foreach (Vector3 lump in chromosome.lumps)
         {
@@ -56,11 +69,37 @@ public class CreatureEvolution : MonoBehaviour
             fitness += lumpYRange.Score(lump.y);
             // z is used for radius
             fitness += lumpRadiusRange.Score(lump.z);
+
+            // Boundaries
+            float xBoundary = Mathf.Abs(lump.x) + lump.z;
+            float yBoundaryMin = lump.y - lump.z;
+            float yBoundaryMax = lump.y + lump.z;
+
+            if (xBoundary > width)
+            {
+                width = xBoundary;
+            }
+            if (yBoundaryMin < yMin)
+            {
+                yMin = yBoundaryMin;
+            }
+            if (yBoundaryMax > yMax)
+            {
+                yMax = yBoundaryMax;
+            }
+
         }
+
         fitness /= chromosome.lumps.Count;
 
-        // Lump Count
+        // Lump count
         fitness += lumpCountRange.Score(chromosome.lumps.Count);
+        // Width
+        fitness += widthRange.Score(width);
+        // Height
+        fitness += heightRange.Score(yMax - yMin);
+
+        Debug.Log("Fitness: " + fitness);
         return fitness;
     }
 
@@ -78,14 +117,14 @@ public class CreatureEvolution : MonoBehaviour
             else if (Random.Range(0, 100) < lumpMutationChance)
             {
 
-                x.lumps[i] = new Vector3(lump.x + Random.Range(-0.3f, 0.3f), lump.y + Random.Range(-0.3f, 0.3f), lump.z + Random.Range(-0.3f, 0.3f));
+                x.lumps[i] = new Vector3(lump.x + Random.Range(-0.3f, 0.3f), lump.y + Random.Range(-0.3f, 0.3f), Mathf.Abs(lump.z + Random.Range(-0.3f, 0.3f)));
             }
         }
 
         if (Random.Range(0, 100) < lumpMutationChance)
         {
             // Add new lump
-            x.lumps.Insert(Random.Range(0, x.lumps.Count - 1), new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f)));
+            x.lumps.Insert(Random.Range(0, x.lumps.Count - 1), new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), Random.Range(0.1f, 0.3f)));
         }
         return x;
     }
@@ -99,7 +138,7 @@ public class CreatureEvolution : MonoBehaviour
         List<Vector3> lumps = x.lumps.GetRange(0, pointX);
         if (y.lumps.Count > 0)
         {
-            lumps.AddRange(y.lumps.GetRange(pointY, y.lumps.Count));
+            lumps.AddRange(y.lumps.GetRange(pointY, y.lumps.Count - pointY));
         }
 
         return new CreatureChromosome(lumps);

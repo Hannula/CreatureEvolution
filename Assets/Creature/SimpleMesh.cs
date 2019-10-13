@@ -6,6 +6,8 @@ public class SimpleMesh : MonoBehaviour
 {
     public int steps = 4;
 
+    public float offset = 0.01f;
+
     public List<Lump> meshLumps;
 
     private MeshRenderer meshRenderer;
@@ -33,25 +35,41 @@ public class SimpleMesh : MonoBehaviour
 
     private void GenerateMesh()
     {
-        CalculateBounds();
-        Mesh newMesh = new Mesh();
-        newMesh.vertices = GetVertices();
+        bool success = false;
+        // Only generate if there are lumps and they contain vertices
+        if (meshLumps.Count >= 0)
+        {
+            CalculateBounds();
+            Mesh newMesh = new Mesh();
+            newMesh.vertices = GetVertices();
 
-        newMesh.triangles = GetTriangles(newMesh.vertices.Length);
-        newMesh.uv = GetUVs(newMesh.vertices);
-        meshFilter.mesh = newMesh;
+            if (newMesh.vertices.Length > 0)
+            {
+                newMesh.triangles = GetTriangles(newMesh.vertices.Length);
+                newMesh.uv = GetUVs(newMesh.vertices);
+                meshFilter.mesh = newMesh;
+                success = true;
+            }
+        }
+
+        if (!success)
+        {
+            // Otherwise use no mesh at all
+            meshFilter.mesh = null;
+        }
     }
 
     private Vector3[] GetVertices()
     {
         List<Vector3> vertices = new List<Vector3>();
-        float angleDifference = Mathf.PI / (steps + 1);
-        float stepSize = bounds.height / (steps + 1);
+        float startOffset = bounds.height * offset;
+        float stepSize = (bounds.height - startOffset * 2) / (steps - 1);
+
 
         // Create add steps times new vertices
-        for (int i = 1; i <= steps; i++)
+        for (int i = 0; i < steps; i++)
         {
-            float y = bounds.yMin + i * stepSize;
+            float y = bounds.yMin + startOffset +  i * stepSize;
             float x = GetMaxX(y);
 
             // Only add vertex if x is not 0
@@ -161,7 +179,15 @@ public class SimpleMesh : MonoBehaviour
     private void CalculateBounds()
     {
         bounds = new Rect(0, 0, 0, 0);
+        if (meshLumps.Count > 0)
+        {
+            bounds.xMax = float.MinValue;
+            bounds.xMin = float.MaxValue;
 
+            bounds.yMax = float.MinValue;
+            bounds.yMin = float.MaxValue;
+        }
+         
         foreach (Lump meshLump in meshLumps)
         {
             // X-axis
