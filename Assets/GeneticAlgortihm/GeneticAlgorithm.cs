@@ -139,9 +139,10 @@ namespace GA
             // Mutate
             // Calculate fitness for each chromosome
             CalculateFitnessValues(population);
+            NormalizeFitnessValues(population);
 
             // Sort by fitness
-            //population.Sort((x, y) => x.Fitness.CompareTo(y.Fitness));
+            population.Sort((x, y) => y.Fitness.CompareTo(x.Fitness));
 
             generation += 1;
         }
@@ -156,6 +157,11 @@ namespace GA
             return pop;
         }
 
+        /// <summary>
+        /// Use fitness evaluator to calculate fitness values for every chromosome
+        /// </summary>
+        /// <param name="population"></param>
+        /// <returns></returns>
         private List<ChromosomeFitnessPair<T>> CalculateFitnessValues(List<ChromosomeFitnessPair<T>> population)
         {
             foreach (ChromosomeFitnessPair<T> pair in population)
@@ -163,6 +169,37 @@ namespace GA
                 pair.Fitness = fitnessEvaluator(pair.Chromosome);
             }
             return population;
+        }
+
+        /// <summary>
+        /// Normalizes every fitness value in population [0...1]
+        /// </summary>
+        /// <param name="population"></param>
+        public void NormalizeFitnessValues(List<ChromosomeFitnessPair<T>> population)
+        {
+            float min = float.MaxValue;
+            float max = float.MinValue;
+            // Get min and max fitness values
+            foreach (ChromosomeFitnessPair<T> pair in population)
+            {
+                float fitness = pair.Fitness;
+                if (fitness < min)
+                {
+                    min = fitness;
+                }
+                if (fitness > max)
+                {
+                    max = fitness;
+                }
+            }
+
+            float dist = max - min;
+            // Normalize
+            foreach (ChromosomeFitnessPair<T> pair in population)
+            {
+                pair.Fitness = (pair.Fitness - min) / dist;
+            }
+
         }
 
         /// <summary>

@@ -99,7 +99,6 @@ public class CreatureEvolution : MonoBehaviour
         // Height
         fitness += heightRange.Score(yMax - yMin);
 
-        Debug.Log("Fitness: " + fitness);
         return fitness;
     }
 
