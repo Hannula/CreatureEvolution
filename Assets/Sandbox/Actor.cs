@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Actor
+public class Actor : MonoBehaviour
 {
-
+    Vector2Int levelPosition;
+    
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Sandbox
 {
-    public class Level : MonoBehaviour
+    public class Level
     {
         Vector2Int dimensions;
         private Tile[,] tileGrid;
