@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class Simulation : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private List<Actor> actors;
+
+    private void SimulateRound()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Start()
     {
-        
+        Actor erkki = new Actor();
+        string actorJson = JsonUtility.ToJson(erkki);
+        Debug.Log(actorJson);
     }
 }
