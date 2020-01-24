@@ -17,6 +17,7 @@ public class Actor
     {
         this.name = name;
         this.actorClass = actorClass;
+        hitpoints = actorClass.maxHitpoints;
     }
 
     public void PerformAttack(Attack attack, Actor target, bool log = true)

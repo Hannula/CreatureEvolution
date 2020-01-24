@@ -11,7 +11,6 @@ public class TerrainData
     Color backgroundColor;
 
     int cover;
-    
 
     bool passable;
 
