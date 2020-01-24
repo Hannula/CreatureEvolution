@@ -5,30 +5,26 @@ using UnityEngine;
 [System.Serializable]
 public class Actor
 {
+    public string name;
+
     public Vector2Int levelPosition;
-    public float initiative = 0;
+    public float energy = 0;
 
     public int hitpoints;
-    public int maxHitpoints;
-    public int speed;
-    public int armorClass;
-    public float size;
-    public Dictionary<DamageTypes, float> resistances;
-    public List<Attack> attacks;
+    public readonly ActorClass actorClass;
 
-    public Actor()
+    public Actor(ActorClass actorClass, string name = "Actor")
     {
-        maxHitpoints = 100;
-        hitpoints = maxHitpoints;
-        initiative = 10;
-        speed = 15;
-        armorClass = 10;
-        size = 4;
-
+        this.name = name;
+        this.actorClass = actorClass;
     }
 
-    public void PerformAttack(Attack attack, Actor target)
+    public void PerformAttack(Attack attack, Actor target, bool log = true)
     {
+        if (log)
+        {
+            Simulation.Log(name + "(" + hitpoints + " hp) attacks " + target.name + "(" + target.hitpoints + " hp) with " + attack.name + ".");
+        }
         bool attackSuccess = false;
         // Determine if the attack hits the target
         // Roll
@@ -45,7 +41,7 @@ public class Actor
             int toHit = attackRoll + attack.attackBonus;
 
             // Compare toHit -value to target's armor class
-            if (toHit >= target.armorClass)
+            if (toHit >= target.actorClass.armorClass)
             {
                 // Attack hits if attackRoll + attack bonus exceeds target's armor class
                 attackSuccess = true;
@@ -57,7 +53,7 @@ public class Actor
         {
             float totalDamage = 0;
             // Loop through every damage in attack
-            foreach(Attack.Damage dmg in attack.damage)
+            foreach (Attack.Damage dmg in attack.damage)
             {
                 // Get base damage by dice roll
                 float baseDamage = Dice.Roll(dmg.damageRoll) + dmg.damageBonus;
@@ -72,45 +68,40 @@ public class Actor
 
             // Reduce target's hitpoints by damage (rounded up)
             target.hitpoints -= Mathf.CeilToInt(totalDamage);
+
+            if (log)
+            {
+                if (target.hitpoints > 0)
+                {
+                    Simulation.Log(attack.name + " hits " + target.name + " causing " + totalDamage + " damage. " + target.name + " now has " + target.hitpoints + " hitpoints.");
+                }
+                else
+                {
+                    Simulation.Log(attack.name + " hits " + target.name + " causing " + totalDamage + " damage. " + target.name + " now has " + target.hitpoints + " hitpoints and is thus dead.");
+                }
+            }
         }
+        else
+        {
+            if (log)
+            {
+                Simulation.Log(attack.name + " misses.");
+            }
+        }
+    }
+    /// <summary>
+    /// Get a random attack from attack list with equal odds.
+    /// </summary>
+    /// <returns></returns>
+    public Attack GetRandomAttack()
+    {
+        // Pick a random attack if there are any. Otherwise default to null.
+        return Utility.UtilityFunctions.GetRandomElement(actorClass.attacks);
     }
 
     public float GetResistance(DamageTypes damageType)
     {
-        // Default resistance is 0
-        float resistance = 0;
-
-        // If resistance exists in resistance dictionary, use that value
-        if (resistances.ContainsKey(damageType))
-        {
-            // Resistance cannot exceed 1 (100% resistance)
-            resistance = Mathf.Min(1, resistances[damageType]);
-        }
-
-        return resistance;
+        return actorClass.GetResistance(damageType);
     }
 
-}
-
-[System.Serializable]
-public class Attack
-{
-    public int attackBonus;
-    public List<Damage> damage;
-
-    [System.Serializable]
-    public struct Damage
-    {
-        public DamageTypes damageType;
-        public int damageRoll;
-        public int damageBonus;
-    }
-}
-
-
-public enum DamageTypes
-{
-    Crushing,
-    Percing,
-    Slashing
 }

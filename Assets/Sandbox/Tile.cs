@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct Tile {
-
+public class Tile {
+    int elevation;
+    int temperature;
+    TerrainData terrain;
 }

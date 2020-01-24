@@ -17,7 +17,7 @@ public class Dice
         // Throw "number" times
         for (int i = 0; i < number; i++)
         {
-            result += Random.Range(1, number + 1);
+            result += Random.Range(1, sides + 1);
         }
 
         return result;
