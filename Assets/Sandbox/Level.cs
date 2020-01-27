@@ -5,14 +5,39 @@ namespace Sandbox
 {
     public class Level
     {
-        readonly Vector2Int dimensions;
+        public readonly Vector2Int dimensions;
         private Tile[,] tileGrid;
 
-        public Level(Vector2Int dimensions)
+        public Level(MapData mapData, Dictionary<int, TerrainData> terrainData)
         {
-            this.dimensions = dimensions;
+            this.dimensions = new Vector2Int(mapData.width, mapData.height);
 
             tileGrid = new Tile[dimensions.x, dimensions.y];
+
+            // Get map layers
+            MapData.Layer terrainLayer = mapData.GetLayer("Terrain");
+
+            int i = 0;
+            for (int x = 0; x < dimensions.x; x++)
+            {
+                for (int y = 0; y < dimensions.y; y++)
+                {
+
+
+                    int terrainIndex = terrainLayer.data[i];
+                    TerrainData terrain = terrainData[0];
+                    if (terrainData.ContainsKey(terrainIndex))
+                    {
+                        terrain = terrainData[terrainIndex];
+                    }
+
+                    Tile newTile = new Tile(terrain, 0, 0);
+
+                    tileGrid[x, y] = newTile;
+
+                    i++;
+                }
+            }
         }
 
         /// <summary>

@@ -1,0 +1,22 @@
+{
+    "name": "Shallow Water",
+    "groundColor": {
+        "r": 0.28,
+        "g": 0.5,
+        "b": 0.6,
+        "a": 1.0
+    },
+    "symbol": 176,
+    "symbolColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1.0
+    },
+    "cover": 0,
+    "noise": 2,
+    "passable": true,
+    "difficulty": 3,
+    "waterDepth": 0.5,
+    "hazards": []
+}

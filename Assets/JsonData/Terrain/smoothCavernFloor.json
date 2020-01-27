@@ -1,0 +1,22 @@
+{
+    "name": "Smooth Cavern Floor",
+    "groundColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1.0
+    },
+    "symbol": 32,
+    "symbolColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1.0
+    },
+    "cover": 0,
+    "noise": 6,
+    "passable": true,
+    "difficulty": 0,
+    "waterDepth": 0,
+    "hazards": []
+}

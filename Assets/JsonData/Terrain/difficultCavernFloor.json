@@ -1,0 +1,22 @@
+{
+    "name": "Difficult Cavern Floor",
+    "groundColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1.0
+    },
+    "symbol": 177,
+    "symbolColor": {
+        "r": 0.6,
+        "g": 0.6,
+        "b": 0.6,
+        "a": 1.0
+    },
+    "cover": 9,
+    "noise": 9,
+    "passable": true,
+    "difficulty": 10,
+    "waterDepth": 0,
+    "hazards": []
+}

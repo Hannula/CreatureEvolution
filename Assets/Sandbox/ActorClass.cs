@@ -17,6 +17,12 @@ public class ActorClass
     public readonly Dictionary<DamageTypes, float> resistances;
     public readonly List<Attack> attacks;
 
+    /*
+     Noise reduction
+     Height
+     
+     */
+
     public ActorClass(string name, int hitpoints, int speed, int armorClass, int size)
     {
         this.name = name;

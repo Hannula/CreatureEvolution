@@ -1,0 +1,14 @@
+{ "columns":5,
+ "image":"animals.png",
+ "imageheight":80,
+ "imagewidth":80,
+ "margin":0,
+ "name":"animals",
+ "spacing":0,
+ "tilecount":25,
+ "tiledversion":"1.3.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":1.2
+}

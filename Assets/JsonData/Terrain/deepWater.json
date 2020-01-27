@@ -1,0 +1,22 @@
+{
+    "name": "Deep Water",
+    "groundColor": {
+        "r": 0.1,
+        "g": 0.3,
+        "b": 0.4,
+        "a": 1.0
+    },
+    "symbol": 240,
+    "symbolColor": {
+        "r": 0.38,
+        "g": 0.6,
+        "b": 0.7,
+        "a": 1.0
+    },
+    "cover": 0,
+    "noise": 2,
+    "passable": true,
+    "difficulty": 2,
+    "waterDepth": 5,
+    "hazards": []
+}

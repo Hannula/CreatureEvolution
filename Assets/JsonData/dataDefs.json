@@ -1,0 +1,11 @@
+{
+    "mapFilePath": "smallMap.json",
+    "terrainDataFilePaths" :[ 
+        {"Key" : 1, "Value" : "Terrain/smoothCavernFloor.json"},
+        {"Key" : 2, "Value" : "Terrain/roughCavernFloor.json"},
+        {"Key" : 3, "Value" : "Terrain/difficultCavernFloor.json"},
+        {"Key" : 6, "Value" : "Terrain/shallowWater.json"},
+        {"Key" : 7, "Value" : "Terrain/water.json"},
+        {"Key" : 8, "Value" : "Terrain/deepWater.json"}
+    ]
+}

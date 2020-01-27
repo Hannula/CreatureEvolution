@@ -1,0 +1,22 @@
+{
+    "name": "Water",
+    "groundColor": {
+        "r": 0.28,
+        "g": 0.5,
+        "b": 0.6,
+        "a": 1.0
+    },
+    "symbol": 240,
+    "symbolColor": {
+        "r": 0.48,
+        "g": 0.7,
+        "b": 0.8,
+        "a": 1.0
+    },
+    "cover": 0,
+    "noise": 2,
+    "passable": true,
+    "difficulty": 2,
+    "waterDepth": 1.5,
+    "hazards": []
+}
