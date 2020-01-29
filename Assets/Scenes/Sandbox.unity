@@ -587,6 +587,9 @@ MonoBehaviour:
   tileNameText: {fileID: 137888030}
   tileElevationText: {fileID: 2056818870}
   tileTemperatureText: {fileID: 181110009}
+  raycastLayermask:
+    serializedVersion: 2
+    m_Bits: 256
   selectedTile: {fileID: 0}
 --- !u!1 &2056818868
 GameObject:
