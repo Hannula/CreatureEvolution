@@ -16,24 +16,40 @@ namespace Sandbox
 
             // Get map layers
             MapData.Layer terrainLayer = mapData.GetLayer("Terrain");
+            MapData.Layer elevationLayer = mapData.GetLayer("Elevation");
+            MapData.Layer temperatureLayer = mapData.GetLayer("Temperature");
 
             int i = 0;
-            for (int x = 0; x < dimensions.x; x++)
+            for (int y = 0; y < dimensions.y; y++)
             {
-                for (int y = 0; y < dimensions.y; y++)
+                for (int x = 0; x < dimensions.x; x++)
                 {
 
 
                     int terrainIndex = terrainLayer.data[i];
+                    int elevation = 0;
+                    int temperature = 0;
+
+                    if (elevationLayer != null)
+                    {
+                        elevation = elevationLayer.data[i];
+                    }
+
+
+                    if (temperatureLayer != null)
+                    {
+                        temperature = temperatureLayer.data[i];
+                    }
+
                     TerrainData terrain = terrainData[0];
                     if (terrainData.ContainsKey(terrainIndex))
                     {
                         terrain = terrainData[terrainIndex];
                     }
 
-                    Tile newTile = new Tile(terrain, 0, 0);
+                    Tile newTile = new Tile(terrain, elevation, temperature);
 
-                    tileGrid[x, y] = newTile;
+                    tileGrid[x, dimensions.y - y - 1] = newTile;
 
                     i++;
                 }

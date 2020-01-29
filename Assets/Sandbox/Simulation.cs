@@ -109,12 +109,16 @@ public class Simulation : MonoBehaviour
             for(int y = 0; y < level.dimensions.y; y++)
             {
                 // Create visual representation for the tile
-                TileVisualizer tileVis = GameObject.Instantiate(tilePrefab, new Vector3(x, y), Quaternion.identity).GetComponent<TileVisualizer>();
-                tileVis.position = new Vector2Int(x, y);
-                tileVis.tile = level.TileAt(x, y);
-                tileVis.tileset = mapData.GetTileset(0);
-                // Reload changes to tile
-                tileVis.Reload();
+                Tile tile = level.TileAt(x, y);
+                if (tile.terrain.id != 0)
+                {
+                    TileVisualizer tileVis = GameObject.Instantiate(tilePrefab, new Vector3(x, y), Quaternion.identity).GetComponent<TileVisualizer>();
+                    tileVis.position = new Vector2Int(x, y);
+                    tileVis.tile = tile;
+                    tileVis.tileset = mapData.GetTileset(0);
+                    // Reload changes to tile
+                    tileVis.Reload();
+                }
 
                 i++;
             }

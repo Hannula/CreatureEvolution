@@ -12,6 +12,5 @@ public class Tile {
         this.terrain = terrain;
         this.elevation = elevation;
         this.temperature = temperature;
-        Simulation.Log(terrain.name);
     }
 }

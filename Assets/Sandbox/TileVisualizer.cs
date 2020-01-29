@@ -8,14 +8,16 @@ public class TileVisualizer : MonoBehaviour
     public Tile tile;
     public Texture2D texture;
     public Tileset tileset;
-    public SpriteRenderer backgroundSprite;
     public MeshRenderer backgroundMesh;
     private Material material;
+    private TileInspector inspector;
+    public void Start()
+    {
+        inspector = FindObjectOfType<TileInspector>();
+    }
 
     public void Reload()
     {
-        backgroundSprite.color = tile.terrain.groundColor;
-
         // Create new material
         texture = tileset.texture;
         material = new Material(backgroundMesh.material);
@@ -33,5 +35,9 @@ public class TileVisualizer : MonoBehaviour
 
         // Rename transform
         transform.name = tile.terrain.name;
+
+        // Set z according to tile elevation
+        transform.position = new Vector3(transform.position.x, transform.position.y, tile.elevation * 0.1f);
     }
+
 }
