@@ -8,7 +8,6 @@ public class TerrainData
     public int id;
     public string name;
     public Color groundColor;
-    public char symbol;
     public Color symbolColor;
 
     public float cover;
@@ -16,8 +15,9 @@ public class TerrainData
 
     public bool passable;
 
-    public float difficulty;
-
+    public float ruggedness;
+    public float softness;
+    public float density;
     public float waterDepth;
 
     public List<Attack> hazards;
@@ -26,7 +26,6 @@ public class TerrainData
     {
         id = 0;
         name = "Solid Wall";
-        symbol = '.';
         symbolColor = Color.black;
         groundColor = Color.black;
 
@@ -34,7 +33,6 @@ public class TerrainData
         noise = 0;
         passable = false;
 
-        difficulty = 0;
         waterDepth = 0;
 
         hazards = new List<Attack>();

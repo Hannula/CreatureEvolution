@@ -10,7 +10,7 @@ public class Actor
     public Vector2Int levelPosition;
     public float energy = 0;
 
-    public int hitpoints;
+    public float hitpoints;
     public readonly ActorClass actorClass;
 
     public Actor(ActorClass actorClass, string name = "Actor")

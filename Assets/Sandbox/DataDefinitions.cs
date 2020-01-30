@@ -6,6 +6,7 @@ public class DataDefinitions
 {
     public string mapFilePath;
     public List<IntStringPair> terrainDataFilePaths;
+    public List<IntStringPair> faunaDataFilePaths;
 
     public static DataDefinitions LoadFromJson(string path)
     {

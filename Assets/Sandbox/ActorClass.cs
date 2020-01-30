@@ -5,31 +5,39 @@ using UnityEngine;
 [System.Serializable]
 public class ActorClass
 {
-    public readonly char symbol;
-    public readonly Color symbolColor;
-
     public readonly string name;
 
-    public readonly int maxHitpoints;
-    public readonly int speed;
+    public readonly Color baseColor;
+    public readonly Color patternColor;
+
+    public readonly float maxHitpoints;
+    public readonly float speed;
     public readonly int armorClass;
     public readonly float size;
     public readonly Dictionary<DamageTypes, float> resistances;
-    public readonly List<Attack> attacks;
+    [SerializeField]
+    private List<string> resistanceStrings;
+    public List<Attack> attacks;
 
-    /*
-     Noise reduction
-     Height
-     
-     */
+    public readonly float swimmingSpeed;
 
-    public ActorClass(string name, int hitpoints, int speed, int armorClass, int size)
+    public readonly float ruggedLandNavigation;
+    public readonly float softLandNavigation;
+    public readonly float crampedNavigation;
+
+    public readonly float height;
+
+    public ActorClass(string name, int hitpoints, int speed, int armorClass, int size, float swimming, float rugged, float soft, float cramped)
     {
         this.name = name;
         maxHitpoints = hitpoints;
         this.speed = speed;
         this.armorClass = armorClass;
         this.size = size;
+        swimmingSpeed = swimming;
+        ruggedLandNavigation = rugged;
+        softLandNavigation = soft;
+        crampedNavigation = cramped;
         attacks = new List<Attack>();
         resistances = new Dictionary<DamageTypes, float>();
     }
@@ -113,5 +121,7 @@ public enum DamageTypes
 {
     Crushing,
     Percing,
-    Slashing
+    Slashing,
+    Fire,
+    Poison
 }

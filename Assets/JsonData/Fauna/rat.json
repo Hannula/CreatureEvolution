@@ -1,0 +1,26 @@
+{
+    "name": "Rat",
+    "baseColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 0
+    },
+    "maxHitpoints": 25,
+    "speed": 13,
+    "armorClass" : 10,
+    "size": 1,
+    "resistances":[
+    ],
+    "swimmingSpeed" : 4,
+    "softLandNavigation" : 5,
+    "ruggedLandNavigation" : 6,
+    "crampedNavigation" : 7,
+    "attacks": []
+}
