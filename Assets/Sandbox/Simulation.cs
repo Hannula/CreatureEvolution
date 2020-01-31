@@ -13,6 +13,8 @@ public class Simulation : MonoBehaviour
     private DataDefinitions dataDefs;
     private MapData mapData;
     private Dictionary<int, TerrainData> terrainData;
+    private Dictionary<int, ActorClass> actorClasses;
+    private Dictionary<int, ResourceClass> resourceClasses;
     private Level level;
 
     private void SimulateRound()
@@ -97,6 +99,32 @@ public class Simulation : MonoBehaviour
         }
         // Wall
         terrainData[0] = new TerrainData();
+    }
+
+    private void LoadActorClasses()
+    {
+        actorClasses = new Dictionary<int, ActorClass>();
+        foreach (IntStringPair keyValuePair in dataDefs.actorClassFilePaths)
+        {
+            string path = keyValuePair.Value;
+            string actorClassJson = FileReader.ReadString(Path.Combine(projectPath, path));
+            ActorClass data = JsonUtility.FromJson<ActorClass>(actorClassJson);
+            data.id = keyValuePair.Key;
+           actorClasses[data.id] = data;
+        }
+    }
+
+    private void LoadResourceClasses()
+    {
+        resourceClasses = new Dictionary<int, ResourceClass>();
+        foreach (IntStringPair keyValuePair in dataDefs.actorClassFilePaths)
+        {
+            string path = keyValuePair.Value;
+            string resourceClassJson = FileReader.ReadString(Path.Combine(projectPath, path));
+            ResourceClass data = JsonUtility.FromJson<ResourceClass>(resourceClassJson);
+            data.id = keyValuePair.Key;
+            resourceClasses[data.id] = data;
+        }
     }
 
     private void CreateLevel()

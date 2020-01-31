@@ -6,7 +6,7 @@ using UnityEngine;
 public class ActorClass
 {
     public readonly string name;
-
+    public int id;
     public readonly Color baseColor;
     public readonly Color patternColor;
 
