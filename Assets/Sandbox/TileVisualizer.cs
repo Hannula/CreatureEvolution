@@ -10,11 +10,6 @@ public class TileVisualizer : MonoBehaviour
     public Tileset tileset;
     public MeshRenderer backgroundMesh;
     private Material material;
-    private TileInspector inspector;
-    public void Start()
-    {
-        inspector = FindObjectOfType<TileInspector>();
-    }
 
     public void Reload()
     {

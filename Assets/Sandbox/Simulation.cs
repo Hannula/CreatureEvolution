@@ -8,6 +8,7 @@ public class Simulation : MonoBehaviour
 {
     public string dataDefsPath;
     public GameObject tilePrefab;
+    public GameObject actorPrefab;
     private string projectPath;
     private List<Actor> actors;
     private DataDefinitions dataDefs;
@@ -39,23 +40,27 @@ public class Simulation : MonoBehaviour
         writer.WriteLine(terrainString);
         writer.Close();*/
 
-        projectPath = Path.Combine(Application.dataPath, Path.GetDirectoryName(dataDefsPath)); 
+        projectPath = Path.Combine(Application.dataPath, Path.GetDirectoryName(dataDefsPath));
+
 
         // Load data
         LoadDataDefinitions();
 
+        // Load map data
+        LoadMapData(Path.Combine(projectPath, dataDefs.mapFilePath));
+
         // Load terrain
         LoadTerrainData();
 
-        // Load map data
-        LoadMapData(Path.Combine(projectPath, dataDefs.mapFilePath));
+        // Load actor classes
+        LoadActorClasses();
 
         // Create new level with map dimensions
         CreateLevel();
 
-
-
-
+        // Spawn actors to the level
+        SpawnActors();
+                     
         /*ActorClass human = new ActorClass("Human", 100, 15, 10, 5);
         Attack punch = new Attack("Punch", 3, new Attack.Damage(DamageTypes.Crushing, 10, 5));
         Attack kick = new Attack("Kick", 0, new Attack.Damage(DamageTypes.Crushing, 15, 5));
@@ -110,7 +115,7 @@ public class Simulation : MonoBehaviour
             string actorClassJson = FileReader.ReadString(Path.Combine(projectPath, path));
             ActorClass data = JsonUtility.FromJson<ActorClass>(actorClassJson);
             data.id = keyValuePair.Key;
-           actorClasses[data.id] = data;
+            actorClasses[data.id] = data;
         }
     }
 
@@ -152,6 +157,39 @@ public class Simulation : MonoBehaviour
             }
         }
 
+    }
+
+    public void SpawnActors()
+    {
+        MapData.Layer actorLayer = mapData.GetLayer(dataDefs.actorLayerName);
+        int i = 0;
+        for (int x = 0; x < level.dimensions.x; x++)
+        {
+            for (int y = 0; y < level.dimensions.y; y++)
+            {
+                // Get actor id from actor layer
+                int actorClassId = actorLayer.data[i];
+                if (actorClassId != 0 && actorClasses.ContainsKey(actorClassId))
+                {
+                    ActorClass actorClass = actorClasses[actorClassId];
+                    //Create actor
+                    Actor actor = new Actor(actorClass);
+                    actor.levelPosition = new Vector2Int(x, y);
+
+                    // Add actor to level
+                    level.actors.Add(actor);
+
+                    ActorVisualizer actorVisualizer = GameObject.Instantiate(actorPrefab, new Vector3(x, y), Quaternion.identity).GetComponent<ActorVisualizer>();
+                    actorVisualizer.actor = actor;
+                    actorVisualizer.level = level;
+                    actorVisualizer.tileset = mapData.GetTileset(1);
+                    // Reload changes to actor visualizer
+                    actorVisualizer.Reload();
+                }
+
+                i++;
+            }
+        }
     }
 
 }

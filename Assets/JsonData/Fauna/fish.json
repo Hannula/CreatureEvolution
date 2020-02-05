@@ -1,0 +1,26 @@
+{
+    "name": "Fish",
+    "baseColor": {
+        "r": 0.3,
+        "g": 0.5,
+        "b": 0.6,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 0.4
+    },
+    "maxHitpoints": 25,
+    "speed": 0,
+    "armorClass" : 11,
+    "size": 2,
+    "resistances":[
+    ],
+    "swimmingSpeed" : 20,
+    "softLandNavigation" : 0,
+    "ruggedLandNavigation" : 0,
+    "crampedNavigation" : 5,
+    "attacks": []
+}

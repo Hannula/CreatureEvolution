@@ -5,25 +5,25 @@ using UnityEngine;
 [System.Serializable]
 public class ActorClass
 {
-    public readonly string name;
+    public string name;
     public int id;
-    public readonly Color baseColor;
-    public readonly Color patternColor;
+    public Color baseColor;
+    public Color patternColor;
 
-    public readonly float maxHitpoints;
-    public readonly float speed;
-    public readonly int armorClass;
-    public readonly float size;
-    public readonly Dictionary<DamageTypes, float> resistances;
+    public float maxHitpoints;
+    public float speed;
+    public int armorClass;
+    public float size;
+    public Dictionary<DamageTypes, float> resistances;
     [SerializeField]
     private List<string> resistanceStrings;
     public List<Attack> attacks;
 
-    public readonly float swimmingSpeed;
+    public float swimmingSpeed;
 
-    public readonly float ruggedLandNavigation;
-    public readonly float softLandNavigation;
-    public readonly float crampedNavigation;
+    public float ruggedLandNavigation;
+    public float softLandNavigation;
+    public float crampedNavigation;
 
     public readonly float height;
 

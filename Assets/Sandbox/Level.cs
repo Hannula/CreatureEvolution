@@ -7,11 +7,12 @@ namespace Sandbox
     {
         public readonly Vector2Int dimensions;
         private Tile[,] tileGrid;
+        public List<Actor> actors;
 
         public Level(MapData mapData, Dictionary<int, TerrainData> terrainData)
         {
             this.dimensions = new Vector2Int(mapData.width, mapData.height);
-
+            actors = new List<Actor>();
             tileGrid = new Tile[dimensions.x, dimensions.y];
 
             // Get map layers
@@ -30,12 +31,13 @@ namespace Sandbox
                     int elevation = 0;
                     int temperature = 0;
 
+                    // Try to get elevation
                     if (elevationLayer != null)
                     {
                         elevation = elevationLayer.data[i];
                     }
-
-
+                
+                    // Try to get temperature
                     if (temperatureLayer != null)
                     {
                         temperature = temperatureLayer.data[i];

@@ -1,5 +1,8 @@
 {
     "mapFilePath": "smallMap.json",
+    "terrainLayerName" : "Terrain",
+    "actorLayerName" : "Fauna",
+    "resourceLayerName" : "Resources",
     "terrainDataFilePaths" :[ 
         {"Key" : 1, "Value" : "Terrain/smoothCavernFloor.json"},
         {"Key" : 2, "Value" : "Terrain/roughCavernFloor.json"},
@@ -8,7 +11,11 @@
         {"Key" : 7, "Value" : "Terrain/water.json"},
         {"Key" : 8, "Value" : "Terrain/deepWater.json"}
     ],
-    "faunaDataFilePaths" :[
-        {"Key" : 1, "Value" : "Fauna/rat.json"}
+    "actorClassFilePaths" :[
+        {"Key" : 27, "Value" : "Fauna/rat.json"},
+        {"Key" : 28, "Value" : "Fauna/bear.json"},
+        {"Key" : 29, "Value" : "Fauna/fish.json"},
+        {"Key" : 30, "Value" : "Fauna/crocodile.json"},
+        {"Key" : 31, "Value" : "Fauna/elk.json"}
     ]
 }

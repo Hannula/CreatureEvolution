@@ -9,6 +9,10 @@ public class DataDefinitions
     public List<IntStringPair> actorClassFilePaths;
     public List<IntStringPair> resourceClassFilePaths;
 
+    public string terrainLayerName;
+    public string actorLayerName;
+    public string resourceLayerName;
+
     public static DataDefinitions LoadFromJson(string path)
     {
         // Read defs json from file

@@ -1,0 +1,26 @@
+{
+    "name": "Bear",
+    "baseColor": {
+        "r": 0.35,
+        "g": 0.3,
+        "b": 0.25,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.35,
+        "g": 0.3,
+        "b": 0.25,
+        "a": 0
+    },
+    "maxHitpoints": 150,
+    "speed": 40,
+    "armorClass" : 10,
+    "size": 10,
+    "resistances":[
+    ],
+    "swimmingSpeed" : 7,
+    "softLandNavigation" : 3,
+    "ruggedLandNavigation" : 3,
+    "crampedNavigation" : 3,
+    "attacks": []
+}

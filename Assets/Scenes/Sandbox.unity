@@ -312,6 +312,8 @@ MonoBehaviour:
   dataDefsPath: JsonData/dataDefs.json
   tilePrefab: {fileID: 3265913840937391545, guid: 212bb92392ffe0848b639f6b8798142e,
     type: 3}
+  actorPrefab: {fileID: 9040193817167200470, guid: 7064308679213a04f99f16c6756929ad,
+    type: 3}
 --- !u!4 &334052795
 Transform:
   m_ObjectHideFlags: 0

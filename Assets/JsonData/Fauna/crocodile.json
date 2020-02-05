@@ -1,0 +1,26 @@
+{
+    "name": "Crocodile",
+    "baseColor": {
+        "r": 0.35,
+        "g": 0.7,
+        "b": 0.4,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.35,
+        "g": 0.7,
+        "b": 0.4,
+        "a": 0
+    },
+    "maxHitpoints": 120,
+    "speed": 15,
+    "armorClass" : 10,
+    "size": 7,
+    "resistances":[
+    ],
+    "swimmingSpeed" : 15,
+    "softLandNavigation" : 8,
+    "ruggedLandNavigation" : 1,
+    "crampedNavigation" : 4,
+    "attacks": []
+}

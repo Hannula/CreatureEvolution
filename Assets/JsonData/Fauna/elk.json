@@ -1,0 +1,26 @@
+{
+    "name": "Elk",
+    "baseColor": {
+        "r": 0.35,
+        "g": 0.3,
+        "b": 0.25,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.35,
+        "g": 0.3,
+        "b": 0.25,
+        "a": 0
+    },
+    "maxHitpoints": 130,
+    "speed": 45,
+    "armorClass" : 10,
+    "size": 8,
+    "resistances":[
+    ],
+    "swimmingSpeed" : 6,
+    "softLandNavigation" : 2.5,
+    "ruggedLandNavigation" : 4,
+    "crampedNavigation" : 2,
+    "attacks": []
+}
