@@ -10,7 +10,6 @@ public class Simulation : MonoBehaviour
     public GameObject tilePrefab;
     public GameObject actorPrefab;
     private string projectPath;
-    private List<Actor> actors;
     private DataDefinitions dataDefs;
     private MapData mapData;
     private Dictionary<int, TerrainData> terrainData;
@@ -20,7 +19,11 @@ public class Simulation : MonoBehaviour
 
     private void SimulateRound()
     {
-
+        foreach(Actor actor in level.actors)
+        {
+            // Find path to random place
+            actor.FindPath(level.TileAt(Random.Range(0, level.dimensions.x), Random.Range(0, level.dimensions.y)));
+        }
     }
 
     public static void Log(string text)
@@ -60,7 +63,7 @@ public class Simulation : MonoBehaviour
 
         // Spawn actors to the level
         SpawnActors();
-                     
+
         /*ActorClass human = new ActorClass("Human", 100, 15, 10, 5);
         Attack punch = new Attack("Punch", 3, new Attack.Damage(DamageTypes.Crushing, 10, 5));
         Attack kick = new Attack("Kick", 0, new Attack.Damage(DamageTypes.Crushing, 15, 5));
@@ -76,6 +79,8 @@ public class Simulation : MonoBehaviour
             pertti.PerformAttack(pertti.GetRandomAttack(), erkki);
             tries++;
         }*/
+
+        SimulateRound();
     }
     private void LoadDataDefinitions()
     {
@@ -136,7 +141,6 @@ public class Simulation : MonoBehaviour
     {
         level = new Level(mapData, terrainData);
 
-        int i = 0;
         for(int x = 0; x < level.dimensions.x; x++)
         {
             for(int y = 0; y < level.dimensions.y; y++)
@@ -145,15 +149,13 @@ public class Simulation : MonoBehaviour
                 Tile tile = level.TileAt(x, y);
                 if (tile.terrain.id != 0)
                 {
-                    TileVisualizer tileVis = GameObject.Instantiate(tilePrefab, new Vector3(x, y), Quaternion.identity).GetComponent<TileVisualizer>();
+                    TileVisualizer tileVis = GameObject.Instantiate(tilePrefab, new Vector3(x, -y), Quaternion.identity).GetComponent<TileVisualizer>();
                     tileVis.position = new Vector2Int(x, y);
                     tileVis.tile = tile;
                     tileVis.tileset = mapData.GetTileset(0);
                     // Reload changes to tile
                     tileVis.Reload();
                 }
-
-                i++;
             }
         }
 
@@ -163,9 +165,9 @@ public class Simulation : MonoBehaviour
     {
         MapData.Layer actorLayer = mapData.GetLayer(dataDefs.actorLayerName);
         int i = 0;
-        for (int x = 0; x < level.dimensions.x; x++)
+        for (int y = 0; y < level.dimensions.y; y++)
         {
-            for (int y = 0; y < level.dimensions.y; y++)
+            for (int x = 0; x < level.dimensions.x; x++)
             {
                 // Get actor id from actor layer
                 int actorClassId = actorLayer.data[i];
@@ -173,13 +175,13 @@ public class Simulation : MonoBehaviour
                 {
                     ActorClass actorClass = actorClasses[actorClassId];
                     //Create actor
-                    Actor actor = new Actor(actorClass);
-                    actor.levelPosition = new Vector2Int(x, y);
+                    Actor actor = new Actor(actorClass, level);
+                    actor.currentTile = level.TileAt(x, y);
 
                     // Add actor to level
                     level.actors.Add(actor);
 
-                    ActorVisualizer actorVisualizer = GameObject.Instantiate(actorPrefab, new Vector3(x, y), Quaternion.identity).GetComponent<ActorVisualizer>();
+                    ActorVisualizer actorVisualizer = GameObject.Instantiate(actorPrefab, new Vector3(x, -y), Quaternion.identity).GetComponent<ActorVisualizer>();
                     actorVisualizer.actor = actor;
                     actorVisualizer.level = level;
                     actorVisualizer.tileset = mapData.GetTileset(1);

@@ -49,9 +49,9 @@ namespace Sandbox
                         terrain = terrainData[terrainIndex];
                     }
 
-                    Tile newTile = new Tile(terrain, elevation, temperature);
+                    Tile newTile = new Tile(this, new Vector2Int(x,y), terrain, elevation, temperature);
 
-                    tileGrid[x, dimensions.y - y - 1] = newTile;
+                    tileGrid[x, y] = newTile;
 
                     i++;
                 }

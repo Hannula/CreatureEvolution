@@ -20,12 +20,14 @@ public class ActorClass
     public List<Attack> attacks;
 
     public float swimmingSpeed;
-
     public float ruggedLandNavigation;
     public float softLandNavigation;
     public float crampedNavigation;
+    public float steepNavigation;
 
     public readonly float height;
+
+    private Dictionary<TerrainData, float> movementCosts;
 
     public ActorClass(string name, int hitpoints, int speed, int armorClass, int size, float swimming, float rugged, float soft, float cramped)
     {
@@ -65,6 +67,45 @@ public class ActorClass
 
         return resistance;
     }
+
+    public float GetTerrainMovementCost(TerrainData targetTerrain)
+    {
+        if (movementCosts == null)
+        {
+            // Create new movement cost dictionary if it doesn't exist
+            movementCosts = new Dictionary<TerrainData, float>();
+        }
+        // Try to find movement cost from dictionary
+        if (movementCosts.ContainsKey(targetTerrain))
+        {
+            return movementCosts[targetTerrain];
+        }
+        else
+        {
+            // Cost is not calculated for this terrain type. Calculate cost.
+            // Base cost is determined by land speed
+            float cost = 1f / speed;
+
+            if (targetTerrain.waterDepth < height)
+            {
+                // Grounded or shallow water
+                cost *= 1f + (targetTerrain.ruggedness / ruggedLandNavigation);
+                cost *= 1f + (targetTerrain.softness / softLandNavigation);
+                cost *= 1f + (targetTerrain.density / crampedNavigation);
+            }
+            else
+            {
+                // Use swimming speed instead if water there is deep enough
+                cost = 1f / swimmingSpeed;
+                cost *= 1f + (targetTerrain.density / crampedNavigation);
+            }
+
+            // Save cost for this terrain type
+            movementCosts[targetTerrain] = cost;
+            return cost;
+        }
+    }
+
 }
 
 [System.Serializable]

@@ -46,9 +46,24 @@ public class ActorVisualizer : MonoBehaviour
 
     private void UpdatePosition()
     {
-        Vector2Int levelPosition = actor.levelPosition;
+        Vector2Int levelPosition = actor.LevelPosition;
         float elevation = level.TileAt(levelPosition.x, levelPosition.y).elevation;
 
-        transform.position = new Vector3(levelPosition.x + 0.5f, levelPosition.y + 0.5f, elevation -1);
+        transform.position = new Vector3(levelPosition.x, -levelPosition.y, elevation -1);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        if (actor.currentPath != null)
+        {
+            Vector3 prev = transform.position;
+            foreach(Tile t in actor.currentPath)
+            {
+                Vector3 next = new Vector3(t.position.x, -t.position.y, -1f);
+                Gizmos.DrawLine(prev, next);
+                prev = next;
+            }
+        }
     }
 }

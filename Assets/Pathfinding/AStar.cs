@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utility;
+using Pathfinding.Utility;
+
 namespace Pathfinding
 {
     /// <summary> A generic implementation of the A* algorithm to find the shortest path between two nodes </summary>
@@ -157,9 +158,7 @@ namespace Pathfinding
             }
             return null;
         }
-
-
-
+               
 
         /// <summary> Construct a path from the start node to the given node according to previousNodes </summary>
         private List<TNode> ConstructPath(TNode node)

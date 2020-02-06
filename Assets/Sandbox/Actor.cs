@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Pathfinding;
+using Sandbox;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,17 +9,30 @@ public class Actor
 {
     public string name;
 
-    public Vector2Int levelPosition;
+    public Vector2Int LevelPosition
+    {
+        get { return currentTile.position; }
+    }
+
+    public Tile currentTile;
     public float energy = 0;
 
     public float hitpoints;
     public readonly ActorClass actorClass;
+    public Level level;
 
-    public Actor(ActorClass actorClass, string name = "Actor")
+    public List<Tile> currentPath;
+
+    private AStar<Tile> pathfinder;
+
+    public Actor(ActorClass actorClass, Level level, string name = "Actor")
     {
         this.name = name;
         this.actorClass = actorClass;
+        this.level = level;
         hitpoints = actorClass.maxHitpoints;
+
+        pathfinder = new AStar<Tile>(GetAdjacentTiles, GetMovementCost, GetMovementCostEstimation);
     }
 
     public void PerformAttack(Attack attack, Actor target, bool log = true)
@@ -103,6 +118,77 @@ public class Actor
     public float GetResistance(DamageTypes damageType)
     {
         return actorClass.GetResistance(damageType);
+    }
+
+    public float GetMovementCost(Tile startTile, Tile targetTile)
+    {
+        // Base cost is based on actor class and terrain
+        if (targetTile != null)
+        {
+            float cost = actorClass.GetTerrainMovementCost(targetTile.terrain);
+
+            // Add additional penalty from elevation difference
+            float elevationDifference = targetTile.elevation - startTile.elevation;
+            if (elevationDifference > 0)
+            {
+                // Target tile is higher
+                cost *= elevationDifference / actorClass.steepNavigation;
+            }
+            return cost;
+        }
+        return float.MaxValue;
+
+    }
+    /// <summary>
+    /// Get estimated cost from current tile to target tile using manhattan distance.
+    /// </summary>
+    /// <param name="targetTile"></param>
+    /// <returns></returns>
+    public float GetMovementCostEstimation(Tile startTile, Tile targetTile)
+    {
+        // Use manhattan distance for estimation
+        float estimatedDistance = Mathf.Abs(targetTile.position.x - startTile.position.x) + Mathf.Abs(targetTile.position.y - startTile.position.y);
+
+        float estimatedCost = estimatedDistance / actorClass.speed;
+
+        return estimatedCost;
+    }
+
+    public List<Tile> GetAdjacentTiles(Tile tile)
+    {
+        List<Tile> adjacentTiles = new List<Tile>();
+
+        // Get adjacent tiles from level
+        Tile leftTile = level.TileAt(tile.position.x - 1, tile.position.y);
+        Tile rightTile = level.TileAt(tile.position.x + 1, tile.position.y);
+        Tile upTile = level.TileAt(tile.position.x, tile.position.y - 1);
+        Tile downTile = level.TileAt(tile.position.x, tile.position.y + 1);
+
+        // Add tiles if they exists and are traversable
+        if (leftTile != null && leftTile.terrain.id != 0)
+        {
+            adjacentTiles.Add(leftTile);
+        }
+        if (rightTile != null && rightTile.terrain.id != 0)
+        {
+            adjacentTiles.Add(rightTile);
+        }
+        if (upTile != null && upTile.terrain.id != 0)
+        {
+            adjacentTiles.Add(upTile);
+        }
+        if (downTile != null && downTile.terrain.id != 0)
+        {
+            adjacentTiles.Add(downTile);
+        }
+
+        return adjacentTiles;
+    }
+
+    public void FindPath(Tile targetTile)
+    {
+        List<Tile> path = pathfinder.FindPath(currentTile, targetTile);
+        currentPath = path;
     }
 
 }

@@ -6,8 +6,7 @@ using UnityEngine.UI;
 public class TileInspector : MonoBehaviour
 {
     public Text tileNameText;
-    public Text tileElevationText;
-    public Text tileTemperatureText;
+    public Text tileText;
 
     public LayerMask raycastLayermask;
 
@@ -25,9 +24,9 @@ public class TileInspector : MonoBehaviour
 
         if (selectedTile)
         {
-            tileNameText.text = selectedTile.tile.terrain.name;
-            tileElevationText.text = "Elevation: " + selectedTile.tile.elevation.ToString();
-            tileTemperatureText.text = "Temperature: " + selectedTile.tile.temperature.ToString();
+            tileNameText.text = selectedTile.tile.terrain.name + "(" + selectedTile.tile.position.x + ", " + selectedTile.tile.position.y + ")";
+            tileText.text = "Elevation: " + selectedTile.tile.elevation.ToString() +
+                "\nTemperature: " + selectedTile.tile.temperature.ToString();
         }
     }
 }
