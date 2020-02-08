@@ -13,6 +13,9 @@ public class DataDefinitions
     public string actorLayerName;
     public string resourceLayerName;
 
+    public float elevationStep;
+    public int elevationStart;
+
     public static DataDefinitions LoadFromJson(string path)
     {
         // Read defs json from file

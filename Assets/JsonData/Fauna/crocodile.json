@@ -18,9 +18,11 @@
     "size": 7,
     "resistances":[
     ],
+    "height" : 1,
     "swimmingSpeed" : 15,
     "softLandNavigation" : 8,
     "ruggedLandNavigation" : 1,
     "crampedNavigation" : 4,
+    "steepNavigation" : 0.5,
     "attacks": []
 }

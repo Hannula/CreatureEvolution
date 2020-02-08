@@ -13,14 +13,16 @@
         "a": 0.4
     },
     "maxHitpoints": 25,
-    "speed": 0,
+    "speed": 0.1,
     "armorClass" : 11,
     "size": 2,
     "resistances":[
     ],
+    "height" : 0.35,
     "swimmingSpeed" : 20,
     "softLandNavigation" : 0,
-    "ruggedLandNavigation" : 0,
+    "ruggedLandNavigation" : 0.1,
     "crampedNavigation" : 5,
+    "steepNavigation" : 0.1,
     "attacks": []
 }

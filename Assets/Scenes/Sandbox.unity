@@ -154,6 +154,7 @@ MonoBehaviour:
     type: 3}
   actorPrefab: {fileID: 9040193817167200470, guid: 7064308679213a04f99f16c6756929ad,
     type: 3}
+  roundDuration: 0.1
 --- !u!4 &334052795
 Transform:
   m_ObjectHideFlags: 0

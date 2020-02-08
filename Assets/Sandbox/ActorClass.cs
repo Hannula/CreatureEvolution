@@ -25,7 +25,7 @@ public class ActorClass
     public float crampedNavigation;
     public float steepNavigation;
 
-    public readonly float height;
+    public float height;
 
     private Dictionary<TerrainData, float> movementCosts;
 

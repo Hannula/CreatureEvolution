@@ -17,15 +17,29 @@ public class Simulation : MonoBehaviour
     private Dictionary<int, ResourceClass> resourceClasses;
     private Level level;
 
+    public float roundDuration = 1f;
+
     private void SimulateRound()
     {
         foreach(Actor actor in level.actors)
         {
             // Find path to random place
-            actor.FindPath(level.TileAt(Random.Range(0, level.dimensions.x), Random.Range(0, level.dimensions.y)));
+            if (actor.currentPath == null || actor.currentPath.Count == 0)
+            {
+                actor.FindPath(level.TileAt(Random.Range(0, level.dimensions.x), Random.Range(0, level.dimensions.y)));
+            }
+            actor.Act();
         }
     }
 
+    IEnumerator simulate()
+    {
+        while (true)
+        {
+            SimulateRound();
+            yield return new WaitForSeconds(roundDuration);
+        }
+    }
     public static void Log(string text)
     {
         Debug.Log(text);
@@ -80,7 +94,7 @@ public class Simulation : MonoBehaviour
             tries++;
         }*/
 
-        SimulateRound();
+        StartCoroutine(simulate());
     }
     private void LoadDataDefinitions()
     {
@@ -139,7 +153,7 @@ public class Simulation : MonoBehaviour
 
     private void CreateLevel()
     {
-        level = new Level(mapData, terrainData);
+        level = new Level(mapData, terrainData, dataDefs.elevationStep, dataDefs.elevationStart);
 
         for(int x = 0; x < level.dimensions.x; x++)
         {

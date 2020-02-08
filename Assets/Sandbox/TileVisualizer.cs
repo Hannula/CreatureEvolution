@@ -32,7 +32,7 @@ public class TileVisualizer : MonoBehaviour
         transform.name = tile.terrain.name;
 
         // Set z according to tile elevation
-        transform.position = new Vector3(transform.position.x, transform.position.y, tile.elevation * 0.1f);
+        transform.position = new Vector3(transform.position.x, transform.position.y, -tile.elevation);
     }
 
 }

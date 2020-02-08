@@ -3,6 +3,7 @@ using Sandbox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utility;
 
 [System.Serializable]
 public class Actor
@@ -120,19 +121,55 @@ public class Actor
         return actorClass.GetResistance(damageType);
     }
 
+    public void Act()
+    {
+        if (energy < 0)
+        {
+            energy += 0.1f;
+        }
+        else
+        {
+            PathAdvance();
+        }
+    }
+    /// <summary>
+    /// Advance on current path.
+    /// </summary>
+    /// <returns>End of the path.</returns>
+    public bool PathAdvance()
+    {
+        if (currentPath == null || currentPath.Count == 0)
+        {
+            return true;
+        }
+        // Get the next tile
+        Tile nextTile = UtilityFunctions.Pop<Tile>(currentPath);
+        // Calculate movement cost
+        float movementCost = GetMovementCost(currentTile, nextTile);
+        // Move to the next tile
+        currentTile = nextTile;
+        // Reduce energy after moving
+        energy -= movementCost;
+
+        // Return true if actor is now at the end of the path
+        return currentPath.Count == 0;
+    }
+
     public float GetMovementCost(Tile startTile, Tile targetTile)
     {
         // Base cost is based on actor class and terrain
         if (targetTile != null)
         {
-            float cost = actorClass.GetTerrainMovementCost(targetTile.terrain);
+            // Take both start tile and target tile into account
+            float cost = actorClass.GetTerrainMovementCost(currentTile.terrain);
+            cost += actorClass.GetTerrainMovementCost(targetTile.terrain);
 
             // Add additional penalty from elevation difference
             float elevationDifference = targetTile.elevation - startTile.elevation;
             if (elevationDifference > 0)
             {
                 // Target tile is higher
-                cost *= elevationDifference / actorClass.steepNavigation;
+                cost *= 1 + (elevationDifference / actorClass.steepNavigation);
             }
             return cost;
         }

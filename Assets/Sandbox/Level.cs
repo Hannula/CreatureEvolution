@@ -9,7 +9,7 @@ namespace Sandbox
         private Tile[,] tileGrid;
         public List<Actor> actors;
 
-        public Level(MapData mapData, Dictionary<int, TerrainData> terrainData)
+        public Level(MapData mapData, Dictionary<int, TerrainData> terrainData, float elevationStep, int elevationStart)
         {
             this.dimensions = new Vector2Int(mapData.width, mapData.height);
             actors = new List<Actor>();
@@ -19,7 +19,6 @@ namespace Sandbox
             MapData.Layer terrainLayer = mapData.GetLayer("Terrain");
             MapData.Layer elevationLayer = mapData.GetLayer("Elevation");
             MapData.Layer temperatureLayer = mapData.GetLayer("Temperature");
-
             int i = 0;
             for (int y = 0; y < dimensions.y; y++)
             {
@@ -28,13 +27,13 @@ namespace Sandbox
 
 
                     int terrainIndex = terrainLayer.data[i];
-                    int elevation = 0;
+                    float elevation = 0;
                     int temperature = 0;
 
                     // Try to get elevation
-                    if (elevationLayer != null)
+                    if (elevationLayer != null && elevationLayer.data[i] != 0)
                     {
-                        elevation = elevationLayer.data[i];
+                        elevation = (elevationLayer.data[i] - elevationStart) * elevationStep;
                     }
                 
                     // Try to get temperature

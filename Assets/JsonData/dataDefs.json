@@ -1,8 +1,10 @@
 {
-    "mapFilePath": "smallMap.json",
+    "mapFilePath": "largeMap.json",
     "terrainLayerName" : "Terrain",
     "actorLayerName" : "Fauna",
     "resourceLayerName" : "Resources",
+    "elevationStart" : 51,
+    "elevationStep" : 0.2,
     "terrainDataFilePaths" :[ 
         {"Key" : 1, "Value" : "Terrain/smoothCavernFloor.json"},
         {"Key" : 2, "Value" : "Terrain/roughCavernFloor.json"},
