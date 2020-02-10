@@ -25,6 +25,8 @@ public class TileVisualizer : MonoBehaviour
 
         material.SetTextureOffset("_MainTex", offset);
         material.SetTexture("_MainTex", texture);
+        float lightLevel = 0.25f + tile.lightLevel * 0.75f;
+        material.color = new Color(lightLevel, lightLevel, lightLevel, 1f);
 
         backgroundMesh.material = material;
 

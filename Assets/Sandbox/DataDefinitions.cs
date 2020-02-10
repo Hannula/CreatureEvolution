@@ -12,9 +12,17 @@ public class DataDefinitions
     public string terrainLayerName;
     public string actorLayerName;
     public string resourceLayerName;
+    public string lightLevelLayerName;
+    public string elevationLayerName;
+    public string temperatureLayerName;
 
     public float elevationStep;
     public int elevationStart;
+
+    public float lightLevelStep;
+    public int lightLevelStart;
+
+    public float globalHungerRate;
 
     public static DataDefinitions LoadFromJson(string path)
     {

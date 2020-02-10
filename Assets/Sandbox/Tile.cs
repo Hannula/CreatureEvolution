@@ -6,18 +6,17 @@ using UnityEngine;
 public class Tile {
     public float elevation { get; private set; }
     public int temperature { get; private set; }
+    public float lightLevel { get; private set; }
     public TerrainData terrain { get; private set; }   
     public Vector2Int position { get; private set; }
 
-    private Level level; 
-
-    public Tile(Level level, Vector2Int position, TerrainData terrain, float elevation, int temperature)
+    public Tile(Vector2Int position, TerrainData terrain, float elevation, int temperature, float lightLevel)
     {
-        this.level = level;
         this.position = position;
         this.terrain = terrain;
         this.elevation = elevation;
         this.temperature = temperature;
+        this.lightLevel = lightLevel;
     }
 
 }

@@ -17,8 +17,15 @@ public class ActorVisualizer : MonoBehaviour
     // Always face camera
     void Update()
     {
-        UpdatePosition();
-        transform.rotation = Camera.main.transform.rotation;
+        if (actor.hitpoints > 0)
+        {
+            UpdatePosition();
+            transform.rotation = Camera.main.transform.rotation;
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public void Reload()

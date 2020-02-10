@@ -17,7 +17,12 @@ public class Simulation : MonoBehaviour
     private Dictionary<int, ResourceClass> resourceClasses;
     private Level level;
 
-    public float roundDuration = 1f;
+    private float roundDuration = 1f;
+    public float roundDurationNormal = 1f;
+    public float roundDurationFast = 1f;
+    public float roundDurationFastest = 1f;
+
+    public bool paused = true;
 
     private void SimulateRound()
     {
@@ -28,7 +33,7 @@ public class Simulation : MonoBehaviour
             {
                 actor.FindPath(level.TileAt(Random.Range(0, level.dimensions.x), Random.Range(0, level.dimensions.y)));
             }
-            actor.Act();
+            bool actorDead = actor.Act();
         }
     }
 
@@ -36,8 +41,15 @@ public class Simulation : MonoBehaviour
     {
         while (true)
         {
-            SimulateRound();
-            yield return new WaitForSeconds(roundDuration);
+            if (!paused)
+            {
+                SimulateRound();
+                yield return new WaitForSeconds(roundDuration);
+            }
+            else
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
         }
     }
     public static void Log(string text)
@@ -59,6 +71,7 @@ public class Simulation : MonoBehaviour
 
         projectPath = Path.Combine(Application.dataPath, Path.GetDirectoryName(dataDefsPath));
 
+        roundDuration = roundDurationNormal;
 
         // Load data
         LoadDataDefinitions();
@@ -74,6 +87,9 @@ public class Simulation : MonoBehaviour
 
         // Create new level with map dimensions
         CreateLevel();
+
+        // Create tile visualizers for the level
+        VisualizeLevel();
 
         // Spawn actors to the level
         SpawnActors();
@@ -95,6 +111,35 @@ public class Simulation : MonoBehaviour
         }*/
 
         StartCoroutine(simulate());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            paused = !paused;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            paused = false;
+            roundDuration = roundDurationNormal;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            paused = false;
+            roundDuration = roundDurationFast;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            paused = false;
+            roundDuration = roundDurationFastest;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            paused = false;
+            roundDuration = 0;
+        }
     }
     private void LoadDataDefinitions()
     {
@@ -153,8 +198,65 @@ public class Simulation : MonoBehaviour
 
     private void CreateLevel()
     {
-        level = new Level(mapData, terrainData, dataDefs.elevationStep, dataDefs.elevationStart);
+        Vector2Int dimensions = new Vector2Int(mapData.width, mapData.height);
+        List<Actor> actors = new List<Actor>();
+        Tile[,] tileGrid = new Tile[dimensions.x, dimensions.y];
 
+        // Get map layers
+        MapData.Layer terrainLayer = mapData.GetLayer(dataDefs.terrainLayerName);
+        MapData.Layer elevationLayer = mapData.GetLayer(dataDefs.elevationLayerName);
+        MapData.Layer temperatureLayer = mapData.GetLayer(dataDefs.temperatureLayerName);
+        MapData.Layer lightLayer = mapData.GetLayer(dataDefs.lightLevelLayerName);
+
+        int i = 0;
+        for (int y = 0; y < dimensions.y; y++)
+        {
+            for (int x = 0; x < dimensions.x; x++)
+            {
+
+
+                int terrainIndex = terrainLayer.data[i];
+                float elevation = 0;
+                int temperature = 0;
+                float lightLevel = 1;
+
+                // Try to get elevation
+                if (elevationLayer != null && elevationLayer.data[i] != 0)
+                {
+                    elevation = (elevationLayer.data[i] - dataDefs.elevationStart) * dataDefs.elevationStep;
+                }
+
+                // Try to get temperature
+                if (temperatureLayer != null)
+                {
+                    temperature = temperatureLayer.data[i];
+                }
+
+                // Try to get light level
+                if (lightLayer != null)
+                {
+                    lightLevel = Mathf.Clamp((lightLayer.data[i] - dataDefs.lightLevelStart) * dataDefs.lightLevelStep, 0f, 1f);
+                }
+
+                TerrainData terrain = terrainData[0];
+                if (terrainData.ContainsKey(terrainIndex))
+                {
+                    terrain = terrainData[terrainIndex];
+                }
+
+                Tile newTile = new Tile(new Vector2Int(x, y), terrain, elevation, temperature, lightLevel);
+
+                tileGrid[x, y] = newTile;
+
+                i++;
+            }
+        }
+
+        level = new Level(tileGrid, actors);
+    }
+
+    private void VisualizeLevel()
+    {
         for(int x = 0; x < level.dimensions.x; x++)
         {
             for(int y = 0; y < level.dimensions.y; y++)
@@ -189,7 +291,7 @@ public class Simulation : MonoBehaviour
                 {
                     ActorClass actorClass = actorClasses[actorClassId];
                     //Create actor
-                    Actor actor = new Actor(actorClass, level);
+                    Actor actor = new Actor(actorClass, level,dataDefs.globalHungerRate);
                     actor.currentTile = level.TileAt(x, y);
 
                     // Add actor to level

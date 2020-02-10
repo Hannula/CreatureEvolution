@@ -19,11 +19,19 @@ public class ActorClass
     private List<string> resistanceStrings;
     public List<Attack> attacks;
 
+    // Movement
     public float swimmingSpeed;
     public float ruggedLandNavigation;
     public float softLandNavigation;
     public float crampedNavigation;
     public float steepNavigation;
+
+    // Survival
+    public float foodConsumption;
+    public float meatConsumptionEfficiency;
+    public float plantConsumptionEfficiency;
+    public float meatAmount;
+
 
     public float height;
 

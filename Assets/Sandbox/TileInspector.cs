@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,25 +9,56 @@ public class TileInspector : MonoBehaviour
     public Text tileNameText;
     public Text tileText;
 
-    public LayerMask raycastLayermask;
+    public Text actorNameText;
+    public Text actorText;
+
+    public LayerMask raycastTileLayermask;
+    public LayerMask raycastActorLayermask;
 
     public TileVisualizer selectedTile;
+    public ActorVisualizer selectedActor;
 
     void Update()
     {
+        // Find tile
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out hit, raycastLayermask);
-        if (hit.collider != null)
+        Physics.Raycast(ray, out hit, raycastTileLayermask);
+        try
+        {
             selectedTile = hit.collider.transform.parent.GetComponent<TileVisualizer>();
+        }
+        catch(Exception e)
+        {
 
+        }
 
+        // Find actor
+        ActorVisualizer newActor = null;
+        Physics.Raycast(ray, out hit, raycastActorLayermask);
+        if (hit.collider != null)
+            newActor = hit.collider.GetComponent<ActorVisualizer>();
 
+        if (newActor != null)
+        {
+            selectedActor = newActor;
+        }
+        // Draw tile info
         if (selectedTile)
         {
             tileNameText.text = selectedTile.tile.terrain.name + "(" + selectedTile.tile.position.x + ", " + selectedTile.tile.position.y + ")";
             tileText.text = "Elevation: " + selectedTile.tile.elevation.ToString() +
-                "\nTemperature: " + selectedTile.tile.temperature.ToString();
+                "\nTemperature: " + selectedTile.tile.temperature.ToString() +
+                "\nLight level: " + selectedTile.tile.lightLevel.ToString();
+        }
+
+        // Draw actor info
+        if (selectedActor)
+        {
+            actorNameText.text = selectedActor.actor.actorClass.name + "(" + selectedTile.tile.position.x + ", " + selectedTile.tile.position.y + ")";
+            actorText.text = "Hitpoints: " + Mathf.Ceil(selectedActor.actor.hitpoints) + "/" + selectedActor.actor.actorClass.maxHitpoints +
+                "\nHunger: " + Mathf.Ceil(selectedActor.actor.hunger) + 
+                "\nEnergy: " + selectedActor.actor.energy;
         }
     }
 }

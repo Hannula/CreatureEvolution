@@ -18,6 +18,9 @@ public class Actor
     public Tile currentTile;
     public float energy = 0;
 
+    public float hunger;
+    public float hungerRate;
+
     public float hitpoints;
     public readonly ActorClass actorClass;
     public Level level;
@@ -26,12 +29,14 @@ public class Actor
 
     private AStar<Tile> pathfinder;
 
-    public Actor(ActorClass actorClass, Level level, string name = "Actor")
+    public Actor(ActorClass actorClass, Level level, float hungerRate, string name = "Actor")
     {
         this.name = name;
         this.actorClass = actorClass;
         this.level = level;
         hitpoints = actorClass.maxHitpoints;
+        this.hungerRate = hungerRate;
+        hunger = 0;
 
         pathfinder = new AStar<Tile>(GetAdjacentTiles, GetMovementCost, GetMovementCostEstimation);
     }
@@ -121,16 +126,28 @@ public class Actor
         return actorClass.GetResistance(damageType);
     }
 
-    public void Act()
+    public bool Act()
     {
-        if (energy < 0)
+        if (hitpoints > 0)
         {
-            energy += 0.1f;
+            hunger += hungerRate;
+            // Start taking damage when too hungry
+            if (hunger > 100)
+            {
+                hitpoints -= actorClass.maxHitpoints * 0.01f;
+            }
+
+            if (energy < 0)
+            {
+                energy += 0.1f;
+            }
+            else
+            {
+                PathAdvance();
+            }
         }
-        else
-        {
-            PathAdvance();
-        }
+        // Return true if actor is still alive
+        return hitpoints > 0;
     }
     /// <summary>
     /// Advance on current path.

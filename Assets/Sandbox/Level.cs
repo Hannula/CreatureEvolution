@@ -9,52 +9,11 @@ namespace Sandbox
         private Tile[,] tileGrid;
         public List<Actor> actors;
 
-        public Level(MapData mapData, Dictionary<int, TerrainData> terrainData, float elevationStep, int elevationStart)
+        public Level(Tile[,] tiles, List<Actor> actors=null)
         {
-            this.dimensions = new Vector2Int(mapData.width, mapData.height);
-            actors = new List<Actor>();
-            tileGrid = new Tile[dimensions.x, dimensions.y];
-
-            // Get map layers
-            MapData.Layer terrainLayer = mapData.GetLayer("Terrain");
-            MapData.Layer elevationLayer = mapData.GetLayer("Elevation");
-            MapData.Layer temperatureLayer = mapData.GetLayer("Temperature");
-            int i = 0;
-            for (int y = 0; y < dimensions.y; y++)
-            {
-                for (int x = 0; x < dimensions.x; x++)
-                {
-
-
-                    int terrainIndex = terrainLayer.data[i];
-                    float elevation = 0;
-                    int temperature = 0;
-
-                    // Try to get elevation
-                    if (elevationLayer != null && elevationLayer.data[i] != 0)
-                    {
-                        elevation = (elevationLayer.data[i] - elevationStart) * elevationStep;
-                    }
-                
-                    // Try to get temperature
-                    if (temperatureLayer != null)
-                    {
-                        temperature = temperatureLayer.data[i];
-                    }
-
-                    TerrainData terrain = terrainData[0];
-                    if (terrainData.ContainsKey(terrainIndex))
-                    {
-                        terrain = terrainData[terrainIndex];
-                    }
-
-                    Tile newTile = new Tile(this, new Vector2Int(x,y), terrain, elevation, temperature);
-
-                    tileGrid[x, y] = newTile;
-
-                    i++;
-                }
-            }
+            this.dimensions = new Vector2Int(tiles.GetLength(0), tiles.GetLength(1));
+            tileGrid = tiles;
+            this.actors = actors;
         }
 
         /// <summary>
