@@ -28,7 +28,7 @@ public class TileInspector : MonoBehaviour
         {
             selectedTile = hit.collider.transform.parent.GetComponent<TileVisualizer>();
         }
-        catch(Exception e)
+        catch(Exception)
         {
 
         }
@@ -56,9 +56,19 @@ public class TileInspector : MonoBehaviour
         if (selectedActor)
         {
             actorNameText.text = selectedActor.actor.actorClass.name + "(" + selectedTile.tile.position.x + ", " + selectedTile.tile.position.y + ")";
-            actorText.text = "Hitpoints: " + Mathf.Ceil(selectedActor.actor.hitpoints) + "/" + selectedActor.actor.actorClass.maxHitpoints +
-                "\nHunger: " + Mathf.Ceil(selectedActor.actor.hunger) + 
-                "\nEnergy: " + selectedActor.actor.energy;
+            string info = "Hitpoints: " + Mathf.Ceil(selectedActor.actor.hitpoints) + "/" + selectedActor.actor.actorClass.maxHitpoints +
+                "\nHunger: " + Mathf.Ceil(selectedActor.actor.hunger) +
+                "\nEnergy: " + selectedActor.actor.energy +
+                "\nResistances: \n";
+            // Find every resistance
+            foreach(DamageTypes dmgType in selectedActor.actor.actorClass.resistances.Keys)
+            {
+                float value = Mathf.Floor(selectedActor.actor.actorClass.resistances[dmgType] * 100);
+                string text = dmgType.ToString() + ": " + value + "%\n";
+
+                info += text;
+            }
+            actorText.text = info;
         }
     }
 }

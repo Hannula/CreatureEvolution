@@ -24,5 +24,9 @@
     "ruggedLandNavigation" : 1,
     "crampedNavigation" : 4,
     "steepNavigation" : 0.5,
-    "attacks": []
+    "attacks": [],
+    "resistanceStrings":[
+        "Slashing:0,3",
+        "Piercing:0,3"
+    ]
 }

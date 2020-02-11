@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,8 +16,8 @@ public class ActorClass
     public int armorClass;
     public float size;
     public Dictionary<DamageTypes, float> resistances;
-    [SerializeField]
-    private List<string> resistanceStrings;
+    
+    public List<string> resistanceStrings;
     public List<Attack> attacks;
 
     // Movement
@@ -50,6 +51,39 @@ public class ActorClass
         crampedNavigation = cramped;
         attacks = new List<Attack>();
         resistances = new Dictionary<DamageTypes, float>();
+    }
+
+    public void ParseResistances()
+    {
+        resistances = new Dictionary<DamageTypes, float>();
+        foreach(string resistanceString in resistanceStrings)
+        {
+            try
+            {
+                string[] parts = resistanceString.Split(':');
+                // Find damage type
+                DamageTypes type = DamageTypes.None;
+                foreach(DamageTypes damageType in Enum.GetValues(typeof(DamageTypes)))
+                {
+                    if (parts[0] == damageType.ToString())
+                    {
+                        type = damageType;
+                    }
+                }
+                // Continue only if damage type is found
+                if (type != DamageTypes.None)
+                {
+                    float resistance = float.Parse(parts[1]);
+                    // Set resistance of given damage type
+                    resistances[type] = resistance;
+                }
+
+            }
+            catch(Exception)
+            {
+                Simulation.Log("Failed to parse resistance strings. Correct format is \"DamageType:ResistanceValue\".");
+            }
+        }
     }
 
     public void AddAttacks(params Attack[] attackList)
@@ -168,8 +202,9 @@ public class Attack
 
 public enum DamageTypes
 {
+    None,
     Crushing,
-    Percing,
+    Piercing,
     Slashing,
     Fire,
     Poison

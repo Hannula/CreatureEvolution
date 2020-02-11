@@ -1,0 +1,8 @@
+{
+    "name": "Fruit Trees",
+    "foodAmount" : 30,
+    "gatheringDifficulty" : 1,
+    "depth" : -2.5,
+    "visibility" : 4,
+    "smell" : 4
+}

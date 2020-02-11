@@ -9,6 +9,7 @@ public class Simulation : MonoBehaviour
     public string dataDefsPath;
     public GameObject tilePrefab;
     public GameObject actorPrefab;
+    public GameObject resourcePrefab;
     private string projectPath;
     private DataDefinitions dataDefs;
     private MapData mapData;
@@ -85,6 +86,9 @@ public class Simulation : MonoBehaviour
         // Load actor classes
         LoadActorClasses();
 
+        // Load resource classes
+        LoadResourceClasses();
+
         // Create new level with map dimensions
         CreateLevel();
 
@@ -93,6 +97,9 @@ public class Simulation : MonoBehaviour
 
         // Spawn actors to the level
         SpawnActors();
+
+        // Spawn resources
+        SpawnResources();
 
         /*ActorClass human = new ActorClass("Human", 100, 15, 10, 5);
         Attack punch = new Attack("Punch", 3, new Attack.Damage(DamageTypes.Crushing, 10, 5));
@@ -178,15 +185,17 @@ public class Simulation : MonoBehaviour
             string path = keyValuePair.Value;
             string actorClassJson = FileReader.ReadString(Path.Combine(projectPath, path));
             ActorClass data = JsonUtility.FromJson<ActorClass>(actorClassJson);
+            data.ParseResistances();
             data.id = keyValuePair.Key;
             actorClasses[data.id] = data;
+            
         }
     }
 
     private void LoadResourceClasses()
     {
         resourceClasses = new Dictionary<int, ResourceClass>();
-        foreach (IntStringPair keyValuePair in dataDefs.actorClassFilePaths)
+        foreach (IntStringPair keyValuePair in dataDefs.resourceClassFilePaths)
         {
             string path = keyValuePair.Value;
             string resourceClassJson = FileReader.ReadString(Path.Combine(projectPath, path));
@@ -199,7 +208,6 @@ public class Simulation : MonoBehaviour
     private void CreateLevel()
     {
         Vector2Int dimensions = new Vector2Int(mapData.width, mapData.height);
-        List<Actor> actors = new List<Actor>();
         Tile[,] tileGrid = new Tile[dimensions.x, dimensions.y];
 
         // Get map layers
@@ -252,7 +260,7 @@ public class Simulation : MonoBehaviour
             }
         }
 
-        level = new Level(tileGrid, actors);
+        level = new Level(tileGrid);
     }
 
     private void VisualizeLevel()
@@ -303,6 +311,37 @@ public class Simulation : MonoBehaviour
                     actorVisualizer.tileset = mapData.GetTileset(1);
                     // Reload changes to actor visualizer
                     actorVisualizer.Reload();
+                }
+
+                i++;
+            }
+        }
+    }
+
+    public void SpawnResources()
+    {
+        MapData.Layer resourceLayer = mapData.GetLayer(dataDefs.resourceLayerName);
+        int i = 0;
+        for (int y = 0; y < level.dimensions.y; y++)
+        {
+            for (int x = 0; x < level.dimensions.x; x++)
+            {
+                // Get resource id from resouce layer
+                int resourceClassId = resourceLayer.data[i];
+                if (resourceClassId != 0 && resourceClasses.ContainsKey(resourceClassId))
+                {
+                    ResourceClass resourceClass = resourceClasses[resourceClassId];
+                    //Create resource
+                    Resource resource = new Resource(resourceClass, level, dataDefs.globalResourceAmountMultiplier);
+                    resource.currentTile = level.TileAt(x, y);
+
+                    // Add actor to level
+                    level.resources.Add(resource);
+
+                    ResourceVisualizer resourceVisualizer = GameObject.Instantiate(resourcePrefab, new Vector3(x, -y), Quaternion.identity).GetComponent<ResourceVisualizer>();
+                    resourceVisualizer.resource = resource;
+                    resourceVisualizer.level = level;
+                    resourceVisualizer.tileset = mapData.GetTileset(2);
                 }
 
                 i++;

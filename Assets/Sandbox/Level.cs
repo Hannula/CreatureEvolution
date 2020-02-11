@@ -8,12 +8,14 @@ namespace Sandbox
         public readonly Vector2Int dimensions;
         private Tile[,] tileGrid;
         public List<Actor> actors;
+        public List<Resource> resources;
 
-        public Level(Tile[,] tiles, List<Actor> actors=null)
+        public Level(Tile[,] tiles)
         {
             this.dimensions = new Vector2Int(tiles.GetLength(0), tiles.GetLength(1));
             tileGrid = tiles;
-            this.actors = actors;
+            actors = new List<Actor>();
+            resources = new List<Resource>();
         }
 
         /// <summary>

@@ -2,11 +2,12 @@
     "mapFilePath": "largeMap.json",
     "terrainLayerName" : "Terrain",
     "actorLayerName" : "Fauna",
-    "resourceLayerName" : "Resources",
+    "resourceLayerName" : "Flora",
     "lightLevelLayerName" : "Light",
     "elevationLayerName" : "Elevation",
     "temperatureLayerName" : "Temperature",
     "globalHungerRate" : 0.5,
+    "globalResourceAmountMultiplier" : 1,
     "elevationStart" : 51,
     "elevationStep" : 0.2,
     "lightLevelStep" : 0.1,
@@ -25,5 +26,11 @@
         {"Key" : 29, "Value" : "Fauna/fish.json"},
         {"Key" : 30, "Value" : "Fauna/crocodile.json"},
         {"Key" : 31, "Value" : "Fauna/elk.json"}
+    ],
+    "resourceClassFilePaths" :[
+        {"Key" : 77, "Value" : "Flora/berryBush.json"},
+        {"Key" : 78, "Value" : "Flora/fruitTree.json"},
+        {"Key" : 79, "Value" : "Flora/roots.json"},
+        {"Key" : 80, "Value" : "Flora/seaweed.json"}
     ]
 }

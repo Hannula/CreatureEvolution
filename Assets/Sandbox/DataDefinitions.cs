@@ -23,6 +23,7 @@ public class DataDefinitions
     public int lightLevelStart;
 
     public float globalHungerRate;
+    public float globalResourceAmountMultiplier;
 
     public static DataDefinitions LoadFromJson(string path)
     {

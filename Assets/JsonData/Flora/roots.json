@@ -1,0 +1,8 @@
+{
+    "name": "Roots",
+    "foodAmount" : 30,
+    "gatheringDifficulty" : 2,
+    "depth" : 1,
+    "visibility" : 2,
+    "smell" : 2
+}

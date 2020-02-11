@@ -1,0 +1,14 @@
+{ "columns":5,
+ "image":"flora.png",
+ "imageheight":80,
+ "imagewidth":80,
+ "margin":0,
+ "name":"flora",
+ "spacing":0,
+ "tilecount":25,
+ "tiledversion":"1.3.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":1.2
+}
