@@ -20,12 +20,27 @@ namespace Sandbox
         public readonly ResourceClass resourceClass;
         public Level level;
 
-        public Resource(ResourceClass resourceClass, Level level, float amount, string name = "Resource")
+        public Resource(ResourceClass resourceClass, Level level, float amount, Tile startingTile, string name = "Resource")
         {
             this.name = name;
             this.resourceClass = resourceClass;
             this.level = level;
             this.amount = resourceClass.foodAmount * amount;
+
+            MoveToTile(startingTile);
+        }
+
+        public void MoveToTile(Tile targetTile)
+        {
+            if (currentTile != null)
+            { 
+                // Remove this actor from previous tile
+                currentTile.RemoveResource(this);
+            }
+            // Add this actor the target tile
+            targetTile.AddResource(this);
+            // Set current tile to target tile
+            currentTile = targetTile;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Sandbox;
 
 public class TileInspector : MonoBehaviour
 {
@@ -16,7 +17,18 @@ public class TileInspector : MonoBehaviour
     public LayerMask raycastActorLayermask;
 
     public TileVisualizer selectedTile;
-    public ActorVisualizer selectedActor;
+    public Actor selectedActor;
+
+    public GameObject actorPanelPrefab;
+    public Transform actorPanelContainer;
+
+    private List<ActorPanelManager> actorPanels;
+
+    private void Start()
+    {
+        actorPanels = new List<ActorPanelManager>();
+        StartCoroutine(updateTileInfo());
+    }
 
     void Update()
     {
@@ -34,15 +46,48 @@ public class TileInspector : MonoBehaviour
         }
 
         // Find actor
-        ActorVisualizer newActor = null;
+        Actor newActor = null;
         Physics.Raycast(ray, out hit, raycastActorLayermask);
         if (hit.collider != null)
-            newActor = hit.collider.GetComponent<ActorVisualizer>();
+        {
+            try
+            {
+                newActor = hit.collider.GetComponent<ActorVisualizer>().actor;
+            }
+            catch(Exception e)
+            {
+
+            }
+        }
 
         if (newActor != null)
         {
             selectedActor = newActor;
         }
+
+        // Draw actor info
+        if (selectedActor != null && selectedActor.currentTile != null)
+        {
+            actorNameText.text = selectedActor.actorClass.name + "(" + selectedActor.currentTile.position.x + ", " + selectedActor.currentTile.position.y + ")";
+            string info = "Hitpoints: " + Mathf.Ceil(selectedActor.hitpoints) + "/" + selectedActor.actorClass.maxHitpoints +
+                "\nHunger: " + Mathf.Ceil(selectedActor.hunger) +
+                "\nEnergy: " + selectedActor.energy +
+                "\nResistances: \n";
+
+            // Find every resistance
+            foreach(DamageTypes dmgType in selectedActor.actorClass.resistances.Keys)
+            {
+                float value = Mathf.Floor(selectedActor.actorClass.resistances[dmgType] * 100);
+                string text = dmgType.ToString() + ": " + value + "%\n";
+
+                info += text;
+            }
+            actorText.text = info;
+        }
+    }
+
+    void UpdateTileInfo()
+    {
         // Draw tile info
         if (selectedTile)
         {
@@ -50,25 +95,52 @@ public class TileInspector : MonoBehaviour
             tileText.text = "Elevation: " + selectedTile.tile.elevation.ToString() +
                 "\nTemperature: " + selectedTile.tile.temperature.ToString() +
                 "\nLight level: " + selectedTile.tile.lightLevel.ToString();
-        }
 
-        // Draw actor info
-        if (selectedActor)
-        {
-            actorNameText.text = selectedActor.actor.actorClass.name + "(" + selectedTile.tile.position.x + ", " + selectedTile.tile.position.y + ")";
-            string info = "Hitpoints: " + Mathf.Ceil(selectedActor.actor.hitpoints) + "/" + selectedActor.actor.actorClass.maxHitpoints +
-                "\nHunger: " + Mathf.Ceil(selectedActor.actor.hunger) +
-                "\nEnergy: " + selectedActor.actor.energy +
-                "\nResistances: \n";
-            // Find every resistance
-            foreach(DamageTypes dmgType in selectedActor.actor.actorClass.resistances.Keys)
+            // Remove existing unlocked panels
+            for(int i = actorPanels.Count - 1; i >= 0; --i)
             {
-                float value = Mathf.Floor(selectedActor.actor.actorClass.resistances[dmgType] * 100);
-                string text = dmgType.ToString() + ": " + value + "%\n";
-
-                info += text;
+                ActorPanelManager panel = actorPanels[i];
+                if (!panel.locked)
+                {
+                    // Destroy this panel if it's unlocked
+                    Destroy(panel.gameObject);
+                    actorPanels.RemoveAt(i);
+                }
             }
-            actorText.text = info;
+
+
+            // Create panel for every actor
+            foreach(Actor a in selectedTile.tile.actors)
+            {
+                bool alreadyContains = false;
+                foreach(ActorPanelManager panel in actorPanels)
+                {
+                    if (panel.actor == a)
+                    {
+                        alreadyContains = true;
+                    }
+                }
+
+                if (!alreadyContains)
+                {
+                    GameObject panelObject = Instantiate(actorPanelPrefab, actorPanelContainer);
+                    ActorPanelManager panel = panelObject.GetComponent<ActorPanelManager>();
+                    panel.actor = a;
+                    actorPanels.Add(panel);
+                }
+                
+            }
+
+        }
+    }
+
+
+    IEnumerator updateTileInfo()
+    {
+        while (true)
+        {
+            UpdateTileInfo();
+            yield return new WaitForSeconds(0.2f);
         }
     }
 }

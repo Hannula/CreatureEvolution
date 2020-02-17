@@ -16,7 +16,7 @@ namespace Sandbox
             get { return currentTile.position; }
         }
 
-        public Tile currentTile;
+        public Tile currentTile { get; private set; }
         public float energy = 0;
 
         public float hunger;
@@ -30,7 +30,7 @@ namespace Sandbox
 
         private AStar<Tile> pathfinder;
 
-        public Actor(ActorClass actorClass, Level level, float hungerRate, string name = "Actor")
+        public Actor(ActorClass actorClass, Level level, float hungerRate, Tile startingTile, string name = "Actor")
         {
             this.name = name;
             this.actorClass = actorClass;
@@ -40,6 +40,8 @@ namespace Sandbox
             hunger = 0;
 
             pathfinder = new AStar<Tile>(GetAdjacentTiles, GetMovementCost, GetMovementCostEstimation);
+
+            MoveToTile(startingTile);
         }
 
         public void PerformAttack(Attack attack, Actor target, bool log = true)
@@ -127,6 +129,23 @@ namespace Sandbox
             return actorClass.GetResistance(damageType);
         }
 
+        /// <summary>
+        /// Always use this method for moving actor
+        /// </summary>
+        /// <param name="targetTile"></param>
+        public void MoveToTile(Tile targetTile)
+        {
+            if (currentTile != null)
+            {
+                // Remove this actor from previous tile
+                currentTile.RemoveActor(this);
+            }
+            // Add this actor the target tile
+            targetTile.AddActor(this);
+            // Set current tile to target tile
+            currentTile = targetTile;
+        }
+
         public bool Act()
         {
             if (hitpoints > 0)
@@ -164,8 +183,9 @@ namespace Sandbox
             Tile nextTile = UtilityFunctions.Pop<Tile>(currentPath);
             // Calculate movement cost
             float movementCost = GetMovementCost(currentTile, nextTile);
-            // Move to the next tile
-            currentTile = nextTile;
+
+            // Advance to next tile
+            MoveToTile(nextTile);
             // Reduce energy after moving
             energy -= movementCost;
 

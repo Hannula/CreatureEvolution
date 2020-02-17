@@ -299,8 +299,8 @@ public class Simulation : MonoBehaviour
                 {
                     ActorClass actorClass = actorClasses[actorClassId];
                     //Create actor
-                    Actor actor = new Actor(actorClass, level,dataDefs.globalHungerRate);
-                    actor.currentTile = level.TileAt(x, y);
+                    Tile startingTile = level.TileAt(x, y);
+                    Actor actor = new Actor(actorClass, level,dataDefs.globalHungerRate, startingTile);
 
                     // Add actor to level
                     level.actors.Add(actor);
@@ -332,9 +332,9 @@ public class Simulation : MonoBehaviour
                 {
                     ResourceClass resourceClass = resourceClasses[resourceClassId];
                     //Create resource
-                    Resource resource = new Resource(resourceClass, level, dataDefs.globalResourceAmountMultiplier);
-                    resource.currentTile = level.TileAt(x, y);
-
+                    Tile startingTile = level.TileAt(x, y);
+                    Resource resource = new Resource(resourceClass, level, dataDefs.globalResourceAmountMultiplier, startingTile);
+                    
                     // Add actor to level
                     level.resources.Add(resource);
 
