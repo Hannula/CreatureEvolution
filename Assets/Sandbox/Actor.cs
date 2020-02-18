@@ -2,6 +2,7 @@
 using Sandbox;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Utility;
 namespace Sandbox
@@ -29,6 +30,8 @@ namespace Sandbox
         public List<Tile> currentPath;
 
         private AStar<Tile> pathfinder;
+        private Resource foodTarget;
+        private Actor huntTarget;
 
         public Actor(ActorClass actorClass, Level level, float hungerRate, Tile startingTile, string name = "Actor")
         {
@@ -114,6 +117,77 @@ namespace Sandbox
                 }
             }
         }
+
+        public void Eat(Resource resource)
+        {
+            if (resource.amount > 0)
+            {
+                Simulation.Log(actorClass.name + " eats " + resource.resourceClass.name + " at " + currentTile.position.ToString());
+
+                float energyCost = EatingEnergyCost(resource);
+
+                if (energyCost < float.MaxValue)
+                {
+
+                    // Apply energy cost
+                    energy -= energyCost;
+
+                    // Reduce hunger
+                    float foodAmount = Mathf.Min(resource.amount, hunger);
+
+                    hunger -= foodAmount;
+                    resource.amount -= foodAmount;
+                }
+            }
+        }
+
+        public float EatingEnergyCost(Resource resource)
+        {
+            // Calculate how long eating a singe unit is going to take
+            float energyCost = actorClass.foodConsumptionDuration * resource.resourceClass.gatheringDifficulty;
+
+            float resourceDepth = resource.resourceClass.depth;
+
+            // If there is water, add diving cost
+            if (resource.currentTile.terrain.waterDepth > 0 && resourceDepth > 0)
+            {
+                if (actorClass.divingSkill > 0)
+                {
+                    energyCost += resourceDepth / actorClass.divingSkill;
+                }
+                else
+                {
+                    energyCost = float.MaxValue;
+                }
+            }
+            else if (resourceDepth > 0)
+            {
+                // Resource is underground, add digging cost
+                if (actorClass.diggingSpeed > 0)
+                {
+                    energyCost += resourceDepth / actorClass.diggingSpeed;
+                }
+                else
+                {
+                    energyCost = float.MaxValue;
+                }
+            }
+            else if (resourceDepth < -actorClass.height)
+            {
+                // Resource is high up, add climbing cost
+                if (actorClass.climbingSpeed > 0)
+                {
+                    energyCost += (-resourceDepth - actorClass.height) / actorClass.climbingSpeed;
+                }
+                else
+                {
+                    energyCost = float.MaxValue;
+                }
+            }
+
+            return energyCost;
+        }
+
         /// <summary>
         /// Get a random attack from attack list with equal odds.
         /// </summary>
@@ -159,12 +233,26 @@ namespace Sandbox
 
                 if (energy < 0)
                 {
-                    energy += 0.1f;
+                    energy += 1f;
                 }
                 else
                 {
+                    if (currentTile.resources.Count > 0)
+                    {
+                        foodTarget = currentTile.resources.ElementAt(0);
+                    }
+                    // Perform eating if hungry
+                    if (foodTarget != null && hunger > 50)
+                    {
+                        if (foodTarget.currentTile == currentTile && foodTarget.amount > 0)
+                        {
+                            Eat(foodTarget);
+                        }
+                    }
+
                     PathAdvance();
                 }
+
             }
             // Return true if actor is still alive
             return hitpoints > 0;

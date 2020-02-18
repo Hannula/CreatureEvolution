@@ -29,8 +29,13 @@ public class ActorClass
 
     // Survival
     public float foodConsumption;
+    public float foodConsumptionDuration;
     public float meatConsumptionEfficiency;
     public float plantConsumptionEfficiency;
+    public float diggingSpeed;
+    public float climbingSpeed;
+    public float divingSkill;
+
     public float meatAmount;
 
 
@@ -126,7 +131,7 @@ public class ActorClass
         {
             // Cost is not calculated for this terrain type. Calculate cost.
             // Base cost is determined by land speed
-            float cost = 1f / speed;
+            float cost = 10f / speed;
 
             if (targetTerrain.waterDepth < height)
             {
@@ -138,7 +143,7 @@ public class ActorClass
             else
             {
                 // Use swimming speed instead if water there is deep enough
-                cost = 1f / swimmingSpeed;
+                cost = 10f / swimmingSpeed;
                 cost *= 1f + (targetTerrain.density / crampedNavigation);
             }
 

@@ -7,6 +7,7 @@ using UnityEngine;
 public class Simulation : MonoBehaviour
 {
     public string dataDefsPath;
+    public static Logger logger;
     public GameObject tilePrefab;
     public GameObject actorPrefab;
     public GameObject resourcePrefab;
@@ -55,7 +56,11 @@ public class Simulation : MonoBehaviour
     }
     public static void Log(string text)
     {
-        Debug.Log(text);
+        if (logger == null)
+        {
+            logger = FindObjectOfType<Logger>();
+        }
+        logger.Log(text);
     }
 
     public void Start()

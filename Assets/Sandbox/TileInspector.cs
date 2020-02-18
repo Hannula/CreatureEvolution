@@ -35,14 +35,17 @@ public class TileInspector : MonoBehaviour
         // Find tile
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out hit, raycastTileLayermask);
-        try
-        {
-            selectedTile = hit.collider.transform.parent.GetComponent<TileVisualizer>();
-        }
-        catch(Exception)
-        {
+        if (Input.GetMouseButtonDown(0))
+        { 
+            Physics.Raycast(ray, out hit, raycastTileLayermask);
+            try
+            {
+                selectedTile = hit.collider.transform.parent.GetComponent<TileVisualizer>();
+            }
+            catch (Exception)
+            {
 
+            }
         }
 
         // Find actor
@@ -112,14 +115,7 @@ public class TileInspector : MonoBehaviour
             // Create panel for every actor
             foreach(Actor a in selectedTile.tile.actors)
             {
-                bool alreadyContains = false;
-                foreach(ActorPanelManager panel in actorPanels)
-                {
-                    if (panel.actor == a)
-                    {
-                        alreadyContains = true;
-                    }
-                }
+                bool alreadyContains = ActorsPanelsContainActor(a);
 
                 if (!alreadyContains)
                 {
@@ -132,6 +128,22 @@ public class TileInspector : MonoBehaviour
             }
 
         }
+    }
+
+    /// <summary>
+    /// Checks if given actor is already displayed by some actor panel
+    /// </summary>
+    /// <param name="a">Actor</param>
+    private bool ActorsPanelsContainActor(Actor a)
+    {
+        foreach (ActorPanelManager panel in actorPanels)
+        {
+            if (panel.actor == a)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 
