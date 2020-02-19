@@ -28,8 +28,8 @@ public class ActorClass
     public float steepNavigation;
 
     // Survival
-    public float foodConsumption;
-    public float foodConsumptionDuration;
+    public float resourceConsumption;
+    public float resourceConsumptionEnergyCost;
     public float meatConsumptionEfficiency;
     public float plantConsumptionEfficiency;
     public float diggingSpeed;

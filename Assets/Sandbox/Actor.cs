@@ -120,10 +120,8 @@ namespace Sandbox
 
         public void Eat(Resource resource)
         {
-            if (resource.amount > 0)
+            if (resource.plantAmount > 0)
             {
-                Simulation.Log(actorClass.name + " eats " + resource.resourceClass.name + " at " + currentTile.position.ToString());
-
                 float energyCost = EatingEnergyCost(resource);
 
                 if (energyCost < float.MaxValue)
@@ -132,19 +130,25 @@ namespace Sandbox
                     // Apply energy cost
                     energy -= energyCost;
 
-                    // Reduce hunger
-                    float foodAmount = Mathf.Min(resource.amount, hunger);
+                    float requiredAmount = hunger / 100f * actorClass.resourceConsumption;
 
-                    hunger -= foodAmount;
-                    resource.amount -= foodAmount;
+                    // Reduce hunger
+                    float foodAmount = Mathf.Min(resource.plantAmount, requiredAmount);
+
+                    float hungerReduction = foodAmount / actorClass.resourceConsumption * 100;
+
+                    hunger -= hungerReduction;
+                    resource.plantAmount -= foodAmount;
+                    Simulation.Log(actorClass.name + " eats "  + foodAmount + " units of " + resource.resourceClass.name + " at " + currentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
                 }
+                
             }
         }
 
         public float EatingEnergyCost(Resource resource)
         {
             // Calculate how long eating a singe unit is going to take
-            float energyCost = actorClass.foodConsumptionDuration * resource.resourceClass.gatheringDifficulty;
+            float energyCost = actorClass.resourceConsumptionEnergyCost * resource.resourceClass.gatheringDifficulty;
 
             float resourceDepth = resource.resourceClass.depth;
 
@@ -244,7 +248,7 @@ namespace Sandbox
                     // Perform eating if hungry
                     if (foodTarget != null && hunger > 50)
                     {
-                        if (foodTarget.currentTile == currentTile && foodTarget.amount > 0)
+                        if (foodTarget.currentTile == currentTile && foodTarget.plantAmount > 0)
                         {
                             Eat(foodTarget);
                         }

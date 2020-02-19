@@ -19,7 +19,7 @@ public class Logger : MonoBehaviour
         LogEntry newEntry = new LogEntry(message);
         entries.Add(newEntry);
 
-        textLog.text += "\n" + newEntry.ToString(); 
+        textLog.text = newEntry.ToString() + "\n" + textLog.text; 
     }
 }
 

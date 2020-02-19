@@ -1,6 +1,6 @@
 {
     "name": "Roots",
-    "foodAmount" : 30,
+    "plantAmount" : 100,
     "gatheringDifficulty" : 2,
     "depth" : 1,
     "visibility" : 2,

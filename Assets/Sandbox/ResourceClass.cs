@@ -6,7 +6,8 @@ public class ResourceClass
 {
     public int id;
     public string name;
-    public float foodAmount;
+    public float plantAmount;
+    public float meatAmount;
     public float gatheringDifficulty;
 
     // How deep or high this resource is located

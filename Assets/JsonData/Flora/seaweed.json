@@ -1,8 +1,8 @@
 {
     "name": "Seaweed",
-    "foodAmount" : 30,
+    "plantAmount" : 100,
     "gatheringDifficulty" : 1,
-    "depth" : 1,
+    "depth" : 2,
     "visibility" : 2,
     "smell" : 0
 }

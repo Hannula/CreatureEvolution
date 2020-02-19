@@ -14,7 +14,7 @@ namespace Sandbox
         }
 
         public Tile currentTile;
-        public float amount = 0;
+        public float plantAmount = 0;
 
         public float hitpoints;
         public readonly ResourceClass resourceClass;
@@ -25,7 +25,7 @@ namespace Sandbox
             this.name = name;
             this.resourceClass = resourceClass;
             this.level = level;
-            this.amount = resourceClass.foodAmount * amount;
+            this.plantAmount = resourceClass.plantAmount * amount;
 
             MoveToTile(startingTile);
         }

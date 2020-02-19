@@ -1,6 +1,6 @@
 {
     "name": "Berry Bushes",
-    "foodAmount" : 30,
+    "plantAmount" : 100,
     "gatheringDifficulty" : 1,
     "depth" : 0,
     "visibility" : 3,

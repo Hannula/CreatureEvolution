@@ -24,5 +24,12 @@
     "ruggedLandNavigation" : 6,
     "crampedNavigation" : 7,
     "steepNavigation" : 3,
+
+    "resourceConsumption" : 3,
+    "resourceConsumptionEnergyCost" : 1,
+
+    "climbingSpeed" : 2,
+    "diggingSpeed" : 1,
+
     "attacks": []
 }

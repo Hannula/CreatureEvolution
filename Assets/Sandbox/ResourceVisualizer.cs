@@ -23,7 +23,7 @@ public class ResourceVisualizer : MonoBehaviour
     // Always face camera
     void Update()
     {
-        if (resource.amount > 0)
+        if (resource.plantAmount > 0)
         {
             transform.rotation = Camera.main.transform.rotation;
         }

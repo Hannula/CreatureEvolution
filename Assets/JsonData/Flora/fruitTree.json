@@ -1,6 +1,6 @@
 {
     "name": "Fruit Trees",
-    "foodAmount" : 30,
+    "plantAmount" : 100,
     "gatheringDifficulty" : 1,
     "depth" : -2.5,
     "visibility" : 4,
