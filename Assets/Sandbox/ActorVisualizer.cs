@@ -17,7 +17,7 @@ public class ActorVisualizer : MonoBehaviour
     // Always face camera
     void Update()
     {
-        if (actor.hitpoints > 0)
+        if (actor.Hitpoints > 0)
         {
             UpdatePosition();
             transform.rotation = Camera.main.transform.rotation;

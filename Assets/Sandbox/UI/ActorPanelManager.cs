@@ -23,9 +23,9 @@ public class ActorPanelManager : MonoBehaviour
     void Update()
     {
         actorNameText.text = actor.actorClass.name + "(" + actor.currentTile.position.x + ", " + actor.currentTile.position.y + ")";
-        actorInfoText.text = "Hitpoints: " + Mathf.Ceil(actor.hitpoints) + "/" + actor.actorClass.maxHitpoints +
-            "\nHunger: " + Mathf.Ceil(actor.hunger) +
-            "\nEnergy: " + actor.energy;
+        actorInfoText.text = "Hitpoints: " + Mathf.Ceil(actor.Hitpoints) + "/" + actor.actorClass.maxHitpoints +
+            "\nHunger: " + Mathf.Ceil(actor.Hunger) +
+            "\nEnergy: " + actor.Energy;
     }
 
     public void ToggleLock()

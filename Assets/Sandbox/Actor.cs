@@ -8,68 +8,159 @@ using Utility;
 namespace Sandbox
 {
     [System.Serializable]
-    public class Actor
+    public class Actor : Entity
     {
         public string name;
 
-        public Vector2Int LevelPosition
-        {
-            get { return currentTile.position; }
-        }
+        public float Energy { get; private set; }
 
-        public Tile currentTile { get; private set; }
-        public float energy = 0;
+        public float Hunger { get; private set; }
+        private float hungerRate;
 
-        public float hunger;
-        public float hungerRate;
-
-        public float hitpoints;
+        public float Hitpoints { get; private set; }
         public readonly ActorClass actorClass;
         public Level level;
 
+        public int age { get; private set; }
+
+
+        // AI
+        public State state;
         public List<Tile> currentPath;
 
         private AStar<Tile> pathfinder;
         private Resource foodTarget;
         private Actor huntTarget;
 
+        public Dictionary<Actor, Memory> actorMemory;
+        public Dictionary<Resource, Memory> resourceMemory;
+
         public Actor(ActorClass actorClass, Level level, float hungerRate, Tile startingTile, string name = "Actor")
         {
             this.name = name;
             this.actorClass = actorClass;
             this.level = level;
-            hitpoints = actorClass.maxHitpoints;
+            Hitpoints = actorClass.maxHitpoints;
             this.hungerRate = hungerRate;
-            hunger = 0;
+            Hunger = 0;
+
+            // Memory
+            actorMemory = new Dictionary<Actor, Memory>();
+            resourceMemory = new Dictionary<Resource, Memory>();
 
             pathfinder = new AStar<Tile>(GetAdjacentTiles, GetMovementCost, GetMovementCostEstimation);
 
             MoveToTile(startingTile);
         }
 
+        #region AI
+        private void Observe()
+        {
+
+        }
+
+        private void Wander()
+        {
+
+        }
+
+        private void UpdateMemory(Actor actor)
+        {
+            float value = 0;
+            float risk = 0;
+            actorMemory[actor] = new Memory(actor, value, risk, age);
+        }
+
+        #endregion
+
+
+        #region Actions
+        public bool Act()
+        {
+            if (Hitpoints > 0)
+            {
+                // Age this actor
+                age += 1;
+
+                Hunger += hungerRate;
+                // Start taking damage when too hungry
+                if (Hunger > 100)
+                {
+                    Hitpoints -= actorClass.maxHitpoints * 0.01f;
+                }
+
+                if (Energy < 0)
+                {
+                    Energy += 1f;
+                }
+                else
+                {
+                    if (currentTile.resources.Count > 0)
+                    {
+                        foodTarget = currentTile.resources.ElementAt(0);
+                    }
+                    // Perform eating if hungry
+                    if (foodTarget != null && Hunger > 50)
+                    {
+                        if (foodTarget.currentTile == currentTile && foodTarget.plantAmount > 0)
+                        {
+                            Eat(foodTarget);
+                        }
+                    }
+
+                    PathAdvance();
+                }
+
+            }
+            // Return true if actor is still alive
+            return Hitpoints > 0;
+        }
+        /// <summary>
+        /// Advance on current path.
+        /// </summary>
+        /// <returns>End of the path.</returns>
+        public bool PathAdvance()
+        {
+            if (currentPath == null || currentPath.Count == 0)
+            {
+                return true;
+            }
+            // Get the next tile
+            Tile nextTile = UtilityFunctions.Pop<Tile>(currentPath);
+            // Calculate movement cost
+            float movementCost = GetMovementCost(currentTile, nextTile);
+
+            // Advance to next tile
+            MoveToTile(nextTile);
+            // Reduce energy after moving
+            Energy -= movementCost;
+
+            // Return true if actor is now at the end of the path
+            return currentPath.Count == 0;
+        }
         public void PerformAttack(Attack attack, Actor target, bool log = true)
         {
             if (log)
             {
-                Simulation.Log(name + "(" + hitpoints + " hp) attacks " + target.name + "(" + target.hitpoints + " hp) with " + attack.name + ".");
+                Simulation.Log(name + "(" + Hitpoints + " hp) attacks " + target.name + "(" + target.Hitpoints + " hp) with " + attack.name + ".");
             }
             bool attackSuccess = false;
             // Determine if the attack hits the target
             // Roll
-            int attackRoll = Dice.Roll(20);
+            int attackRoll = Dice.Roll(100);
 
-            if (attackRoll == 20)
+            if (attackRoll >= 95)
             {
                 // Critical hit always hits
                 attackSuccess = true;
             }
-            else if (attackRoll > 1)
+            else if (attackRoll >= 5)
             {
                 // Attack didn't miss but no critical hit
                 int toHit = attackRoll + attack.attackBonus;
 
                 // Compare toHit -value to target's armor class
-                if (toHit >= target.actorClass.armorClass)
+                if (toHit >= target.actorClass.evasion)
                 {
                     // Attack hits if attackRoll + attack bonus exceeds target's armor class
                     attackSuccess = true;
@@ -94,18 +185,18 @@ namespace Sandbox
                     totalDamage += baseDamage * (1 - resistance);
                 }
 
-                // Reduce target's hitpoints by damage (rounded up)
-                target.hitpoints -= Mathf.CeilToInt(totalDamage);
+                // Reduce target's hitpoints by damage
+                target.Hitpoints -= totalDamage;
 
                 if (log)
                 {
-                    if (target.hitpoints > 0)
+                    if (target.Hitpoints > 0)
                     {
-                        Simulation.Log(attack.name + " hits " + target.name + " causing " + totalDamage + " damage. " + target.name + " now has " + target.hitpoints + " hitpoints.");
+                        Simulation.Log(attack.name + " hits " + target.name + " causing " + totalDamage + " damage. " + target.name + " now has " + target.Hitpoints + " hitpoints.");
                     }
                     else
                     {
-                        Simulation.Log(attack.name + " hits " + target.name + " causing " + totalDamage + " damage. " + target.name + " now has " + target.hitpoints + " hitpoints and is thus dead.");
+                        Simulation.Log(attack.name + " hits " + target.name + " causing " + totalDamage + " damage. " + target.name + " now has " + target.Hitpoints + " hitpoints and is thus dead.");
                     }
                 }
             }
@@ -128,22 +219,41 @@ namespace Sandbox
                 {
 
                     // Apply energy cost
-                    energy -= energyCost;
+                    Energy -= energyCost;
 
-                    float requiredAmount = hunger / 100f * actorClass.resourceConsumption;
+                    float requiredAmount = Hunger / 100f * actorClass.resourceConsumption;
 
                     // Reduce hunger
                     float foodAmount = Mathf.Min(resource.plantAmount, requiredAmount);
 
                     float hungerReduction = foodAmount / actorClass.resourceConsumption * 100;
 
-                    hunger -= hungerReduction;
+                    Hunger -= hungerReduction;
                     resource.plantAmount -= foodAmount;
-                    Simulation.Log(actorClass.name + " eats "  + foodAmount + " units of " + resource.resourceClass.name + " at " + currentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
+                    Simulation.Log(actorClass.name + " eats " + foodAmount + " units of " + resource.resourceClass.name + " at " + currentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
                 }
-                
+
             }
         }
+
+        /// <summary>
+        /// Always use this method for moving actor
+        /// </summary>
+        /// <param name="targetTile"></param>
+        public void MoveToTile(Tile targetTile)
+        {
+            if (currentTile != null)
+            {
+                // Remove this actor from previous tile
+                currentTile.RemoveActor(this);
+            }
+            // Add this actor the target tile
+            targetTile.AddActor(this);
+            // Set current tile to target tile
+            currentTile = targetTile;
+        }
+
+        #endregion
 
         public float EatingEnergyCost(Resource resource)
         {
@@ -207,83 +317,8 @@ namespace Sandbox
             return actorClass.GetResistance(damageType);
         }
 
-        /// <summary>
-        /// Always use this method for moving actor
-        /// </summary>
-        /// <param name="targetTile"></param>
-        public void MoveToTile(Tile targetTile)
-        {
-            if (currentTile != null)
-            {
-                // Remove this actor from previous tile
-                currentTile.RemoveActor(this);
-            }
-            // Add this actor the target tile
-            targetTile.AddActor(this);
-            // Set current tile to target tile
-            currentTile = targetTile;
-        }
 
-        public bool Act()
-        {
-            if (hitpoints > 0)
-            {
-                hunger += hungerRate;
-                // Start taking damage when too hungry
-                if (hunger > 100)
-                {
-                    hitpoints -= actorClass.maxHitpoints * 0.01f;
-                }
 
-                if (energy < 0)
-                {
-                    energy += 1f;
-                }
-                else
-                {
-                    if (currentTile.resources.Count > 0)
-                    {
-                        foodTarget = currentTile.resources.ElementAt(0);
-                    }
-                    // Perform eating if hungry
-                    if (foodTarget != null && hunger > 50)
-                    {
-                        if (foodTarget.currentTile == currentTile && foodTarget.plantAmount > 0)
-                        {
-                            Eat(foodTarget);
-                        }
-                    }
-
-                    PathAdvance();
-                }
-
-            }
-            // Return true if actor is still alive
-            return hitpoints > 0;
-        }
-        /// <summary>
-        /// Advance on current path.
-        /// </summary>
-        /// <returns>End of the path.</returns>
-        public bool PathAdvance()
-        {
-            if (currentPath == null || currentPath.Count == 0)
-            {
-                return true;
-            }
-            // Get the next tile
-            Tile nextTile = UtilityFunctions.Pop<Tile>(currentPath);
-            // Calculate movement cost
-            float movementCost = GetMovementCost(currentTile, nextTile);
-
-            // Advance to next tile
-            MoveToTile(nextTile);
-            // Reduce energy after moving
-            energy -= movementCost;
-
-            // Return true if actor is now at the end of the path
-            return currentPath.Count == 0;
-        }
 
         public float GetMovementCost(Tile startTile, Tile targetTile)
         {
@@ -332,19 +367,19 @@ namespace Sandbox
             Tile downTile = level.TileAt(tile.position.x, tile.position.y + 1);
 
             // Add tiles if they exists and are traversable
-            if (leftTile != null && leftTile.terrain.id != 0)
+            if (leftTile != null && actorClass.IsPassable(leftTile.terrain))
             {
                 adjacentTiles.Add(leftTile);
             }
-            if (rightTile != null && rightTile.terrain.id != 0)
+            if (rightTile != null && actorClass.IsPassable(rightTile.terrain))
             {
                 adjacentTiles.Add(rightTile);
             }
-            if (upTile != null && upTile.terrain.id != 0)
+            if (upTile != null && actorClass.IsPassable(upTile.terrain))
             {
                 adjacentTiles.Add(upTile);
             }
-            if (downTile != null && downTile.terrain.id != 0)
+            if (downTile != null && actorClass.IsPassable(downTile.terrain))
             {
                 adjacentTiles.Add(downTile);
             }
@@ -357,6 +392,34 @@ namespace Sandbox
             List<Tile> path = pathfinder.FindPath(currentTile, targetTile);
             currentPath = path;
         }
+
+    }
+
+    public enum State
+    {
+        wander,
+        findFood,
+        escape
+    }
+
+    public class Memory
+    {
+        // Memory of a certain entity in certain place at certain time
+        Entity subject;
+        Tile tile;
+        int time;
+        float value;
+        float risk;
+
+        public Memory(Entity subject, float value, float risk, int time)
+        {
+            this.subject = subject;
+            tile = subject.currentTile;
+            this.value = value;
+            this.risk = risk;
+            this.time = time;
+        }
+
 
     }
 }

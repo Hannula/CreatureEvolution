@@ -13,7 +13,7 @@ public class ActorClass
 
     public float maxHitpoints;
     public float speed;
-    public int armorClass;
+    public int evasion;
     public float size;
     public Dictionary<DamageTypes, float> resistances;
     
@@ -43,12 +43,17 @@ public class ActorClass
 
     private Dictionary<TerrainData, float> movementCosts;
 
+    private Dictionary<ActorClass, float> actorClassRiskValues;
+    private Dictionary<ResourceClass, float> resourceValues;
+    private Dictionary<Attack, float> expectedDamages;
+
+
     public ActorClass(string name, int hitpoints, int speed, int armorClass, int size, float swimming, float rugged, float soft, float cramped)
     {
         this.name = name;
         maxHitpoints = hitpoints;
         this.speed = speed;
-        this.armorClass = armorClass;
+        this.evasion = armorClass;
         this.size = size;
         swimmingSpeed = swimming;
         ruggedLandNavigation = rugged;
@@ -115,6 +120,24 @@ public class ActorClass
         return resistance;
     }
 
+    public bool IsPassable(TerrainData terrain)
+    {
+        if (terrain.id == 0)
+        {
+            // Return false if there is no terrain
+            return false;
+        }
+        if (terrain.waterDepth > height && swimmingSpeed <= 0)
+        {
+            // Tile is not passable if actor class cannot swim and depth is more than the height of the actor
+            return false;
+        }
+
+        return true;
+
+
+    }
+
     public float GetTerrainMovementCost(TerrainData targetTerrain)
     {
         if (movementCosts == null)
@@ -151,6 +174,51 @@ public class ActorClass
             movementCosts[targetTerrain] = cost;
             return cost;
         }
+    }
+
+    public float GetActorClassRiskValues(ActorClass actorClass)
+    {
+        float risk = 0;
+        if (actorClassRiskValues == null)
+        {
+            // Create new dictionary if it doesn't exist
+            actorClassRiskValues = new Dictionary<ActorClass, float>();
+        }
+        // Try to find value from dictionary
+        if (actorClassRiskValues.ContainsKey(actorClass))
+        {
+            return actorClassRiskValues[actorClass];
+        }
+        else
+        {
+            // Calculate risk value
+
+        }
+
+        return risk;
+    }
+
+    public float GetAttackExpectedDamage(Attack attack)
+    {
+        float damage = 0;
+        if (expectedDamages == null)
+        {
+            // Create new dictionary if it doesn't exist
+            expectedDamages = new Dictionary<Attack, float>();
+        }
+        // Try to find value from dictionary
+        if (expectedDamages.ContainsKey(attack))
+        {
+            return expectedDamages[attack];
+        }
+        else
+        {
+            // Calculate estimated damage
+
+        }
+
+        return damage;
+
     }
 
 }

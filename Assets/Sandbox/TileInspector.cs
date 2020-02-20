@@ -72,9 +72,9 @@ public class TileInspector : MonoBehaviour
         if (selectedActor != null && selectedActor.currentTile != null)
         {
             actorNameText.text = selectedActor.actorClass.name + "(" + selectedActor.currentTile.position.x + ", " + selectedActor.currentTile.position.y + ")";
-            string info = "Hitpoints: " + Mathf.Ceil(selectedActor.hitpoints) + "/" + selectedActor.actorClass.maxHitpoints +
-                "\nHunger: " + Mathf.Ceil(selectedActor.hunger) +
-                "\nEnergy: " + selectedActor.energy +
+            string info = "Hitpoints: " + Mathf.Ceil(selectedActor.Hitpoints) + "/" + selectedActor.actorClass.maxHitpoints +
+                "\nHunger: " + Mathf.Ceil(selectedActor.Hunger) +
+                "\nEnergy: " + selectedActor.Energy +
                 "\nResistances: \n";
 
             // Find every resistance

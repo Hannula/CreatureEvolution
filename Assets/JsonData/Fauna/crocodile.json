@@ -14,7 +14,7 @@
     },
     "maxHitpoints": 120,
     "speed": 15,
-    "armorClass" : 10,
+    "evasion": 30,
     "size": 7,
     "resistances":[
     ],
