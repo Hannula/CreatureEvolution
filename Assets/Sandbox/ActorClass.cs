@@ -45,8 +45,10 @@ public class ActorClass
 
     private Dictionary<ActorClass, float> actorClassRiskValues;
     private Dictionary<ResourceClass, float> resourceValues;
-    private Dictionary<Attack, float> expectedDamages;
+    private Dictionary<Attack, float> expectedAttackDamages;
+    private Dictionary<ActorClass, float> expectedActorClassDamages;
 
+    public float Predatory { get; private set; }
 
     public ActorClass(string name, int hitpoints, int speed, int armorClass, int size, float swimming, float rugged, float soft, float cramped)
     {
@@ -61,6 +63,16 @@ public class ActorClass
         crampedNavigation = cramped;
         attacks = new List<Attack>();
         resistances = new Dictionary<DamageTypes, float>();
+
+        // If this actor can consume plants, calculate ratio of predatory
+        if (plantConsumptionEfficiency > 0)
+        {
+            Predatory = Mathf.Min(1f, meatConsumptionEfficiency / plantConsumptionEfficiency);
+        }
+        else
+        {
+            Predatory = 1f;
+        }
     }
 
     public void ParseResistances()
@@ -191,8 +203,29 @@ public class ActorClass
         }
         else
         {
-            // Calculate risk value
+            float expectedDamageTaken = GetActorClassExpectedDamage(actorClass);
+            float expectedDamageGiven = actorClass.GetActorClassExpectedDamage(this);
 
+            if (expectedDamageGiven <= 0)
+            {
+                // High risk when there's no way to kill the other actor
+                risk = 10;
+            }
+            else if (expectedDamageTaken <= 0)
+            {
+                // No risk if other actor cannot kill this
+                risk = 0;
+            }
+            else
+            {
+                // Calculate how many hits it takes to kill or get killed
+                float hitsToDie = maxHitpoints / expectedDamageTaken;
+                float hitsToKill = actorClass.maxHitpoints / expectedDamageGiven;
+
+                risk = hitsToKill / hitsToDie;
+            }
+
+            actorClassRiskValues[actorClass] = risk;
         }
 
         return risk;
@@ -200,26 +233,80 @@ public class ActorClass
 
     public float GetAttackExpectedDamage(Attack attack)
     {
-        float damage = 0;
-        if (expectedDamages == null)
+        float expectedDamageTotal = 0;
+        if (expectedAttackDamages == null)
         {
             // Create new dictionary if it doesn't exist
-            expectedDamages = new Dictionary<Attack, float>();
+            expectedAttackDamages = new Dictionary<Attack, float>();
         }
         // Try to find value from dictionary
-        if (expectedDamages.ContainsKey(attack))
+        if (expectedAttackDamages.ContainsKey(attack))
         {
-            return expectedDamages[attack];
+            return expectedAttackDamages[attack];
         }
         else
         {
             // Calculate estimated damage
+            // Chance to hit
+            float hitChance = Mathf.Clamp(1 - evasion / (100 + attack.attackBonus), 5f, 95f) * 0.01f;
 
+            float expectedDamage = 0;
+
+            // Loop through every damage in attack
+            foreach (Attack.Damage dmg in attack.damage)
+            {
+                // Get base damage from dice roll and bonus
+                float baseDamage = (dmg.damageRoll + 1) * 0.5f + dmg.damageBonus;
+
+                // Get resistance
+                DamageTypes type = dmg.damageType;
+                float resistance = GetResistance(type);
+
+                // Reduce the damage by resistance
+                expectedDamage += baseDamage * (1 - resistance);
+            }
+            // Save expected damage for this attack
+            expectedAttackDamages[attack] = expectedDamageTotal;
         }
 
-        return damage;
+        return expectedDamageTotal;
 
     }
+
+    public float GetActorClassExpectedDamage(ActorClass actorClass)
+    {
+        float expectedDamageTotal = 0;
+        if (expectedActorClassDamages == null)
+        {
+            // Create new dictionary if it doesn't exist
+            expectedActorClassDamages = new Dictionary<ActorClass, float>();
+        }
+        // Try to find value from dictionary
+        if (expectedActorClassDamages.ContainsKey(actorClass))
+        {
+            return expectedActorClassDamages[actorClass];
+        }
+        else
+        {
+            // Calculate estimated damage
+            // Find highest damage attack
+            foreach(Attack attack in actorClass.attacks)
+            {
+                float attackDamage = GetAttackExpectedDamage(attack);
+                if (attackDamage > expectedDamageTotal)
+                {
+                    expectedDamageTotal = attackDamage;
+                }
+            }
+
+            // Save estimated damage for this actor class
+            expectedActorClassDamages[actorClass] = expectedDamageTotal;
+        }
+
+        return expectedDamageTotal;
+
+    }
+
 
 }
 

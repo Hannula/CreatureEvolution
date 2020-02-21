@@ -53,6 +53,11 @@ namespace Sandbox
             MoveToTile(startingTile);
         }
 
+        public float GetHitpointRatio()
+        {
+            return Hitpoints / actorClass.maxHitpoints;
+        }
+
         #region AI
         private void Observe()
         {
@@ -64,11 +69,24 @@ namespace Sandbox
 
         }
 
-        private void UpdateMemory(Actor actor)
+        private void UpdateMemory(Actor subject)
         {
-            float value = 0;
-            float risk = 0;
-            actorMemory[actor] = new Memory(actor, value, risk, age);
+            if (subject.Hitpoints < 0)
+            {
+                actorMemory[subject] = new Memory(subject, 0, 0, age);
+            }
+            else
+            {
+                float value = 0;
+                float risk = actorClass.GetActorClassRiskValues(subject.actorClass);
+                // Take hitpoints in to account
+                risk *= GetHitpointRatio() / subject.GetHitpointRatio();
+
+                // Risk is reduced if both actors prefer plant based food
+                risk *= Mathf.Max(actorClass.Predatory, subject.actorClass.Predatory);
+
+                actorMemory[subject] = new Memory(subject, value, risk, age);
+            }
         }
 
         #endregion
