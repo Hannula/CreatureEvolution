@@ -25,6 +25,8 @@
     "crampedNavigation" : 4,
     "steepNavigation" : 0.5,
 
+    "visibility" : 2,
+
     "resourceConsumption" : 10,
     "resourceConsumptionEnergyCost" : 1,
 

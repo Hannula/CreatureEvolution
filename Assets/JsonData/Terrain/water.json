@@ -7,7 +7,7 @@
         "a": 1.0
     },
     "symbol": 240,
-    "symbolColor": {
+    "secondaryColor": {
         "r": 0.48,
         "g": 0.7,
         "b": 0.8,

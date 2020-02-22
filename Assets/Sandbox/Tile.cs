@@ -13,8 +13,12 @@ public class Tile {
     public HashSet<Actor> actors;
     public HashSet<Resource> resources;
 
-    public Tile(Vector2Int position, TerrainData terrain, float elevation, int temperature, float lightLevel)
+    private Level level;
+    private List<Tile> adjacentTiles;
+
+    public Tile(Level level, Vector2Int position, TerrainData terrain, float elevation, int temperature, float lightLevel)
     {
+        this.level = level;
         this.position = position;
         this.terrain = terrain;
         this.elevation = elevation;
@@ -43,6 +47,40 @@ public class Tile {
     public void RemoveResource(Resource resource)
     {
         resources.Remove(resource);
+    }
+
+    public List<Tile> GetAdjacentTiles()
+    {
+        if (adjacentTiles == null)
+        {
+            adjacentTiles = new List<Tile>();
+
+            // Get adjacent tiles from level
+            Tile leftTile = level.TileAt(position.x - 1, position.y);
+            Tile rightTile = level.TileAt(position.x + 1, position.y);
+            Tile upTile = level.TileAt(position.x, position.y - 1);
+            Tile downTile = level.TileAt(position.x, position.y + 1);
+
+            // Add tiles if they exists and are traversable
+            if (leftTile != null && leftTile.terrain.id != 0)
+            {
+                adjacentTiles.Add(leftTile);
+            }
+            if (rightTile != null && rightTile.terrain.id != 0)
+            {
+                adjacentTiles.Add(rightTile);
+            }
+            if (upTile != null && upTile.terrain.id != 0)
+            {
+                adjacentTiles.Add(upTile);
+            }
+            if (downTile != null && downTile.terrain.id != 0)
+            {
+                adjacentTiles.Add(downTile);
+            }
+        }
+
+        return adjacentTiles;
     }
 
 

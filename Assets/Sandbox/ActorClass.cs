@@ -8,8 +8,6 @@ public class ActorClass
 {
     public string name;
     public int id;
-    public Color baseColor;
-    public Color patternColor;
 
     public float maxHitpoints;
     public float speed;
@@ -36,7 +34,24 @@ public class ActorClass
     public float climbingSpeed;
     public float divingSkill;
 
+
+    public Color baseColor;
+    public Color patternColor;
+    public float visibility;
+    public float noise;
+
     public float meatAmount;
+
+    // Observation
+    public float ObservationRange { get; private set; }
+
+    public float visionRange;
+    public float lightVision;
+    public float darkVision;
+
+    public float smellSenseRange;
+
+    public float hearingRange;
 
 
     public float height;
@@ -47,6 +62,7 @@ public class ActorClass
     private Dictionary<ResourceClass, float> resourceValues;
     private Dictionary<Attack, float> expectedAttackDamages;
     private Dictionary<ActorClass, float> expectedActorClassDamages;
+    private Dictionary<TerrainData, float> visibilityValues;
 
     public float Predatory { get; private set; }
 
@@ -63,6 +79,10 @@ public class ActorClass
         crampedNavigation = cramped;
         attacks = new List<Attack>();
         resistances = new Dictionary<DamageTypes, float>();
+    }
+
+    public void Initialize()
+    {
 
         // If this actor can consume plants, calculate ratio of predatory
         if (plantConsumptionEfficiency > 0)
@@ -73,6 +93,12 @@ public class ActorClass
         {
             Predatory = 1f;
         }
+
+        // Observation range
+        ObservationRange = Mathf.Max(visionRange, smellSenseRange, hearingRange);
+
+        // Resistances
+        ParseResistances();
     }
 
     public void ParseResistances()
@@ -305,6 +331,44 @@ public class ActorClass
 
         return expectedDamageTotal;
 
+    }
+
+    public float GetVisibilityValue(TerrainData targetTerrain)
+    {
+        if (visibilityValues == null)
+        {
+            // Create new dictionary if it doesn't exist
+            visibilityValues = new Dictionary<TerrainData, float>();
+        }
+        // Try to find visibility from dictionary
+        if (visibilityValues.ContainsKey(targetTerrain))
+        {
+            return visibilityValues[targetTerrain];
+        }
+        else
+        {
+            float terrainVisibility = visibility;
+
+            // Apply cover bonus
+            float coverBonus = targetTerrain.cover / size;
+
+            terrainVisibility = terrainVisibility * (1 - coverBonus);
+
+            // Own colors
+            Vector3 baseColorVec = new Vector3(baseColor.r, baseColor.g, baseColor.b);
+            Vector3 patternColorVec = new Vector3(patternColor.r, patternColor.g, patternColor.b);
+
+            // Terrain colors
+            Vector3 groundColorVec = new Vector3(targetTerrain.groundColor.r, targetTerrain.groundColor.g, targetTerrain.groundColor.b);
+            Vector3 groundSecondaryColorVec = new Vector3(targetTerrain.secondaryColor.r, targetTerrain.secondaryColor.g, targetTerrain.secondaryColor.b);
+
+            // Apply camouflage modifier
+            terrainVisibility *= Vector3.Distance(baseColorVec, groundColorVec) + Vector3.Distance(patternColorVec, groundSecondaryColorVec);
+            
+            // Save visibility for this terrain type
+            visibilityValues[targetTerrain] = Mathf.Clamp(terrainVisibility, 0.05f, 0.95f);
+            return terrainVisibility;
+        }
     }
 
 

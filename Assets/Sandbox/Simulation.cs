@@ -190,9 +190,10 @@ public class Simulation : MonoBehaviour
             string path = keyValuePair.Value;
             string actorClassJson = FileReader.ReadString(Path.Combine(projectPath, path));
             ActorClass data = JsonUtility.FromJson<ActorClass>(actorClassJson);
-            data.ParseResistances();
             data.id = keyValuePair.Key;
+            data.Initialize();
             actorClasses[data.id] = data;
+
             
         }
     }
@@ -214,6 +215,7 @@ public class Simulation : MonoBehaviour
     {
         Vector2Int dimensions = new Vector2Int(mapData.width, mapData.height);
         Tile[,] tileGrid = new Tile[dimensions.x, dimensions.y];
+        level = new Level(tileGrid);
 
         // Get map layers
         MapData.Layer terrainLayer = mapData.GetLayer(dataDefs.terrainLayerName);
@@ -257,15 +259,13 @@ public class Simulation : MonoBehaviour
                     terrain = terrainData[terrainIndex];
                 }
 
-                Tile newTile = new Tile(new Vector2Int(x, y), terrain, elevation, temperature, lightLevel);
+                Tile newTile = new Tile(level, new Vector2Int(x, y), terrain, elevation, temperature, lightLevel);
 
                 tileGrid[x, y] = newTile;
 
                 i++;
             }
         }
-
-        level = new Level(tileGrid);
     }
 
     private void VisualizeLevel()

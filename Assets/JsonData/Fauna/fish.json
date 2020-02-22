@@ -25,6 +25,8 @@
     "crampedNavigation" : 5,
     "steepNavigation" : 0.1,
 
+    "visibility" : 1,
+
     "resourceConsumption" : 5,
     "resourceConsumptionEnergyCost" : 1,
     "divingSkill" : 10,

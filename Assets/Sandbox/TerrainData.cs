@@ -8,7 +8,7 @@ public class TerrainData
     public int id;
     public string name;
     public Color groundColor;
-    public Color symbolColor;
+    public Color secondaryColor;
 
     public float cover;
     public float noise;
@@ -26,7 +26,7 @@ public class TerrainData
     {
         id = 0;
         name = "Solid Wall";
-        symbolColor = Color.black;
+        secondaryColor = Color.black;
         groundColor = Color.black;
 
         cover = 0;

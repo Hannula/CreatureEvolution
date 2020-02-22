@@ -61,6 +61,60 @@ namespace Sandbox
         #region AI
         private void Observe()
         {
+            // Use breadth first search to observe surrounding area
+            HashSet<Tile> closedTiles = new HashSet<Tile>();
+            Queue<Tile> openTiles = new Queue<Tile>();
+
+            openTiles.Enqueue(currentTile);
+
+            // Search nearby tiles
+            while(openTiles.Count > 0)
+            {
+                // Get next tile
+                Tile tile = openTiles.Dequeue();
+                closedTiles.Add(tile);
+
+                float distance = Vector2Int.Distance(currentTile.position, tile.position);
+                // Only process this tile if it's within observation radius
+                if (distance < actorClass.ObservationRange)
+                {
+                    if (tile.actors.Count > 0 || tile.resources.Count > 0)
+                    {
+                        // Different senses
+                        float vision = 1 - (distance / actorClass.visionRange) * Mathf.Lerp(actorClass.darkVision, actorClass.lightVision, tile.lightLevel);
+                        float smell = 1 - (distance / actorClass.smellSenseRange);
+                        float hearing = 1 - (distance / actorClass.hearingRange);
+
+                        float heightDifference = currentTile.elevation - tile.elevation;
+                        // Gain vision bonus from higher ground
+                        vision = Mathf.Clamp(vision * ( 1 + heightDifference * 0.1f), 0, 1f);
+                        // Gain smell bonus from lower ground
+                        smell = Mathf.Clamp(smell * (1 - heightDifference * 0.1f), 0, 1f);
+
+                        // Current tile is higher than 
+
+                        foreach (Actor actor in tile.actors)
+                        {
+                            // Process every actor which is not same species
+                            if (actor.actorClass != actorClass)
+                            {
+                                float visibility = actor.actorClass.GetVisibilityValue(tile.terrain);
+                                Simulation.Log(actorClass.name + " tries to see " + actor.actorClass.name + " (dist=" + distance + "). Vision is " + vision + ", cover is " + tile.terrain.cover + " , visibility is " + visibility + ".");
+                            }
+                        }
+                    }
+
+                    // Add neighbors
+                    foreach (Tile neighbor in tile.GetAdjacentTiles())
+                    {
+                        if (!closedTiles.Contains(neighbor) && !openTiles.Contains(neighbor))
+                        {
+                            openTiles.Enqueue(neighbor);
+                        }
+                    }
+                }
+
+            }
 
         }
 
@@ -127,6 +181,7 @@ namespace Sandbox
                     }
 
                     PathAdvance();
+                    Observe();
                 }
 
             }

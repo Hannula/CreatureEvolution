@@ -24,6 +24,9 @@
     "ruggedLandNavigation" : 4,
     "crampedNavigation" : 2,
     "steepNavigation" : 1,
+
+    "visibility" : 3,
+
     "resourceConsumption" : 10,
     "resourceConsumptionEnergyCost" : 1,
     "diggingSpeed" : 1,
