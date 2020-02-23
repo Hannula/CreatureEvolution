@@ -280,9 +280,12 @@ public class ActorClass
             }
 
             // Calculate how many hits it takes to kill or get killed
-            float hitsToDie = maxHitpoints / expectedDamageTaken;
+            if (expectedDamageTaken > 0)
+            {
+                float hitsToDie = maxHitpoints / expectedDamageTaken;
 
-            risk = hitsToDie;
+                risk = 1 / hitsToDie;
+            }
 
             resourceClassRiskValues[resourceClass] = risk;
         }

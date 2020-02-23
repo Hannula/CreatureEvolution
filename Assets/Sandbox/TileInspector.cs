@@ -78,7 +78,13 @@ public class TileInspector : MonoBehaviour
                 "\nResistances: \n" +
                 "\n\nMemories:";
 
-                foreach (Actor actorMemory in selectedActor.actorMemory.Keys)
+            foreach (Resource resourceMemory in selectedActor.resourceMemory.Keys)
+            {
+                Memory mem = selectedActor.resourceMemory[resourceMemory];
+                info += "\n" + resourceMemory.resourceClass.name + "  Value: " + mem.Value + ", Risk: " + mem.Risk + ", Time: " + mem.Time;
+            }
+
+            foreach (Actor actorMemory in selectedActor.actorMemory.Keys)
                 {
                     Memory mem = selectedActor.actorMemory[actorMemory];
                     info += "\n" + actorMemory.actorClass.name + "  Value: " + mem.Value + ", Risk: " + mem.Risk + ", Time: " + mem.Time;
