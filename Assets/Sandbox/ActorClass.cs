@@ -59,6 +59,7 @@ public class ActorClass
     private Dictionary<TerrainData, float> movementCosts;
 
     private Dictionary<ActorClass, float> actorClassRiskValues;
+    private Dictionary<ResourceClass, float> resourceClassRiskValues;
     private Dictionary<ResourceClass, float> resourceValues;
     private Dictionary<Attack, float> expectedAttackDamages;
     private Dictionary<ActorClass, float> expectedActorClassDamages;
@@ -257,6 +258,38 @@ public class ActorClass
         return risk;
     }
 
+    public float GetResourceClassRiskValues(ResourceClass resourceClass)
+    {
+        float risk = 0;
+        if (resourceClassRiskValues == null)
+        {
+            // Create new dictionary if it doesn't exist
+            resourceClassRiskValues = new Dictionary<ResourceClass, float>();
+        }
+        // Try to find value from dictionary
+        if (resourceClassRiskValues.ContainsKey(resourceClass))
+        {
+            return resourceClassRiskValues[resourceClass];
+        }
+        else
+        {
+            float expectedDamageTaken = 0;
+            foreach(Attack a in resourceClass.hazards)
+            {
+                expectedDamageTaken += GetAttackExpectedDamage(a);
+            }
+
+            // Calculate how many hits it takes to kill or get killed
+            float hitsToDie = maxHitpoints / expectedDamageTaken;
+
+            risk = hitsToDie;
+
+            resourceClassRiskValues[resourceClass] = risk;
+        }
+
+        return risk;
+    }
+
     public float GetAttackExpectedDamage(Attack attack)
     {
         float expectedDamageTotal = 0;
@@ -350,9 +383,14 @@ public class ActorClass
             float terrainVisibility = visibility;
 
             // Apply cover bonus
-            float coverBonus = targetTerrain.cover / size;
+            float coverBonus = 1;
 
-            terrainVisibility = terrainVisibility * (1 - coverBonus);
+            if (targetTerrain.cover > 0)
+            {
+                coverBonus = 1 + targetTerrain.cover / size;
+            }
+
+            terrainVisibility /= coverBonus;
 
             // Own colors
             Vector3 baseColorVec = new Vector3(baseColor.r, baseColor.g, baseColor.b);
@@ -364,9 +402,10 @@ public class ActorClass
 
             // Apply camouflage modifier
             terrainVisibility *= Vector3.Distance(baseColorVec, groundColorVec) + Vector3.Distance(patternColorVec, groundSecondaryColorVec);
-            
+
             // Save visibility for this terrain type
-            visibilityValues[targetTerrain] = Mathf.Clamp(terrainVisibility, 0.05f, 0.95f);
+            terrainVisibility = Mathf.Max(terrainVisibility, 0.05f);
+            visibilityValues[targetTerrain] = terrainVisibility;
             return terrainVisibility;
         }
     }

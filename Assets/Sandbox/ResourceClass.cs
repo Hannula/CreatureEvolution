@@ -10,6 +10,8 @@ public class ResourceClass
     public float meatAmount;
     public float gatheringDifficulty;
 
+    public float visibility;
+
     // How deep or high this resource is located
     public float depth;
 

@@ -13,7 +13,7 @@
         "b": 0.5,
         "a": 1.0
     },
-    "cover": 0,
+    "cover": 3,
     "noise": 6,
     "passable": true,
     "ruggedness":0,

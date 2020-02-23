@@ -3,6 +3,6 @@
     "plantAmount" : 100,
     "gatheringDifficulty" : 1,
     "depth" : 2,
-    "visibility" : 2,
+    "visibility" : 1,
     "smell" : 0
 }

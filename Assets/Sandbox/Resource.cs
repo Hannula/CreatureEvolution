@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Sandbox
 {
-    public class Resource
+    public class Resource : Entity
     {
         public string name;
 

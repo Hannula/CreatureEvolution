@@ -91,15 +91,30 @@ namespace Sandbox
                         // Gain smell bonus from lower ground
                         smell = Mathf.Clamp(smell * (1 - heightDifference * 0.1f), 0, 1f);
 
-                        // Current tile is higher than 
-
+                        // Actors
                         foreach (Actor actor in tile.actors)
                         {
                             // Process every actor which is not same species
                             if (actor.actorClass != actorClass)
                             {
                                 float visibility = actor.actorClass.GetVisibilityValue(tile.terrain);
-                                Simulation.Log(actorClass.name + " tries to see " + actor.actorClass.name + " (dist=" + distance + "). Vision is " + vision + ", cover is " + tile.terrain.cover + " , visibility is " + visibility + ".");
+
+                                if (Random.Range(0, 1f) < visibility * vision)
+                                {
+                                    UpdateMemory(actor);
+                                }
+                            }
+                        }
+
+                        // Resources
+                        foreach (Resource resource in tile.resources)
+                        {
+                            float visibility = resource.resourceClass.visibility;
+
+                            if (Random.Range(0, 1f) < visibility * vision)
+                            {
+                                UpdateMemory(resource);
+                                Simulation.Log(actorClass.name + " tries to see " + resource.resourceClass.name + " (dist=" + distance + "). Vision is " + vision + ", visibility is " + visibility + ".");
                             }
                         }
                     }
@@ -134,12 +149,29 @@ namespace Sandbox
                 float value = 0;
                 float risk = actorClass.GetActorClassRiskValues(subject.actorClass);
                 // Take hitpoints in to account
-                risk *= GetHitpointRatio() / subject.GetHitpointRatio();
+                risk *= subject.GetHitpointRatio() / GetHitpointRatio();
 
                 // Risk is reduced if both actors prefer plant based food
                 risk *= Mathf.Max(actorClass.Predatory, subject.actorClass.Predatory);
 
                 actorMemory[subject] = new Memory(subject, value, risk, age);
+            }
+        }
+
+        private void UpdateMemory(Resource subject)
+        {
+            if (subject.plantAmount < 0)
+            {
+                resourceMemory[subject] = new Memory(subject, 0, 0, age);
+            }
+            else
+            {
+                float value = 0;
+                float risk = actorClass.GetResourceClassRiskValues(subject.resourceClass);
+                // Take hitpoints in to account
+                risk /= GetHitpointRatio();
+
+                resourceMemory[subject] = new Memory(subject, value, risk, age);
             }
         }
 
@@ -478,19 +510,19 @@ namespace Sandbox
     public class Memory
     {
         // Memory of a certain entity in certain place at certain time
-        Entity subject;
-        Tile tile;
-        int time;
-        float value;
-        float risk;
+        public Entity Subject { get; private set; }
+        public Tile Tile { get; private set; }
+        public int Time { get; private set; }
+        public float Value { get; private set; }
+        public float Risk { get; private set; }
 
         public Memory(Entity subject, float value, float risk, int time)
         {
-            this.subject = subject;
-            tile = subject.currentTile;
-            this.value = value;
-            this.risk = risk;
-            this.time = time;
+            this.Subject = subject;
+            Tile = subject.currentTile;
+            this.Value = value;
+            this.Risk = risk;
+            this.Time = time;
         }
 
 

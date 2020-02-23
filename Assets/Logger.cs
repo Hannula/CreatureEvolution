@@ -18,8 +18,13 @@ public class Logger : MonoBehaviour
     {
         LogEntry newEntry = new LogEntry(message);
         entries.Add(newEntry);
-
-        textLog.text = newEntry.ToString() + "\n" + textLog.text; 
+        string text = "";
+        for(int i = 0; i < Mathf.Min(20, entries.Count);  ++i)
+        {
+            var entry = entries[entries.Count - 1 - i];
+            text += entry.ToString() + "\n";
+        }
+        textLog.text = text; 
     }
 }
 

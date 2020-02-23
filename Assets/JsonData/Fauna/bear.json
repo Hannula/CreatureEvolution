@@ -35,5 +35,16 @@
     "resourceConsumptionEnergyCost" : 1,
     "climbingSpeed" : 3,
     "diggingSpeed" : 2,
-    "attacks": []
+    "attacks": [
+        {
+            "name" : "Claw Swipe",
+            "damage" : [
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 8,
+                    "damageBonus" : 8
+                }
+            ]
+        }
+    ]
 }
