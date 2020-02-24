@@ -26,6 +26,9 @@
     "steepNavigation" : 3,
 
     "visibility" : 1,
+    "visionRange" : 3,
+    "lightVision" : 1,
+    "darkVision" : 0.75,
 
     "resourceConsumption" : 3,
     "resourceConsumptionEnergyCost" : 1,
@@ -33,5 +36,26 @@
     "climbingSpeed" : 2,
     "diggingSpeed" : 1,
 
-    "attacks": []
+    "attacks": [
+        {
+            "name" : "Claw",
+            "damage" : [
+                {
+                    "damageType" : 3,
+                    "damageRoll" : 2,
+                    "damageBonus" : 2
+                }
+            ]
+        },
+        {
+            "name" : "Bite",
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 3,
+                    "damageBonus" : 3
+                }
+            ]
+        }
+    ]
 }

@@ -75,9 +75,17 @@ public class TileInspector : MonoBehaviour
             string info = "Hitpoints: " + Mathf.Ceil(selectedActor.Hitpoints) + "/" + selectedActor.actorClass.maxHitpoints +
                 "\nHunger: " + Mathf.Ceil(selectedActor.Hunger) +
                 "\nEnergy: " + selectedActor.Energy +
-                "\nResistances: \n" +
-                "\n\nMemories:";
+                "\nResistances: \n";
+            // Find every resistance
+            foreach (DamageTypes dmgType in selectedActor.actorClass.resistances.Keys)
+            {
+                float value = Mathf.Floor(selectedActor.actorClass.resistances[dmgType] * 100);
+                string text = dmgType.ToString() + ": " + value + "%\n";
 
+                info += text;
+            }
+            info += "\n\nMemories:";
+            // Go through every memory
             foreach (Resource resourceMemory in selectedActor.resourceMemory.Keys)
             {
                 Memory mem = selectedActor.resourceMemory[resourceMemory];
@@ -90,14 +98,6 @@ public class TileInspector : MonoBehaviour
                     info += "\n" + actorMemory.actorClass.name + "  Value: " + mem.Value + ", Risk: " + mem.Risk + ", Time: " + mem.Time;
                 }
 
-            // Find every resistance
-            foreach (DamageTypes dmgType in selectedActor.actorClass.resistances.Keys)
-            {
-                float value = Mathf.Floor(selectedActor.actorClass.resistances[dmgType] * 100);
-                string text = dmgType.ToString() + ": " + value + "%\n";
-
-                info += text;
-            }
             actorText.text = info;
         }
     }

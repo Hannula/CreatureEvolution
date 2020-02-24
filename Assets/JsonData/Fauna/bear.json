@@ -25,7 +25,7 @@
     "crampedNavigation" : 3,
     "steepNavigation" : 5,
 
-    "visionRange" : 4,
+    "visionRange" : 3,
     "lightVision" : 1,
     "darkVision" : 0.35,
 
@@ -37,10 +37,20 @@
     "diggingSpeed" : 2,
     "attacks": [
         {
-            "name" : "Claw Swipe",
+            "name" : "Claw",
             "damage" : [
                 {
-                    "damageType" : 1,
+                    "damageType" : 3,
+                    "damageRoll" : 10,
+                    "damageBonus" : 10
+                }
+            ]
+        },
+        {
+            "name" : "Bite",
+            "damage" : [
+                {
+                    "damageType" : 2,
                     "damageRoll" : 8,
                     "damageBonus" : 8
                 }

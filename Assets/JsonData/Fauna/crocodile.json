@@ -27,12 +27,27 @@
 
     "visibility" : 2,
 
+    "visionRange" : 3,
+    "lightVision" : 0.8,
+    "darkVision" : 0.4,
+
     "resourceConsumption" : 10,
     "resourceConsumptionEnergyCost" : 1,
 
-    "attacks": [],
+    "attacks": [
+        {
+            "name" : "Bite",
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 12,
+                    "damageBonus" : 12
+                }
+            ]
+        }
+    ],
     "resistanceStrings":[
-        "Slashing:0,3",
-        "Piercing:0,3"
+        "Slashing:0,45",
+        "Piercing:0,25"
     ]
 }

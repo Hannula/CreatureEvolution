@@ -60,7 +60,6 @@ public class ActorClass
 
     private Dictionary<ActorClass, float> actorClassRiskValues;
     private Dictionary<ResourceClass, float> resourceClassRiskValues;
-    private Dictionary<ResourceClass, float> resourceValues;
     private Dictionary<Attack, float> expectedAttackDamages;
     private Dictionary<ActorClass, float> expectedActorClassDamages;
     private Dictionary<TerrainData, float> visibilityValues;
@@ -215,6 +214,7 @@ public class ActorClass
         }
     }
 
+    #region risks
     public float GetActorClassRiskValues(ActorClass actorClass)
     {
         float risk = 0;
@@ -310,9 +310,7 @@ public class ActorClass
         {
             // Calculate estimated damage
             // Chance to hit
-            float hitChance = Mathf.Clamp(1 - evasion / (100 + attack.attackBonus), 5f, 95f) * 0.01f;
-
-            float expectedDamage = 0;
+            float hitChance = Mathf.Clamp(1 - evasion / (100f + attack.attackBonus), 0.05f, 0.95f);
 
             // Loop through every damage in attack
             foreach (Attack.Damage dmg in attack.damage)
@@ -325,7 +323,7 @@ public class ActorClass
                 float resistance = GetResistance(type);
 
                 // Reduce the damage by resistance
-                expectedDamage += baseDamage * (1 - resistance);
+                expectedDamageTotal += hitChance * baseDamage * (1 - resistance);
             }
             // Save expected damage for this attack
             expectedAttackDamages[attack] = expectedDamageTotal;
@@ -350,6 +348,7 @@ public class ActorClass
         }
         else
         {
+
             // Calculate estimated damage
             // Find highest damage attack
             foreach(Attack attack in actorClass.attacks)
@@ -363,11 +362,14 @@ public class ActorClass
 
             // Save estimated damage for this actor class
             expectedActorClassDamages[actorClass] = expectedDamageTotal;
+
+            Simulation.Log(actorClass.name + " should deal around " + expectedDamageTotal + " against " + name);
         }
 
         return expectedDamageTotal;
 
     }
+    #endregion
 
     public float GetVisibilityValue(TerrainData targetTerrain)
     {

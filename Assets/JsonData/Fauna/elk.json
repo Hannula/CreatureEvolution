@@ -27,8 +27,42 @@
 
     "visibility" : 3,
 
+    "visionRange" : 3.5,
+    "lightVision" : 1.4,
+    "darkVision" : 0.3,
+
     "resourceConsumption" : 10,
     "resourceConsumptionEnergyCost" : 1,
     "diggingSpeed" : 1,
-    "attacks": []
+
+
+    "attacks": [
+        {
+            "name" : "Charge",
+            "attackBonus" : -30,
+            "damage" : [
+                {
+                    "damageType" : 2, 
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
+                },
+                {
+                    "damageType" : 1, 
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
+                }
+            ]
+
+        },
+        {
+            "name" : "Kick",
+            "damage" : [
+                {
+                    "damageType" : 1, 
+                    "damageRoll" : 7,
+                    "damageBonus" : 7
+                }
+            ]
+        }
+    ]
 }

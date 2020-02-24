@@ -26,10 +26,24 @@
     "steepNavigation" : 0.1,
 
     "visibility" : 1,
+    "visionRange" : 2,
+    "lightVision" : 0.5,
+    "darkVision" : 0.8,
 
     "resourceConsumption" : 5,
     "resourceConsumptionEnergyCost" : 1,
     "divingSkill" : 10,
 
-    "attacks": []
+    "attacks": [
+        {
+            "name" : "Bite",
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 4,
+                    "damageBonus" : 4
+                }
+            ]
+        }
+    ]
 }
