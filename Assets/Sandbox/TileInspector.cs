@@ -72,7 +72,9 @@ public class TileInspector : MonoBehaviour
         if (selectedActor != null && selectedActor.currentTile != null)
         {
             actorNameText.text = selectedActor.actorClass.name + "(" + selectedActor.currentTile.position.x + ", " + selectedActor.currentTile.position.y + ")";
-            string info = "Hitpoints: " + Mathf.Ceil(selectedActor.Hitpoints) + "/" + selectedActor.actorClass.maxHitpoints +
+            string info = "";
+            info += "\nState: " + selectedActor.state + "\n";
+            info += "Hitpoints: " + Mathf.Ceil(selectedActor.Hitpoints) + "/" + selectedActor.actorClass.maxHitpoints +
                 "\nHunger: " + Mathf.Ceil(selectedActor.Hunger) +
                 "\nEnergy: " + selectedActor.Energy +
                 "\nResistances: \n";
@@ -84,18 +86,25 @@ public class TileInspector : MonoBehaviour
 
                 info += text;
             }
+
+
+            if (selectedActor.ResourceTarget != null)
+            {
+                info += "\nResource target: " + selectedActor.ResourceTarget.resourceClass.name;
+            }
+
             info += "\n\nMemories:";
             // Go through every memory
             foreach (Resource resourceMemory in selectedActor.resourceMemory.Keys)
             {
                 Memory mem = selectedActor.resourceMemory[resourceMemory];
-                info += "\n" + resourceMemory.resourceClass.name + "  Value: " + mem.Value + ", Risk: " + mem.Risk + ", Time: " + mem.Time;
+                info += "\n" + resourceMemory.resourceClass.name + "  Val: " + mem.Value + ", Risk: " + mem.Risk + ", T: " + mem.Time;
             }
 
             foreach (Actor actorMemory in selectedActor.actorMemory.Keys)
                 {
                     Memory mem = selectedActor.actorMemory[actorMemory];
-                    info += "\n" + actorMemory.actorClass.name + "  Value: " + mem.Value + ", Risk: " + mem.Risk + ", Time: " + mem.Time;
+                    info += "\n" + actorMemory.actorClass.name + "  Val: " + mem.Value + ", Risk: " + mem.Risk + ", T: " + mem.Time;
                 }
 
             actorText.text = info;

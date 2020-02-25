@@ -6,41 +6,38 @@ namespace Sandbox
 {
     public class Resource : Entity
     {
-        public string name;
+        public string Name { get; private set; }
 
-        public Vector2Int LevelPosition
-        {
-            get { return currentTile.position; }
-        }
+        public Tile CurrentTile { get; private set; }
+        public float Amount { get; set; }
 
-        public Tile currentTile;
-        public float plantAmount = 0;
-
-        public float hitpoints;
+        public float HitPoints { get; private set; }
         public readonly ResourceClass resourceClass;
-        public Level level;
+        private Level level;
 
         public Resource(ResourceClass resourceClass, Level level, float amount, Tile startingTile, string name = "Resource")
         {
-            this.name = name;
+            this.Name = name;
             this.resourceClass = resourceClass;
             this.level = level;
-            this.plantAmount = resourceClass.plantAmount * amount;
+            this.Amount = resourceClass.plantAmount * amount;
+
+            currentTile = startingTile;
 
             MoveToTile(startingTile);
         }
 
         public void MoveToTile(Tile targetTile)
         {
-            if (currentTile != null)
+            if (CurrentTile != null)
             { 
                 // Remove this actor from previous tile
-                currentTile.RemoveResource(this);
+                CurrentTile.RemoveResource(this);
             }
             // Add this actor the target tile
             targetTile.AddResource(this);
             // Set current tile to target tile
-            currentTile = targetTile;
+            CurrentTile = targetTile;
         }
     }
 }

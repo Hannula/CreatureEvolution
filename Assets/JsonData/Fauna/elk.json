@@ -16,6 +16,7 @@
     "speed": 30,
     "evasion": 50,
     "size": 8,
+    "meatAmount" : 30,
     "resistances":[
     ],
     "height" : 2,
@@ -30,8 +31,8 @@
     "visionRange" : 3.5,
     "lightVision" : 1.4,
     "darkVision" : 0.3,
-
-    "resourceConsumption" : 10,
+    "plantConsumptionEfficiency" : 1,
+    "resourceConsumption" : 35,
     "resourceConsumptionEnergyCost" : 1,
     "diggingSpeed" : 1,
 
@@ -39,7 +40,7 @@
     "attacks": [
         {
             "name" : "Charge",
-            "attackBonus" : -30,
+            "attackBonus" : -20,
             "damage" : [
                 {
                     "damageType" : 2, 

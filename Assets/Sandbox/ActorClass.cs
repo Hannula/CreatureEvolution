@@ -311,7 +311,7 @@ public class ActorClass
             // Calculate estimated damage
             // Chance to hit
             float hitChance = Mathf.Clamp(1 - evasion / (100f + attack.attackBonus), 0.05f, 0.95f);
-
+            
             // Loop through every damage in attack
             foreach (Attack.Damage dmg in attack.damage)
             {
@@ -362,8 +362,6 @@ public class ActorClass
 
             // Save estimated damage for this actor class
             expectedActorClassDamages[actorClass] = expectedDamageTotal;
-
-            Simulation.Log(actorClass.name + " should deal around " + expectedDamageTotal + " against " + name);
         }
 
         return expectedDamageTotal;

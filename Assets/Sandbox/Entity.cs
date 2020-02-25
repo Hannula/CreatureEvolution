@@ -8,6 +8,6 @@ public class Entity
     {
         get { return currentTile.position; }
     }
-
+       
     public Tile currentTile { get; protected set; }
 }

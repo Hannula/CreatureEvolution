@@ -23,7 +23,7 @@ public class ResourceVisualizer : MonoBehaviour
     // Always face camera
     void Update()
     {
-        if (resource.plantAmount > 0)
+        if (resource.Amount > 0)
         {
             transform.rotation = Camera.main.transform.rotation;
         }
@@ -59,7 +59,7 @@ public class ResourceVisualizer : MonoBehaviour
     private void UpdatePosition()
     {
         Vector2Int levelPosition = resource.LevelPosition;
-        float elevation = resource.currentTile.elevation;
+        float elevation = resource.CurrentTile.elevation;
 
         transform.position = new Vector3(levelPosition.x, -levelPosition.y, -elevation - 1);
     }

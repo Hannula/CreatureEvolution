@@ -30,11 +30,6 @@ public class Simulation : MonoBehaviour
     {
         foreach(Actor actor in level.actors)
         {
-            // Find path to random place
-            if (actor.currentPath == null || actor.currentPath.Count == 0)
-            {
-                actor.FindPath(level.TileAt(Random.Range(0, level.dimensions.x), Random.Range(0, level.dimensions.y)));
-            }
             bool actorDead = actor.Act();
         }
     }

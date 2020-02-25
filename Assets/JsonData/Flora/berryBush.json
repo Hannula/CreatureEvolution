@@ -4,5 +4,18 @@
     "gatheringDifficulty" : 1,
     "depth" : 0,
     "visibility" : 1,
-    "smell" : 1
+    "smell" : 1,
+    "hazards" : [
+        {
+            "name" : "Poisonous Berry",
+            "damage" : [
+                {
+                    "attackBonus" : 500,
+                    "damageType" : 5,
+                    "damageRoll" : 10,
+                    "damageBonus" : 0
+                }
+            ]
+        }
+    ]
 }
