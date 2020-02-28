@@ -1,5 +1,13 @@
 { "columns":5,
- "image":"..\/terrain.png",
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
+ "image":"..\/..\/JsonData\/Tileset\/terrain.png",
  "imageheight":80,
  "imagewidth":80,
  "margin":0,

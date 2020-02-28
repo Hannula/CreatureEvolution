@@ -22,7 +22,7 @@ namespace Sandbox
             this.level = level;
             this.Amount = resourceClass.plantAmount * amount;
 
-            currentTile = startingTile;
+            base.CurrentTile = startingTile;
 
             MoveToTile(startingTile);
         }

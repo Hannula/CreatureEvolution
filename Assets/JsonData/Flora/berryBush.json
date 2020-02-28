@@ -3,7 +3,7 @@
     "plantAmount" : 100,
     "gatheringDifficulty" : 1,
     "depth" : 0,
-    "visibility" : 1,
+    "visibility" : 0.5,
     "smell" : 1,
     "hazards" : [
         {

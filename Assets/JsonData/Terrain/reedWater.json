@@ -1,5 +1,5 @@
 {
-    "name": "Shallow Water",
+    "name": "Reed Water",
     "groundColor": {
         "r": 0.28,
         "g": 0.5,
@@ -8,16 +8,16 @@
     },
     "symbol": 176,
     "secondaryColor": {
-        "r": 0.5,
-        "g": 0.5,
-        "b": 0.5,
+        "r": 0.3,
+        "g": 0.7,
+        "b": 0.35,
         "a": 1.0
     },
-    "cover": 0,
-    "noise": 2,
+    "cover": 1.5,
+    "noise": 3,
     "passable": true,
     "ruggedness":0,
-    "softness":1.5,
+    "softness":2,
     "density":0,
     "waterDepth": 1,
     "hazards": []

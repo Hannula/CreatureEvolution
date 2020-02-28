@@ -1,4 +1,12 @@
 { "columns":5,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
  "image":"terrain.png",
  "imageheight":80,
  "imagewidth":80,

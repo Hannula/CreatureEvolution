@@ -16,11 +16,11 @@
     "speed": 0.1,
     "evasion" : 65,
     "size": 2,
-    "meatAmount" : 7,
+    "meatAmount" : 30,
     "resistances":[
     ],
     "height" : 0.35,
-    "swimmingSpeed" : 20,
+    "swimmingSpeed" : 10,
     "softLandNavigation" : 0,
     "ruggedLandNavigation" : 0.1,
     "crampedNavigation" : 5,
@@ -28,11 +28,13 @@
 
     "visibility" : 1,
     "visionRange" : 2,
-    "lightVision" : 0.5,
+    "lightVision" : 0.8,
     "darkVision" : 0.8,
 
     "resourceConsumption" : 5,
     "resourceConsumptionEnergyCost" : 1,
+    "meatConsumptionEfficiency" : 1,
+    "plantConsumptionEfficiency" : 1,
     "divingSkill" : 10,
 
     "attacks": [

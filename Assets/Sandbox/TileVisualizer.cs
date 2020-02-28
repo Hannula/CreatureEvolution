@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class TileVisualizer : MonoBehaviour
@@ -9,8 +10,29 @@ public class TileVisualizer : MonoBehaviour
     public Texture2D texture;
     public Tileset tileset;
     public MeshRenderer backgroundMesh;
+    public TextMeshPro text;
     private Material material;
+    private TileInspector inspector;
 
+    public void Start()
+    {
+        inspector = FindObjectOfType<TileInspector>();
+    }
+
+    public void Update()
+    {
+        // Draw movement cost if actor is selected
+        if (inspector && inspector.selectedActor != null && tile != null && Input.GetKey(KeyCode.Tab))
+        {
+            text.text = "Cost: " + inspector.selectedActor.actorClass.GetTerrainMovementCost(tile.terrain) +
+                   "\nVisibility: " + inspector.selectedActor.actorClass.GetVisibilityValue(tile.terrain) +
+                   "\nRisk: " + inspector.selectedActor.GetMovementCostRisk(tile, tile);
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            text.text = "";
+        }
+    }
     public void Reload()
     {
         // Create new material
@@ -20,7 +42,7 @@ public class TileVisualizer : MonoBehaviour
         float texturePosition = tile.terrain.id - 1;
         Vector2 offset = new Vector2(
             (texturePosition % tileset.columns) * tileset.textureScale.x,
-            1 - Mathf.Floor(texturePosition/ tileset.columns) * tileset.textureScale.y - tileset.textureScale.y
+            1 - Mathf.Floor(texturePosition / tileset.columns) * tileset.textureScale.y - tileset.textureScale.y
             );
 
         material.SetTextureOffset("_MainTex", offset);
@@ -35,6 +57,16 @@ public class TileVisualizer : MonoBehaviour
 
         // Set z according to tile elevation
         transform.position = new Vector3(transform.position.x, transform.position.y, -tile.elevation);
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (inspector && inspector.selectedTile == this)
+        {
+            // Draw marker
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(transform.position, Vector3.one * 1.25f);
+        }
     }
 
 }

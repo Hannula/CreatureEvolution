@@ -14,7 +14,7 @@ public class ActorClass
     public int evasion;
     public float size;
     public Dictionary<DamageTypes, float> resistances;
-    
+
     public List<string> resistanceStrings;
     public List<Attack> attacks;
 
@@ -104,14 +104,14 @@ public class ActorClass
     public void ParseResistances()
     {
         resistances = new Dictionary<DamageTypes, float>();
-        foreach(string resistanceString in resistanceStrings)
+        foreach (string resistanceString in resistanceStrings)
         {
             try
             {
                 string[] parts = resistanceString.Split(':');
                 // Find damage type
                 DamageTypes type = DamageTypes.None;
-                foreach(DamageTypes damageType in Enum.GetValues(typeof(DamageTypes)))
+                foreach (DamageTypes damageType in Enum.GetValues(typeof(DamageTypes)))
                 {
                     if (parts[0] == damageType.ToString())
                     {
@@ -127,7 +127,7 @@ public class ActorClass
                 }
 
             }
-            catch(Exception)
+            catch (Exception)
             {
                 Simulation.Log("Failed to parse resistance strings. Correct format is \"DamageType:ResistanceValue\".");
             }
@@ -274,7 +274,7 @@ public class ActorClass
         else
         {
             float expectedDamageTaken = 0;
-            foreach(Attack a in resourceClass.hazards)
+            foreach (Attack a in resourceClass.hazards)
             {
                 expectedDamageTaken += GetAttackExpectedDamage(a);
             }
@@ -311,7 +311,7 @@ public class ActorClass
             // Calculate estimated damage
             // Chance to hit
             float hitChance = Mathf.Clamp(1 - evasion / (100f + attack.attackBonus), 0.05f, 0.95f);
-            
+
             // Loop through every damage in attack
             foreach (Attack.Damage dmg in attack.damage)
             {
@@ -351,7 +351,7 @@ public class ActorClass
 
             // Calculate estimated damage
             // Find highest damage attack
-            foreach(Attack attack in actorClass.attacks)
+            foreach (Attack attack in actorClass.attacks)
             {
                 float attackDamage = GetAttackExpectedDamage(attack);
                 if (attackDamage > expectedDamageTotal)
@@ -383,17 +383,10 @@ public class ActorClass
         }
         else
         {
-            float terrainVisibility = visibility;
+            // Visibility is increased with size
+            float terrainVisibility = visibility * size * 0.33f;
 
-            // Apply cover bonus
-            float coverBonus = 1;
-
-            if (targetTerrain.cover > 0)
-            {
-                coverBonus = 1 + targetTerrain.cover / size;
-            }
-
-            terrainVisibility /= coverBonus;
+            terrainVisibility /= 1 + targetTerrain.cover;
 
             // Own colors
             Vector3 baseColorVec = new Vector3(baseColor.r, baseColor.g, baseColor.b);
@@ -404,10 +397,10 @@ public class ActorClass
             Vector3 groundSecondaryColorVec = new Vector3(targetTerrain.secondaryColor.r, targetTerrain.secondaryColor.g, targetTerrain.secondaryColor.b);
 
             // Apply camouflage modifier
-            terrainVisibility *= Vector3.Distance(baseColorVec, groundColorVec) + Vector3.Distance(patternColorVec, groundSecondaryColorVec);
+            terrainVisibility *= 0.35f + (0.65f * Vector3.Distance(baseColorVec, groundColorVec) + Vector3.Distance(patternColorVec, groundSecondaryColorVec));
 
             // Save visibility for this terrain type
-            terrainVisibility = Mathf.Max(terrainVisibility, 0.05f);
+            terrainVisibility = Mathf.Clamp(terrainVisibility, 0.05f, 1f);
             visibilityValues[targetTerrain] = terrainVisibility;
             return terrainVisibility;
         }

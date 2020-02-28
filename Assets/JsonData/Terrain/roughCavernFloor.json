@@ -13,10 +13,10 @@
         "b": 0.6,
         "a": 1.0
     },
-    "cover": 1.5,
+    "cover": 0.5,
     "noise": 8,
     "passable": true,
-    "ruggedness":5,
+    "ruggedness":2.5,
     "softness":0,
     "density":1,
     "waterDepth": 0,

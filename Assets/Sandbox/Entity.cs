@@ -6,8 +6,8 @@ public class Entity
 {
     public Vector2Int LevelPosition
     {
-        get { return currentTile.position; }
+        get { return CurrentTile.position; }
     }
        
-    public Tile currentTile { get; protected set; }
+    public Tile CurrentTile { get; protected set; }
 }

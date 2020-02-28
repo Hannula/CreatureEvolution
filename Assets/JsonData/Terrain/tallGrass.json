@@ -1,0 +1,24 @@
+{
+    "name": "Tall Grass",
+    "groundColor": {
+        "r": 0.3,
+        "g": 0.7,
+        "b": 0.35,
+        "a": 1.0
+    },
+    "symbol": 176,
+    "secondaryColor": {
+        "r": 0.3,
+        "g": 0.7,
+        "b": 0.35,
+        "a": 1.0
+    },
+    "cover": 1,
+    "noise": 1,
+    "passable": true,
+    "ruggedness":0.3,
+    "softness":0.5,
+    "density":1,
+    "waterDepth": 0,
+    "hazards": []
+}

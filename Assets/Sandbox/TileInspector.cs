@@ -36,7 +36,7 @@ public class TileInspector : MonoBehaviour
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Input.GetMouseButtonDown(0))
-        { 
+        {
             Physics.Raycast(ray, out hit, raycastTileLayermask);
             try
             {
@@ -57,7 +57,7 @@ public class TileInspector : MonoBehaviour
             {
                 newActor = hit.collider.GetComponent<ActorVisualizer>().actor;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
@@ -69,43 +69,11 @@ public class TileInspector : MonoBehaviour
         }
 
         // Draw actor info
-        if (selectedActor != null && selectedActor.currentTile != null)
+        if (selectedActor != null && selectedActor.CurrentTile != null)
         {
-            actorNameText.text = selectedActor.actorClass.name + "(" + selectedActor.currentTile.position.x + ", " + selectedActor.currentTile.position.y + ")";
-            string info = "";
-            info += "\nState: " + selectedActor.state + "\n";
-            info += "Hitpoints: " + Mathf.Ceil(selectedActor.Hitpoints) + "/" + selectedActor.actorClass.maxHitpoints +
-                "\nHunger: " + Mathf.Ceil(selectedActor.Hunger) +
-                "\nEnergy: " + selectedActor.Energy +
-                "\nResistances: \n";
-            // Find every resistance
-            foreach (DamageTypes dmgType in selectedActor.actorClass.resistances.Keys)
-            {
-                float value = Mathf.Floor(selectedActor.actorClass.resistances[dmgType] * 100);
-                string text = dmgType.ToString() + ": " + value + "%\n";
+            actorNameText.text = selectedActor.actorClass.name + "(" + selectedActor.CurrentTile.position.x + ", " + selectedActor.CurrentTile.position.y + ")";
+            string info = selectedActor.ToString();
 
-                info += text;
-            }
-
-
-            if (selectedActor.ResourceTarget != null)
-            {
-                info += "\nResource target: " + selectedActor.ResourceTarget.resourceClass.name;
-            }
-
-            info += "\n\nMemories:";
-            // Go through every memory
-            foreach (Resource resourceMemory in selectedActor.resourceMemory.Keys)
-            {
-                Memory mem = selectedActor.resourceMemory[resourceMemory];
-                info += "\n" + resourceMemory.resourceClass.name + "  Val: " + mem.Value + ", Risk: " + mem.Risk + ", T: " + mem.Time;
-            }
-
-            foreach (Actor actorMemory in selectedActor.actorMemory.Keys)
-                {
-                    Memory mem = selectedActor.actorMemory[actorMemory];
-                    info += "\n" + actorMemory.actorClass.name + "  Val: " + mem.Value + ", Risk: " + mem.Risk + ", T: " + mem.Time;
-                }
 
             actorText.text = info;
         }
@@ -122,7 +90,7 @@ public class TileInspector : MonoBehaviour
                 "\nLight level: " + selectedTile.tile.lightLevel.ToString();
 
             // Remove existing unlocked panels
-            for(int i = actorPanels.Count - 1; i >= 0; --i)
+            for (int i = actorPanels.Count - 1; i >= 0; --i)
             {
                 ActorPanelManager panel = actorPanels[i];
                 if (!panel.locked)
@@ -135,7 +103,7 @@ public class TileInspector : MonoBehaviour
 
 
             // Create panel for every actor
-            foreach(Actor a in selectedTile.tile.actors)
+            foreach (Actor a in selectedTile.tile.actors)
             {
                 bool alreadyContains = ActorsPanelsContainActor(a);
 
@@ -146,7 +114,7 @@ public class TileInspector : MonoBehaviour
                     panel.actor = a;
                     actorPanels.Add(panel);
                 }
-                
+
             }
 
         }

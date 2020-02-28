@@ -13,27 +13,28 @@
         "a": 0
     },
     "maxHitpoints": 150,
-    "speed": 25,
+    "speed": 15,
     "evasion": 50,
     "size": 10,
-    "meatAmount" : 17,
+    "meatAmount" : 40,
     "resistances":[
     ],
 
     "height" : 2,
     "swimmingSpeed" : 7,
-    "softLandNavigation" : 3,
+    "softLandNavigation" : 1.5,
     "ruggedLandNavigation" : 3,
     "crampedNavigation" : 3,
     "steepNavigation" : 5,
 
-    "visionRange" : 3,
+    "visionRange" : 4,
     "lightVision" : 1,
-    "darkVision" : 0.35,
+    "darkVision" : 0.55,
 
-    "visibility" : 2,
+    "visibility" : 1,
 
-    "plantConsumptionEfficiency" : 0.5,
+    "plantConsumptionEfficiency" : 1,
+    "meatConsumptionEfficiency" : 1,
     "resourceConsumption" : 45,
     "resourceConsumptionEnergyCost" : 1,
     "climbingSpeed" : 3,

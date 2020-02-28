@@ -1,24 +1,24 @@
 {
-    "name": "Shallow Water",
+    "name": "Mud",
     "groundColor": {
         "r": 0.28,
-        "g": 0.5,
-        "b": 0.6,
+        "g": 0.3,
+        "b": 0.25,
         "a": 1.0
     },
     "symbol": 176,
     "secondaryColor": {
-        "r": 0.5,
-        "g": 0.5,
-        "b": 0.5,
+        "r": 0.28,
+        "g": 0.3,
+        "b": 0.25,
         "a": 1.0
     },
     "cover": 0,
-    "noise": 2,
+    "noise": 0.5,
     "passable": true,
     "ruggedness":0,
-    "softness":1.5,
+    "softness":6,
     "density":0,
-    "waterDepth": 1,
+    "waterDepth": 0,
     "hazards": []
 }

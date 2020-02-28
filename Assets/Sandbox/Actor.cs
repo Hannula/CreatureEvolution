@@ -21,25 +21,29 @@ namespace Sandbox
         public readonly ActorClass actorClass;
         public Level level;
 
-        public int age { get; private set; }
+        public int Age { get; private set; }
 
         public float MeatAmount { get; set; }
+
+        private int wanderArea = 10;
+        public float MemoryLength = 250f;
 
 
         // AI
         public State state;
-        public List<Tile> currentPath;
+        public List<Tile> CurrentPath { get; private set; }
 
         private AStar<Tile> pathfinder;
-        public Resource ResourceTarget;
-        public Actor HuntTarget;
+        public Resource ResourceTarget { get; private set; }
+        public Actor HuntTarget { get; private set; }
+        Tile targetPosition;
 
-        public Dictionary<Actor, Memory> actorMemory;
-        public Dictionary<Resource, Memory> resourceMemory;
+        public Dictionary<Actor, Memory> ActorMemory { get; private set; }
+        public Dictionary<Resource, Memory> ResourceMemory { get; private set; }
 
-        public Actor(ActorClass actorClass, Level level, float hungerRate, Tile startingTile, string name = "Actor")
+        public Actor(ActorClass actorClass, Level level, float hungerRate, Tile startingTile)
         {
-            this.name = name;
+            this.name = actorClass.name;
             this.actorClass = actorClass;
             this.level = level;
             Hitpoints = actorClass.maxHitpoints;
@@ -48,10 +52,10 @@ namespace Sandbox
             MeatAmount = actorClass.meatAmount;
 
             // Memory
-            actorMemory = new Dictionary<Actor, Memory>();
-            resourceMemory = new Dictionary<Resource, Memory>();
+            ActorMemory = new Dictionary<Actor, Memory>();
+            ResourceMemory = new Dictionary<Resource, Memory>();
 
-            pathfinder = new AStar<Tile>(GetAdjacentTiles, GetMovementCost, GetMovementCostEstimation);
+            pathfinder = new AStar<Tile>(GetAdjacentTiles, GetMovementCostRisk, GetMovementCostEstimation);
 
             MoveToTile(startingTile);
         }
@@ -68,16 +72,16 @@ namespace Sandbox
             HashSet<Tile> closedTiles = new HashSet<Tile>();
             Queue<Tile> openTiles = new Queue<Tile>();
 
-            openTiles.Enqueue(currentTile);
+            openTiles.Enqueue(CurrentTile);
 
             // Search nearby tiles
-            while(openTiles.Count > 0)
+            while (openTiles.Count > 0)
             {
                 // Get next tile
                 Tile tile = openTiles.Dequeue();
                 closedTiles.Add(tile);
 
-                float distance = Vector2Int.Distance(currentTile.position, tile.position);
+                float distance = Vector2Int.Distance(CurrentTile.position, tile.position);
                 // Only process this tile if it's within observation radius
                 if (distance < actorClass.ObservationRange)
                 {
@@ -88,9 +92,9 @@ namespace Sandbox
                         float smell = 1 - (distance / actorClass.smellSenseRange);
                         float hearing = 1 - (distance / actorClass.hearingRange);
 
-                        float heightDifference = currentTile.elevation - tile.elevation;
+                        float heightDifference = CurrentTile.elevation - tile.elevation;
                         // Gain vision bonus from higher ground
-                        vision = Mathf.Clamp(vision * ( 1 + heightDifference * 0.1f), 0, 1f);
+                        vision = Mathf.Clamp(vision * (1 + heightDifference * 0.1f), 0, 1f);
                         // Gain smell bonus from lower ground
                         smell = Mathf.Clamp(smell * (1 - heightDifference * 0.1f), 0, 1f);
 
@@ -102,7 +106,7 @@ namespace Sandbox
                             {
                                 float visibility = actor.actorClass.GetVisibilityValue(tile.terrain);
 
-                                if (Random.Range(0, 1f) < visibility * vision)
+                                if (Random.Range(0, 5f) < visibility * vision)
                                 {
                                     UpdateMemory(actor);
                                 }
@@ -137,21 +141,174 @@ namespace Sandbox
 
         private void Wander()
         {
+            HuntTarget = null;
+            ResourceTarget = null;
+            // Find path to a random place
+            if (CurrentPath == null || CurrentPath.Count == 0)
+            {
+                int x = Random.Range(Mathf.Max(LevelPosition.x, wanderArea) - wanderArea,
+                            Mathf.Min(LevelPosition.x, level.dimensions.x - wanderArea) + wanderArea);
 
+                int y = Random.Range(Mathf.Max(LevelPosition.y, wanderArea) - wanderArea,
+                            Mathf.Min(LevelPosition.y, level.dimensions.y - wanderArea) + wanderArea);
+
+                FindPath(level.TileAt(x, y));
+            }
+            else
+            {
+                PathAdvance();
+            }
+
+            if (Hunger > 33 && state == State.wander)
+            {
+                state = State.findFood;
+                CurrentPath = null;
+            }
+        }
+
+        private void FindFood()
+        {
+            // Stop finding food if full enough
+            if (Hunger < 15)
+            {
+                state = State.wander;
+            }
+            else
+            {
+                if (HuntTarget != null && CurrentPath != null && CurrentTile != HuntTarget.CurrentTile)
+                {
+                    // Try pathing frequently if target is nearby
+                    int repathChance = Mathf.CeilToInt(Vector2.Distance(LevelPosition, HuntTarget.LevelPosition));
+                    if (Random.Range(0, repathChance + 2) == 0)
+                    {
+                        FindPath(targetPosition);
+                    }
+                }
+                if (CurrentPath == null || CurrentPath.Count == 0)
+                {
+                    // If there's no path, find the best food source and try to go there
+                    // Find the best resource from memory
+                    float bestValue = 0;
+                    float hungerRatio = Hunger / 100;
+
+                    foreach (Resource resource in ResourceMemory.Keys)
+                    {
+                        Memory mem = ResourceMemory[resource];
+
+                        float timeDifference = Age - mem.Time;
+
+                        if (timeDifference < MemoryLength)
+                        {
+                            float value = mem.Value;
+                            float dist = Vector2.Distance(CurrentTile.position, resource.CurrentTile.position);
+
+                            float div = 1 + dist * 0.05f + mem.Risk * 5f / hungerRatio;
+
+                            value /= div + timeDifference * 2f / MemoryLength;
+
+                            if (value > bestValue)
+                            {
+                                ResourceTarget = resource;
+                                bestValue = value;
+                                targetPosition = mem.Tile;
+                            }
+                        }
+                    }
+
+                    // Find the best prey from memory
+                    HuntTarget = null;
+                    foreach (Actor actor in ActorMemory.Keys)
+                    {
+                        Memory mem = ActorMemory[actor];
+                        float value = mem.Value;
+                        float dist = Vector2.Distance(CurrentTile.position, actor.LevelPosition);
+
+                        float timeDifference = (Age - mem.Time);
+
+                        float div = 1 + dist * 0.05f + timeDifference * 0.0025f + mem.Risk * 5f / hungerRatio;
+
+                        value /= div;
+
+                        if (value > bestValue)
+                        {
+                            // Replace previous hunt target or resource target if value is higher
+                            ResourceTarget = null;
+                            HuntTarget = actor;
+                            bestValue = value;
+                            targetPosition = mem.Tile;
+                        }
+                    }
+
+                    if (ResourceTarget != null && ResourceTarget.CurrentTile != CurrentTile)
+                    {
+                        FindPath(targetPosition);
+                    }
+                    else if (HuntTarget != null && HuntTarget.CurrentTile != CurrentTile)
+                    {
+                        FindPath(targetPosition);
+                    }
+                }
+                else
+                {
+                    PathAdvance();
+                }
+
+                // Perform eating if hungry
+                if (ResourceTarget != null)
+                {
+                    if (ResourceTarget.CurrentTile == CurrentTile && ResourceTarget.Amount > 0)
+                    {
+                        Eat(ResourceTarget);
+                    }
+                }
+                else if (HuntTarget != null)
+                {
+                    if (HuntTarget.CurrentTile == CurrentTile && HuntTarget.MeatAmount > 0)
+                    {
+                        if (HuntTarget.Hitpoints > 0)
+                        {
+                            // Attack if target still has health
+                            PerformBestAttack(HuntTarget, false, true);
+                            // Prey retaliates
+                            HuntTarget.PerformBestAttack(this, true, true);
+                        }
+                        else
+                        {
+                            // Eat corpse if target is dead
+                            Eat(HuntTarget);
+                        }
+                    }
+                }
+                else if (CurrentPath == null || CurrentPath.Count == 0)
+                {
+                    // Wander around if no food is found
+                    Wander();
+                }
+            }
         }
 
         private void UpdateMemory(Actor subject)
         {
-            if (subject.Hitpoints < 0)
+            if (subject.MeatAmount < 0)
             {
-                actorMemory[subject] = new Memory(subject, 0, 0, age);
+                ActorMemory[subject] = new Memory(subject, 0, 0, Age);
             }
             else
             {
                 float value = 0;
                 if (subject.MeatAmount > 0)
                 {
-                    value = Mathf.Min(actorClass.resourceConsumption, subject.MeatAmount / actorClass.meatConsumptionEfficiency);
+                    value = Mathf.Min(actorClass.resourceConsumption, subject.MeatAmount * actorClass.meatConsumptionEfficiency);
+
+                    // Reduce value if other actor is faster
+                    float energyCost = GetMovementCost(subject.CurrentTile, subject.CurrentTile);
+                    float energyCostSubject = subject.GetMovementCost(subject.CurrentTile, subject.CurrentTile);
+
+                    if (energyCost > energyCostSubject)
+                    {
+                        float difference = energyCostSubject - energyCost;
+                        value /= 1 + difference;
+                    }
                 }
                 float risk = 0;
                 if (subject.Hitpoints > 0)
@@ -165,7 +322,7 @@ namespace Sandbox
                 }
 
 
-                actorMemory[subject] = new Memory(subject, value, risk, age);
+                ActorMemory[subject] = new Memory(subject, value, risk, Age);
             }
         }
 
@@ -173,7 +330,7 @@ namespace Sandbox
         {
             if (subject.Amount < 0)
             {
-                resourceMemory[subject] = new Memory(subject, 0, 0, age);
+                ResourceMemory[subject] = new Memory(subject, 0, 0, Age);
             }
             else
             {
@@ -182,7 +339,7 @@ namespace Sandbox
                 // Take hitpoints in to account
                 risk /= GetHitpointRatio();
 
-                resourceMemory[subject] = new Memory(subject, value, risk, age);
+                ResourceMemory[subject] = new Memory(subject, value, risk, Age);
             }
         }
 
@@ -195,7 +352,7 @@ namespace Sandbox
             if (Hitpoints > 0)
             {
                 // Age this actor
-                age += 1;
+                Age += 1;
 
                 Hunger += hungerRate;
                 // Start taking damage when too hungry
@@ -212,89 +369,11 @@ namespace Sandbox
                 {
                     if (state == State.wander)
                     {
-                        HuntTarget = null;
-                        ResourceTarget = null;
-                        // Find path to random place
-                        if (currentPath == null || currentPath.Count == 0)
-                        {
-                                FindPath(level.TileAt(Random.Range(0, level.dimensions.x), Random.Range(0, level.dimensions.y)));
-                        }
-                        else
-                        {
-                            PathAdvance();
-                        }
-
-                        if (Hunger > 50)
-                        {
-                            state = State.findFood;
-                            currentPath = null;
-                        }
-
+                        Wander();
                     }
-                    else if (state == State.findFood )
+                    else if (state == State.findFood)
                     {
-                        if (Hunger < 25)
-                        {
-                            state = State.wander;
-
-                        }
-                        else 
-                        {
-                            if (currentPath == null || currentPath.Count == 0)
-                            {
-                                Resource bestResource = null;
-                                float bestValue = 0;
-                                foreach (Resource resource in resourceMemory.Keys)
-                                {
-                                    Memory mem = resourceMemory[resource];
-                                    float value = mem.Value;
-                                    float dist = Vector2.Distance(currentTile.position, resource.CurrentTile.position);
-
-                                    float timeDifference = (age - mem.Time);
-
-                                    float div = 1 + timeDifference * 0.01f;
-
-                                    if (dist > 0)
-                                    {
-                                        value /= dist;
-                                        value /= dist;
-                                    }
-
-                                    if (value >= bestValue)
-                                    {
-                                        bestResource = resource;
-                                        bestValue = value;
-                                    }
-
-                                    ResourceTarget = bestResource;
-
-                                }
-
-                                if (ResourceTarget == null)
-                                {
-                                    FindPath(level.TileAt(Random.Range(0, level.dimensions.x), Random.Range(0, level.dimensions.y)));
-                                }
-                                else if (ResourceTarget.CurrentTile != currentTile)
-                                {
-                                    FindPath(ResourceTarget.CurrentTile);
-                                }
-                            }
-                            else
-                            {
-                                PathAdvance();
-                            }
-
-
-
-                            // Perform eating if hungry
-                            if (ResourceTarget != null)
-                            {
-                                if (ResourceTarget.CurrentTile == currentTile && ResourceTarget.Amount > 0)
-                                {
-                                    Eat(ResourceTarget);
-                                }
-                            }
-                        }
+                        FindFood();
                     }
 
                     Observe();
@@ -310,25 +389,37 @@ namespace Sandbox
         /// <returns>End of the path.</returns>
         public bool PathAdvance()
         {
-            if (currentPath == null || currentPath.Count == 0)
+            if (CurrentPath == null || CurrentPath.Count == 0)
             {
                 return true;
             }
             // Get the next tile
-            Tile nextTile = UtilityFunctions.Pop<Tile>(currentPath);
+            Tile nextTile = UtilityFunctions.Pop<Tile>(CurrentPath);
             // Calculate movement cost
-            float movementCost = GetMovementCost(currentTile, nextTile);
+            float movementCost = GetMovementCost(CurrentTile, nextTile);
 
             // Advance to next tile
             MoveToTile(nextTile);
             // Reduce energy after moving
             Energy -= movementCost;
 
+            // Attack immediately if hunt target is found
+            if (HuntTarget != null && HuntTarget.CurrentTile == CurrentTile)
+            {
+                PerformBestAttack(HuntTarget, false, true);
+                HuntTarget.PerformBestAttack(this, true, true);
+                CurrentPath = null;
+                return true;
+            }
+
             // Return true if actor is now at the end of the path
-            return currentPath.Count == 0;
+            return CurrentPath.Count == 0;
         }
-        public void PerformAttack(Attack attack, Actor target, bool log = false)
+        public void PerformAttack(Attack attack, Actor target, bool retaliation = false, bool log = false)
         {
+            // Retaliation is cost less energy than normal attack
+            Energy -= 1f;
+
             if (log)
             {
                 Simulation.Log(name + "(" + Hitpoints + " hp) attacks " + target.name + "(" + target.Hitpoints + " hp) with " + attack.name + ".");
@@ -395,6 +486,26 @@ namespace Sandbox
                 {
                     Simulation.Log(attack.name + " misses.");
                 }
+            }
+        }
+
+        public void PerformBestAttack(Actor target, bool retaliation, bool log = false)
+        {
+            // Find the best attack
+            float bestDamage = 0;
+            Attack bestAttack = null;
+
+            foreach (Attack attack in actorClass.attacks)
+            {
+                float damageExpected = target.actorClass.GetAttackExpectedDamage(attack);
+                if (damageExpected >= bestDamage)
+                {
+                    bestAttack = attack;
+                }
+            }
+            if (bestAttack != null)
+            {
+                PerformAttack(bestAttack, target, retaliation, log);
             }
         }
 
@@ -481,7 +592,7 @@ namespace Sandbox
                     // Apply energy cost
                     Energy -= energyCost;
 
-                    float requiredAmount = ( Hunger / 100f * actorClass.resourceConsumption ) / actorClass.plantConsumptionEfficiency;
+                    float requiredAmount = (Hunger / 100f * actorClass.resourceConsumption) / actorClass.plantConsumptionEfficiency;
 
                     // Reduce hunger
                     float foodAmount = Mathf.Min(resource.Amount, requiredAmount);
@@ -490,7 +601,7 @@ namespace Sandbox
 
                     Hunger -= hungerReduction;
                     resource.Amount -= foodAmount;
-                    Simulation.Log(actorClass.name + " eats " + foodAmount + " units of " + resource.resourceClass.name + " at " + currentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
+                    Simulation.Log(actorClass.name + " eats " + foodAmount + " units of " + resource.resourceClass.name + " at " + CurrentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
                     foreach (Attack attack in resource.resourceClass.hazards)
                     {
                         TakeAttack(attack);
@@ -507,11 +618,10 @@ namespace Sandbox
 
                 if (energyCost < float.MaxValue)
                 {
-
                     // Apply energy cost
                     Energy -= energyCost;
 
-                    float requiredAmount = (Hunger / 100f * actorClass.resourceConsumption) / actorClass.plantConsumptionEfficiency;
+                    float requiredAmount = (Hunger / 100f * actorClass.resourceConsumption) / actorClass.meatConsumptionEfficiency;
 
                     // Reduce hunger
                     float foodAmount = Mathf.Min(actor.MeatAmount, requiredAmount);
@@ -520,7 +630,7 @@ namespace Sandbox
 
                     Hunger -= hungerReduction;
                     actor.MeatAmount -= foodAmount;
-                    Simulation.Log(actorClass.name + " eats " + foodAmount + " units of " + actor.actorClass.name + " at " + currentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
+                    Simulation.Log(actorClass.name + " eats " + foodAmount + " units of " + actor.actorClass.name + " at " + CurrentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
                 }
 
             }
@@ -532,15 +642,15 @@ namespace Sandbox
         /// <param name="targetTile"></param>
         public void MoveToTile(Tile targetTile)
         {
-            if (currentTile != null)
+            if (CurrentTile != null)
             {
                 // Remove this actor from previous tile
-                currentTile.RemoveActor(this);
+                CurrentTile.RemoveActor(this);
             }
             // Add this actor the target tile
             targetTile.AddActor(this);
             // Set current tile to target tile
-            currentTile = targetTile;
+            CurrentTile = targetTile;
         }
 
         #endregion
@@ -616,7 +726,7 @@ namespace Sandbox
             if (targetTile != null)
             {
                 // Take both start tile and target tile into account
-                float cost = actorClass.GetTerrainMovementCost(currentTile.terrain);
+                float cost = actorClass.GetTerrainMovementCost(CurrentTile.terrain);
                 cost += actorClass.GetTerrainMovementCost(targetTile.terrain);
 
                 // Add additional penalty from elevation difference
@@ -631,6 +741,40 @@ namespace Sandbox
             return float.MaxValue;
 
         }
+
+        public float GetMovementCostRisk(Tile startTile, Tile targetTile)
+        {
+            float cost = GetMovementCost(startTile, targetTile);
+
+            float totalRisk = 0;
+            // Terrain risk
+            foreach (Attack attack in targetTile.terrain.hazards)
+            {
+                totalRisk += actorClass.GetAttackExpectedDamage(attack);
+            }
+
+            totalRisk /= actorClass.maxHitpoints;
+
+            // Hunter risk
+            foreach (Actor actor in ActorMemory.Keys)
+            {
+                float dist = Vector2.Distance(targetTile.position, actor.CurrentTile.position);
+
+                // Only increase risk if hunter is nearby
+                if (dist < 5)
+                {
+                    Memory mem = ActorMemory[actor];
+
+                    // Reduced risk if actor is far away or prefers plants
+                    float actorRisk = mem.Risk / (1 + dist * 0.2f) * actor.actorClass.Predatory;
+
+                    totalRisk += actorRisk;
+                }
+
+            }
+            return cost * (1 + totalRisk);
+
+        }
         /// <summary>
         /// Get estimated cost from current tile to target tile using manhattan distance.
         /// </summary>
@@ -641,7 +785,7 @@ namespace Sandbox
             // Use manhattan distance for estimation
             float estimatedDistance = Mathf.Abs(targetTile.position.x - startTile.position.x) + Mathf.Abs(targetTile.position.y - startTile.position.y);
 
-            float estimatedCost = estimatedDistance / actorClass.speed;
+            float estimatedCost = estimatedDistance;
 
             return estimatedCost;
         }
@@ -679,8 +823,62 @@ namespace Sandbox
 
         public void FindPath(Tile targetTile)
         {
-            List<Tile> path = pathfinder.FindPath(currentTile, targetTile);
-            currentPath = path;
+            List<Tile> path = pathfinder.FindPath(CurrentTile, targetTile);
+            CurrentPath = path;
+        }
+
+        public override string ToString()
+        {
+            string info = name;
+            if (Hitpoints > 0)
+            {
+                info += "\nState: " + state + "\n";
+                info += "Hitpoints: " + Mathf.Ceil(Hitpoints) + "/" + actorClass.maxHitpoints +
+                    "\nAge: " + Mathf.Ceil(Age) +
+                    "\nHunger: " + Mathf.Ceil(Hunger) +
+                    "\nEnergy: " + Energy +
+                    "\nVisibility: " + actorClass.GetVisibilityValue(CurrentTile.terrain);
+
+                info += "\nResistances: \n";
+                // Find every resistance
+                foreach (DamageTypes dmgType in actorClass.resistances.Keys)
+                {
+                    float value = Mathf.Floor(actorClass.resistances[dmgType] * 100);
+                    string text = dmgType.ToString() + ": " + value + "%\n";
+
+                    info += text;
+                }
+
+                if (ResourceTarget != null)
+                {
+                    info += "\nResource target: " + ResourceTarget.resourceClass.name;
+                }
+                if (HuntTarget != null)
+                {
+                    info += "\nHunt target: " + HuntTarget.actorClass.name;
+                }
+
+                info += "\n\nMemories:";
+                // Go through every memory
+                foreach (Resource resourceMemory in ResourceMemory.Keys)
+                {
+                    Memory mem = ResourceMemory[resourceMemory];
+                    info += "\n" + resourceMemory.resourceClass.name + "  Val: " + mem.Value + ", Risk: " + mem.Risk + ", T: " + mem.Time;
+                }
+
+                foreach (Actor actorMemory in ActorMemory.Keys)
+                {
+                    Memory mem = ActorMemory[actorMemory];
+                    info += "\n" + actorMemory.actorClass.name + "  Val: " + mem.Value + ", Risk: " + mem.Risk + ", T: " + mem.Time;
+                }
+            }
+            else
+            {
+                info += "Hitpoints: " + Mathf.Ceil(Hitpoints) + "/" + actorClass.maxHitpoints +
+                    "\nAge: " + Mathf.Ceil(Age) +
+                    "\nMeat amount: " + MeatAmount;
+            }
+            return info;
         }
 
     }
@@ -704,7 +902,7 @@ namespace Sandbox
         public Memory(Entity subject, float value, float risk, int time)
         {
             this.Subject = subject;
-            Tile = subject.currentTile;
+            Tile = subject.CurrentTile;
             this.Value = value;
             this.Risk = risk;
             this.Time = time;

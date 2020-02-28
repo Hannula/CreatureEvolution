@@ -2,38 +2,39 @@
     "name": "Crocodile",
     "baseColor": {
         "r": 0.35,
-        "g": 0.7,
+        "g": 0.6,
         "b": 0.4,
         "a": 1.0
     },
     "patternColor": {
         "r": 0.35,
-        "g": 0.7,
+        "g": 0.6,
         "b": 0.4,
         "a": 0
     },
     "maxHitpoints": 120,
-    "speed": 15,
+    "speed": 10,
     "evasion": 30,
     "size": 7,
-    "meatAmount" : 13,
+    "meatAmount" : 30,
     "resistances":[
     ],
-    "height" : 1,
-    "swimmingSpeed" : 15,
-    "softLandNavigation" : 8,
+    "height" : 0.9,
+    "swimmingSpeed" : 18,
+    "softLandNavigation" : 12,
     "ruggedLandNavigation" : 1,
-    "crampedNavigation" : 4,
+    "crampedNavigation" : 5,
     "steepNavigation" : 0.5,
 
-    "visibility" : 2,
+    "visibility" : 1,
 
-    "visionRange" : 3,
+    "visionRange" : 3.5,
     "lightVision" : 0.8,
-    "darkVision" : 0.4,
+    "darkVision" : 0.45,
 
-    "resourceConsumption" : 10,
+    "resourceConsumption" : 7,
     "resourceConsumptionEnergyCost" : 1,
+    "meatConsumptionEfficiency" : 1,
 
     "attacks": [
         {
