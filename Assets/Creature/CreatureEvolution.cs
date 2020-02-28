@@ -9,10 +9,10 @@ public class CreatureEvolution
 {
     private int populationSize;
     private GeneticAlgorithm<CreatureChromosome> GA;
-    private List<KeyValuePair<string, Range<int>>> geneLimits;
+    private List<KeyIntRangePair> geneLimits;
     private CreatureChromosome baseChromosome;
 
-    public CreatureEvolution(int populationSize, List<KeyValuePair<string, Range<int>>> geneLimits)
+    public CreatureEvolution(int populationSize, List<KeyIntRangePair> geneLimits)
     {
         this.populationSize = populationSize;
         this.geneLimits = geneLimits;
@@ -20,13 +20,14 @@ public class CreatureEvolution
         baseChromosome = new CreatureChromosome();
         baseChromosome.Genes = new CreatureGene[Enum.GetNames(typeof(CreatureGeneKeys)).Length];
         // Add gene limits
-        foreach (KeyValuePair<string, Range<int>> geneLimit in geneLimits)
+        foreach (KeyIntRangePair geneLimit in geneLimits)
         {
             try
             {
-                //CreatureGeneKeys key = ;
-                Range<int> range = geneLimit.Value;
-
+                string key = geneLimit.Key;
+                int index = (int)Enum.Parse(typeof(CreatureGeneKeys), key);
+                baseChromosome.Genes[index] = new CreatureGene(geneLimit.Min, geneLimit.Max);
+                Simulation.Log(key + " set to " + geneLimit.Min + "-" + geneLimit.Max);
             }
             catch (Exception e)
             {
@@ -41,7 +42,7 @@ public class CreatureEvolution
         List<CreatureChromosome> initialPopulation = new List<CreatureChromosome>();
         for (int i = 0; i < populationSize; i++)
         {
-            initialPopulation.Add(CreatureChromosome.CreateRandom());
+            initialPopulation.Add(CreatureChromosome.CreateRandom(baseChromosome));
         }
 
         // GA.SetPopulation(initialPopulation);

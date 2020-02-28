@@ -18,27 +18,71 @@ namespace Sandbox
 
         }
         /// <summary>
-        /// Create new random CreatureChromosome
+        /// Create new random CreatureChromosome with gene limits from base chromosome
         /// </summary>
         /// <returns></returns>
-        public static CreatureChromosome CreateRandom()
+        public static CreatureChromosome CreateRandom(CreatureChromosome baseChromosome)
         {
-            return new CreatureChromosome();
+            CreatureChromosome chromosome = new CreatureChromosome();
+            chromosome.Genes = new CreatureGene[baseChromosome.Genes.Length];
+            for(int i = 0; i < baseChromosome.Genes.Length; i++)
+            {
+                CreatureGene baseGene = baseChromosome.Genes[i];
+                chromosome.Genes[i] = new CreatureGene(baseGene.Min, baseGene.Max);
+            }
+
+            Simulation.Log(chromosome.ToString());
+
+            return chromosome;
         }
 
+
+        public override string ToString()
+        {
+            string str = "";
+            for (int i = 0; i < Genes.Length; i++)
+            {
+                str += ((CreatureGeneKeys)i) + ":"+ Genes[i].ToString();
+
+                // Add comma if not the last one
+                if (i != Genes.Length - 1)
+                {
+                    str += ", ";
+                }
+            }
+
+            return str;
+        }
 
     }
 
     [System.Serializable]
     public struct CreatureGene
     {
-        public int Value
-        {
-            get { return Value; }
-            set { Value = Mathf.Clamp(value, Min, Max); }
+        public int Value {
+            get; private set;
         }
         public int Min { get; private set; }
         public int Max { get; private set; }
+
+        public CreatureGene(int min, int max)
+        {
+            Min = min;
+            Max = max;
+            Value = Random.Range(min, max + 1);
+        }
+
+        public CreatureGene(int value, int min, int max)
+        {
+            Value = value;
+            Min = min;
+            Max = max;
+        }
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
     }
 
     public enum CreatureGeneKeys
@@ -47,7 +91,7 @@ namespace Sandbox
         BodyWidth, // 50-200 // Body width relative to height
         Posture, // 0 for quadrupedal and 1 for bipedal 
         Skin, // 0 for hide, 1 for scales, 2 for feathers, 3 for fur
-        SkinThickess, // 1-100
+        SkinThickness, // 1-100
         HeadWidth, // 10-50
         HeadHeight, // 10-50
         HeadPosition, // 0-200 - 0=head completely inside body, 100=head completely outside, but no neck, 200=long neck

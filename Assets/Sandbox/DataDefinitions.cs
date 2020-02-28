@@ -1,6 +1,7 @@
 ﻿using Sandbox;
 using System.Collections.Generic;
 using UnityEngine;
+using Utility;
 [System.Serializable]
 public class DataDefinitions
 {
@@ -33,7 +34,8 @@ public class DataDefinitions
 
     public int PopulationSize;
 
-    public List<KeyValuePair<string, Range<int>>> GeneLimits;
+    [SerializeField]
+    public List<KeyIntRangePair> GeneLimits;
 
     public static DataDefinitions LoadFromJson(string path)
     {
@@ -59,8 +61,10 @@ public class IntStringPair
 }
 
 [System.Serializable]
-public class Range<T>
+public class KeyIntRangePair
 {
-    public T Min;
-    public T Max;
+    public string Key;
+    public int Min;
+    public int Max;
+
 }

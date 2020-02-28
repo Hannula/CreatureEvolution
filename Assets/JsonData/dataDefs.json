@@ -44,24 +44,25 @@
         {"Key" : 55, "Value" : "Flora/seaweed.json"}
     ],
 
-    "GeneLimits" : [
-        { "Key": "Size", "Value" : {"Min":1, "Max":10} },
-        { "Key": "BodyWidth", "Value" : {"Min":33, "Max":300} },
-        { "Key": "Posture", "Value" : {"Min":0, "Max":1} },
-        { "Key": "Skin", "Value" : {"Min":0, "Max":3} },
-        { "Key": "SkinThickness", "Value" : {"Min":1, "Max":100} },
-        { "Key": "HeadWidth", "Value" : {"Min":10, "Max":80} },
-        { "Key": "HeadHeight", "Value" : {"Min":10, "Max":80} },
-        { "Key": "HeadPosition", "Value" : {"Min":0, "Max":200} },
-        { "Key": "Eye Number", "Value" : {"Min":0, "Max":4} },
-        { "Key": "EyePosition", "Value" : {"Min":0, "Max":100} },
-        { "Key": "MouthSize", "Value" : {"Min":10, "Max":100} },
-        { "Key": "MouthType", "Value" : {"Min":0, "Max":3} },
-        { "Key": "EarSize", "Value" : {"Min":0, "Max":100} },
-        { "Key": "EarPosition", "Value" : {"Min":0, "Max":100} },
-        { "Key": "ForelimbLength", "Value" : {"Min":15, "Max":300} },
-        { "Key": "ForelimbThickness", "Value" : {"Min":1, "Max":50} },
-        { "Key": "HindlimbLength", "Value" : {"Min":15, "Max":300} },
-        { "Key": "HindlimbThickness", "Value" : {"Min":1, "Max":50} }
+    "GeneLimits" :
+    [
+        { "Key": "Size", "Min":1, "Max":10 },
+        { "Key": "BodyWidth", "Min":33, "Max":300},
+        { "Key": "Posture", "Min":0, "Max":1},
+        { "Key": "Skin", "Min":0, "Max":3} ,
+        { "Key": "SkinThickness", "Min":1, "Max":100} ,
+        { "Key": "HeadWidth", "Min":10, "Max":80},
+        { "Key": "HeadHeight", "Min":10, "Max":80},
+        { "Key": "HeadPosition", "Min":0, "Max":200},
+        { "Key": "EyeNumber", "Min":0, "Max":4},
+        { "Key": "EyePosition", "Min":0, "Max":100},
+        { "Key": "MouthSize", "Min":10, "Max":100},
+        { "Key": "MouthType", "Min":0, "Max":3},
+        { "Key": "EarSize", "Min":0, "Max":100},
+        { "Key": "EarPosition", "Min":0, "Max":100},
+        { "Key": "ForelimbLength", "Min":15, "Max":300},
+        { "Key": "ForelimbThickness", "Min":1, "Max":50},
+        { "Key": "HindlimbLength", "Min":15, "Max":300},
+        { "Key": "HindlimbThickness", "Min":1, "Max":50}
     ]
 }
