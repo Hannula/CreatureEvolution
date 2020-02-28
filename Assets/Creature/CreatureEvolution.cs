@@ -9,10 +9,31 @@ public class CreatureEvolution
 {
     private int populationSize;
     private GeneticAlgorithm<CreatureChromosome> GA;
+    private List<KeyValuePair<string, Range<int>>> geneLimits;
+    private CreatureChromosome baseChromosome;
 
-    public CreatureEvolution(int populationSize)
+    public CreatureEvolution(int populationSize, List<KeyValuePair<string, Range<int>>> geneLimits)
     {
         this.populationSize = populationSize;
+        this.geneLimits = geneLimits;
+
+        baseChromosome = new CreatureChromosome();
+        baseChromosome.Genes = new CreatureGene[Enum.GetNames(typeof(CreatureGeneKeys)).Length];
+        // Add gene limits
+        foreach (KeyValuePair<string, Range<int>> geneLimit in geneLimits)
+        {
+            try
+            {
+                //CreatureGeneKeys key = ;
+                Range<int> range = geneLimit.Value;
+
+            }
+            catch (Exception e)
+            {
+                Simulation.Log(e.Message);
+            }
+        }
+
         // Create a new genetic algorithm
         GA = new GeneticAlgorithm<CreatureChromosome>(populationSize, EvaluateCreatureFitness, GeneticAlgorithm<CreatureChromosome>.FitnessProportionateSelection, SinglePointCrossover, Mutate);
 

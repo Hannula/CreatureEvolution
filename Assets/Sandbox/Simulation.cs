@@ -72,7 +72,7 @@ public class Simulation : MonoBehaviour
         LoadDataDefinitions();
 
         // Create CreatureEvolution GA-handler
-        creatureEvolution = new CreatureEvolution(dataDefs.PopulationSize);
+        creatureEvolution = new CreatureEvolution(dataDefs.PopulationSize, dataDefs.GeneLimits);
 
         // Load map data
         LoadMapData(Path.Combine(projectPath, dataDefs.MapFilePath));

@@ -6,7 +6,7 @@ namespace Sandbox
     public class CreatureChromosome
     {
 
-        public List<CreatureGene> Genes { get; set; }
+        public CreatureGene[] Genes { get; set; }
 
         public static CreatureChromosome SinglePointCrossover(CreatureChromosome a, CreatureChromosome b)
         {
