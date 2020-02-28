@@ -1,4 +1,5 @@
-﻿using Sandbox;
+﻿using GA;
+using Sandbox;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -24,11 +25,13 @@ public class Simulation : MonoBehaviour
     public float roundDurationFast = 1f;
     public float roundDurationFastest = 1f;
 
+    private CreatureEvolution creatureEvolution;
+
     public bool paused = true;
 
     private void SimulateRound()
     {
-        foreach(Actor actor in level.actors)
+        foreach (Actor actor in level.actors)
         {
             bool actorDead = actor.Act();
         }
@@ -60,15 +63,6 @@ public class Simulation : MonoBehaviour
 
     public void Start()
     {
-        /*TerrainData terrain = new TerrainData();
-        string terrainString = JsonUtility.ToJson(terrain, true);
-
-        string path = Application.dataPath + "/JsonData/Terrain/test.json";
-
-        //Write some text to the test.txt file
-        StreamWriter writer = new StreamWriter(path);
-        writer.WriteLine(terrainString);
-        writer.Close();*/
 
         projectPath = Path.Combine(Application.dataPath, Path.GetDirectoryName(dataDefsPath));
 
@@ -77,8 +71,11 @@ public class Simulation : MonoBehaviour
         // Load data
         LoadDataDefinitions();
 
+        // Create CreatureEvolution GA-handler
+        creatureEvolution = new CreatureEvolution(dataDefs.PopulationSize);
+
         // Load map data
-        LoadMapData(Path.Combine(projectPath, dataDefs.mapFilePath));
+        LoadMapData(Path.Combine(projectPath, dataDefs.MapFilePath));
 
         // Load terrain
         LoadTerrainData();
@@ -100,22 +97,6 @@ public class Simulation : MonoBehaviour
 
         // Spawn resources
         SpawnResources();
-
-        /*ActorClass human = new ActorClass("Human", 100, 15, 10, 5);
-        Attack punch = new Attack("Punch", 3, new Attack.Damage(DamageTypes.Crushing, 10, 5));
-        Attack kick = new Attack("Kick", 0, new Attack.Damage(DamageTypes.Crushing, 15, 5));
-        human.AddAttacks(punch, kick);
-
-        Actor erkki = new Actor(human, "Erkki");
-        Actor pertti = new Actor(human, "Pertti");
-
-        int tries = 0;
-        while (erkki.hitpoints > 0 && pertti.hitpoints > 0 && tries < 100)
-        {
-            erkki.PerformAttack(erkki.GetRandomAttack(), pertti);
-            pertti.PerformAttack(pertti.GetRandomAttack(), erkki);
-            tries++;
-        }*/
 
         StartCoroutine(simulate());
     }
@@ -163,7 +144,7 @@ public class Simulation : MonoBehaviour
     {
         terrainData = new Dictionary<int, TerrainData>();
         // Loop through every int, path pair
-        foreach(IntStringPair keyValuePair in dataDefs.terrainDataFilePaths)
+        foreach (IntStringPair keyValuePair in dataDefs.TerrainDataFilePaths)
         {
             string path = keyValuePair.Value;
             string terrainDataJson = FileReader.ReadString(Path.Combine(projectPath, path));
@@ -180,7 +161,7 @@ public class Simulation : MonoBehaviour
     private void LoadActorClasses()
     {
         actorClasses = new Dictionary<int, ActorClass>();
-        foreach (IntStringPair keyValuePair in dataDefs.actorClassFilePaths)
+        foreach (IntStringPair keyValuePair in dataDefs.ActorClassFilePaths)
         {
             string path = keyValuePair.Value;
             string actorClassJson = FileReader.ReadString(Path.Combine(projectPath, path));
@@ -189,14 +170,14 @@ public class Simulation : MonoBehaviour
             data.Initialize();
             actorClasses[data.id] = data;
 
-            
+
         }
     }
 
     private void LoadResourceClasses()
     {
         resourceClasses = new Dictionary<int, ResourceClass>();
-        foreach (IntStringPair keyValuePair in dataDefs.resourceClassFilePaths)
+        foreach (IntStringPair keyValuePair in dataDefs.ResourceClassFilePaths)
         {
             string path = keyValuePair.Value;
             string resourceClassJson = FileReader.ReadString(Path.Combine(projectPath, path));
@@ -213,10 +194,10 @@ public class Simulation : MonoBehaviour
         level = new Level(tileGrid);
 
         // Get map layers
-        MapData.Layer terrainLayer = mapData.GetLayer(dataDefs.terrainLayerName);
-        MapData.Layer elevationLayer = mapData.GetLayer(dataDefs.elevationLayerName);
-        MapData.Layer temperatureLayer = mapData.GetLayer(dataDefs.temperatureLayerName);
-        MapData.Layer lightLayer = mapData.GetLayer(dataDefs.lightLevelLayerName);
+        MapData.Layer terrainLayer = mapData.GetLayer(dataDefs.TerrainLayerName);
+        MapData.Layer elevationLayer = mapData.GetLayer(dataDefs.ElevationLayerName);
+        MapData.Layer temperatureLayer = mapData.GetLayer(dataDefs.TemperatureLayerName);
+        MapData.Layer lightLayer = mapData.GetLayer(dataDefs.LightLevelLayerName);
 
         int i = 0;
         for (int y = 0; y < dimensions.y; y++)
@@ -227,25 +208,25 @@ public class Simulation : MonoBehaviour
 
                 int terrainIndex = terrainLayer.data[i];
                 float elevation = 0;
-                int temperature = 0;
+                float temperature = 0;
                 float lightLevel = 1;
 
                 // Try to get elevation
                 if (elevationLayer != null && elevationLayer.data[i] != 0)
                 {
-                    elevation = (elevationLayer.data[i] - dataDefs.elevationStart) * dataDefs.elevationStep;
+                    elevation = (elevationLayer.data[i] - dataDefs.ElevationStartID) * dataDefs.ElevationStep;
                 }
 
                 // Try to get temperature
                 if (temperatureLayer != null)
                 {
-                    temperature = temperatureLayer.data[i];
+                    temperature = dataDefs.TemperatureStart + (temperatureLayer.data[i] - dataDefs.TemperatureStartID) * dataDefs.TemperatureStep;
                 }
 
                 // Try to get light level
                 if (lightLayer != null)
                 {
-                    lightLevel = Mathf.Clamp((lightLayer.data[i] - dataDefs.lightLevelStart) * dataDefs.lightLevelStep, 0f, 1f);
+                    lightLevel = Mathf.Clamp((lightLayer.data[i] - dataDefs.LightLevelStartID) * dataDefs.LightLevelStep, 0f, 1f);
                 }
 
                 TerrainData terrain = terrainData[0];
@@ -265,9 +246,9 @@ public class Simulation : MonoBehaviour
 
     private void VisualizeLevel()
     {
-        for(int x = 0; x < level.dimensions.x; x++)
+        for (int x = 0; x < level.dimensions.x; x++)
         {
-            for(int y = 0; y < level.dimensions.y; y++)
+            for (int y = 0; y < level.dimensions.y; y++)
             {
                 // Create visual representation for the tile
                 Tile tile = level.TileAt(x, y);
@@ -287,7 +268,7 @@ public class Simulation : MonoBehaviour
 
     public void SpawnActors()
     {
-        MapData.Layer actorLayer = mapData.GetLayer(dataDefs.actorLayerName);
+        MapData.Layer actorLayer = mapData.GetLayer(dataDefs.ActorLayerName);
         int i = 0;
         for (int y = 0; y < level.dimensions.y; y++)
         {
@@ -300,7 +281,7 @@ public class Simulation : MonoBehaviour
                     ActorClass actorClass = actorClasses[actorClassId];
                     //Create actor
                     Tile startingTile = level.TileAt(x, y);
-                    Actor actor = new Actor(actorClass, level,dataDefs.globalHungerRate, startingTile);
+                    Actor actor = new Actor(actorClass, level, dataDefs.GlobalHungerRate, dataDefs.GlobalObservationDifficulty, dataDefs.GlobalMemoryLength, startingTile);
 
                     // Add actor to level
                     level.actors.Add(actor);
@@ -320,7 +301,7 @@ public class Simulation : MonoBehaviour
 
     public void SpawnResources()
     {
-        MapData.Layer resourceLayer = mapData.GetLayer(dataDefs.resourceLayerName);
+        MapData.Layer resourceLayer = mapData.GetLayer(dataDefs.ResourceLayerName);
         int i = 0;
         for (int y = 0; y < level.dimensions.y; y++)
         {
@@ -333,8 +314,8 @@ public class Simulation : MonoBehaviour
                     ResourceClass resourceClass = resourceClasses[resourceClassId];
                     //Create resource
                     Tile startingTile = level.TileAt(x, y);
-                    Resource resource = new Resource(resourceClass, level, dataDefs.globalResourceAmountMultiplier, startingTile);
-                    
+                    Resource resource = new Resource(resourceClass, level, dataDefs.GlobalResourceAmountMultiplier, startingTile);
+
                     // Add actor to level
                     level.resources.Add(resource);
 

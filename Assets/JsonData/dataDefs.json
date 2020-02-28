@@ -1,18 +1,25 @@
 {
-    "mapFilePath": "largeMap.json",
-    "terrainLayerName" : "Terrain",
-    "actorLayerName" : "Fauna",
-    "resourceLayerName" : "Flora",
-    "lightLevelLayerName" : "Light",
-    "elevationLayerName" : "Elevation",
-    "temperatureLayerName" : "Temperature",
-    "globalHungerRate" : 0.25,
-    "globalResourceAmountMultiplier" : 1,
-    "elevationStart" : 77,
-    "elevationStep" : 0.2,
-    "lightLevelStep" : 0.1,
-    "lightLevelStart" : 77,
-    "terrainDataFilePaths" :[ 
+    "PopulationSize": 10,
+    
+    "MapFilePath": "largeMap.json",
+    "TerrainLayerName" : "Terrain",
+    "ActorLayerName" : "Fauna",
+    "ResourceLayerName" : "Flora",
+    "LightLevelLayerName" : "Light",
+    "ElevationLayerName" : "Elevation",
+    "TemperatureLayerName" : "Temperature",
+    "GlobalHungerRate" : 0.25,
+    "GlobalResourceAmountMultiplier" : 1,
+    "GlobalObservationDifficulty" : 1,
+    "GlobalMemoryLength" : 500,
+    "ElevationStartID" : 77,
+    "ElevationStep" : 0.2,
+    "LightLevelStep" : 0.1,
+    "LightLevelStartID" : 77,
+    "TemperatureStart" : -50,
+    "TemperatureStep" : 5,
+    "TemperatureStartID" : 77,
+    "TerrainDataFilePaths" :[ 
         {"Key" : 1, "Value" : "Terrain/smoothCavernFloor.json"},
         {"Key" : 2, "Value" : "Terrain/roughCavernFloor.json"},
         {"Key" : 3, "Value" : "Terrain/difficultCavernFloor.json"},
@@ -23,17 +30,38 @@
         {"Key" : 10, "Value" : "Terrain/mud.json"},
         {"Key" : 11, "Value" : "Terrain/tallGrass.json"}
     ],
-    "actorClassFilePaths" :[
+    "ActorClassFilePaths" :[
         {"Key" : 27, "Value" : "Fauna/rat.json"},
         {"Key" : 28, "Value" : "Fauna/bear.json"},
         {"Key" : 29, "Value" : "Fauna/fish.json"},
         {"Key" : 30, "Value" : "Fauna/crocodile.json"},
         {"Key" : 31, "Value" : "Fauna/elk.json"}
     ],
-    "resourceClassFilePaths" :[
+    "ResourceClassFilePaths" :[
         {"Key" : 52, "Value" : "Flora/berryBush.json"},
         {"Key" : 53, "Value" : "Flora/fruitTree.json"},
         {"Key" : 54, "Value" : "Flora/roots.json"},
         {"Key" : 55, "Value" : "Flora/seaweed.json"}
+    ],
+
+    "GeneLimits" : [
+        { "Key": "Size", "Value" : {"Min":1, "Max":10} },
+        { "Key": "BodyWidth", "Value" : {"Min":33, "Max":300} },
+        { "Key": "Posture", "Value" : {"Min":0, "Max":1} },
+        { "Key": "Skin", "Value" : {"Min":0, "Max":3} },
+        { "Key": "SkinThickness", "Value" : {"Min":1, "Max":100} },
+        { "Key": "HeadWidth", "Value" : {"Min":10, "Max":80} },
+        { "Key": "HeadHeight", "Value" : {"Min":10, "Max":80} },
+        { "Key": "HeadPosition", "Value" : {"Min":0, "Max":200} },
+        { "Key": "Eye Number", "Value" : {"Min":0, "Max":4} },
+        { "Key": "EyePosition", "Value" : {"Min":0, "Max":100} },
+        { "Key": "MouthSize", "Value" : {"Min":10, "Max":100} },
+        { "Key": "MouthType", "Value" : {"Min":0, "Max":3} },
+        { "Key": "EarSize", "Value" : {"Min":0, "Max":100} },
+        { "Key": "EarPosition", "Value" : {"Min":0, "Max":100} },
+        { "Key": "ForelimbLength", "Value" : {"Min":15, "Max":300} },
+        { "Key": "ForelimbThickness", "Value" : {"Min":1, "Max":50} },
+        { "Key": "HindlimbLength", "Value" : {"Min":15, "Max":300} },
+        { "Key": "HindlimbThickness", "Value" : {"Min":1, "Max":50} }
     ]
 }

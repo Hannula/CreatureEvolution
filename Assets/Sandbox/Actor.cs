@@ -26,6 +26,7 @@ namespace Sandbox
         public float MeatAmount { get; set; }
 
         private int wanderArea = 10;
+        private float observationDifficulty;
         public float MemoryLength = 250f;
 
 
@@ -41,13 +42,15 @@ namespace Sandbox
         public Dictionary<Actor, Memory> ActorMemory { get; private set; }
         public Dictionary<Resource, Memory> ResourceMemory { get; private set; }
 
-        public Actor(ActorClass actorClass, Level level, float hungerRate, Tile startingTile)
+        public Actor(ActorClass actorClass, Level level, float hungerRate, float observationDifficulty, float memoryLength, Tile startingTile)
         {
             this.name = actorClass.name;
             this.actorClass = actorClass;
             this.level = level;
             Hitpoints = actorClass.maxHitpoints;
             this.hungerRate = hungerRate;
+            this.observationDifficulty = observationDifficulty;
+            MemoryLength = memoryLength;
             Hunger = 0;
             MeatAmount = actorClass.meatAmount;
 
@@ -83,20 +86,22 @@ namespace Sandbox
 
                 float distance = Vector2Int.Distance(CurrentTile.position, tile.position);
                 // Only process this tile if it's within observation radius
-                if (distance < actorClass.ObservationRange)
+                if (distance < actorClass.observationRange)
                 {
                     if (tile.actors.Count > 0 || tile.resources.Count > 0)
                     {
+                        // Linear distance falloff
+                        float distanceMultiplier = 1 - distance / actorClass.observationRange;
                         // Different senses
-                        float vision = 1 - (distance / actorClass.visionRange) * Mathf.Lerp(actorClass.darkVision, actorClass.lightVision, tile.lightLevel);
-                        float smell = 1 - (distance / actorClass.smellSenseRange);
-                        float hearing = 1 - (distance / actorClass.hearingRange);
+                        float vision = distanceMultiplier * Mathf.Lerp(actorClass.darkVision, actorClass.lightVision, tile.lightLevel);
+                        float smell = distanceMultiplier * actorClass.smellSense;
+                        float hearing = distanceMultiplier * actorClass.hearing;
 
                         float heightDifference = CurrentTile.elevation - tile.elevation;
-                        // Gain vision bonus from higher ground
-                        vision = Mathf.Clamp(vision * (1 + heightDifference * 0.1f), 0, 1f);
-                        // Gain smell bonus from lower ground
-                        smell = Mathf.Clamp(smell * (1 - heightDifference * 0.1f), 0, 1f);
+                        // Gain small vision bonus from higher ground
+                        vision = Mathf.Clamp(vision * (1 + heightDifference * 0.05f), 0, 1f);
+                        // Gain small smell bonus from lower ground
+                        smell = Mathf.Clamp(smell * (1 - heightDifference * 0.05f), 0, 1f);
 
                         // Actors
                         foreach (Actor actor in tile.actors)
@@ -105,8 +110,20 @@ namespace Sandbox
                             if (actor.actorClass != actorClass)
                             {
                                 float visibility = actor.actorClass.GetVisibilityValue(tile.terrain);
+                                float noise = actor.actorClass.GetNoiseValue(tile.terrain);
+                                // Odor is reduced if there are more actors in the same space
+                                float odor = actor.actorClass.odor / tile.actors.Count;
 
-                                if (Random.Range(0, 5f) < visibility * vision)
+                                float detectChance = visibility * vision + odor * smell + noise * hearing;
+                                // Add tracking bonus if actor is already detected lately
+                                if (ActorMemory.ContainsKey(actor))
+                                {
+                                    Memory mem = ActorMemory[actor];
+                                    float memoryAge = Age - mem.Time;
+                                    float trackingBonus = actorClass.tracking * (1 - memoryAge / MemoryLength);
+                                    detectChance *= 1 + trackingBonus;
+                                }
+                                if (Random.Range(0, observationDifficulty) < detectChance)
                                 {
                                     UpdateMemory(actor);
                                 }
@@ -146,13 +163,27 @@ namespace Sandbox
             // Find path to a random place
             if (CurrentPath == null || CurrentPath.Count == 0)
             {
-                int x = Random.Range(Mathf.Max(LevelPosition.x, wanderArea) - wanderArea,
-                            Mathf.Min(LevelPosition.x, level.dimensions.x - wanderArea) + wanderArea);
+                int tries = 20;
+                bool found = false;
+                Tile targetTile = null;
+                while (tries > 0 && !found)
+                {
+                    int x = Random.Range(Mathf.Max(LevelPosition.x, wanderArea) - wanderArea,
+                                Mathf.Min(LevelPosition.x, level.dimensions.x - wanderArea) + wanderArea);
 
-                int y = Random.Range(Mathf.Max(LevelPosition.y, wanderArea) - wanderArea,
-                            Mathf.Min(LevelPosition.y, level.dimensions.y - wanderArea) + wanderArea);
+                    int y = Random.Range(Mathf.Max(LevelPosition.y, wanderArea) - wanderArea,
+                                Mathf.Min(LevelPosition.y, level.dimensions.y - wanderArea) + wanderArea);
 
-                FindPath(level.TileAt(x, y));
+                    targetTile = level.TileAt(x, y);
+
+                    if (GetMovementCostRisk(targetTile, targetTile) < 10f / tries)
+                    {
+                        // Use this tile if movement cost is low
+                        found = true;
+                    }
+                    --tries;
+                }
+                FindPath(targetTile);
             }
             else
             {
@@ -221,6 +252,21 @@ namespace Sandbox
                     {
                         Memory mem = ActorMemory[actor];
                         float value = mem.Value;
+
+                        if (mem.Tile == CurrentTile)
+                        {
+                            // Reduce value if memory tells actor is here but it's not
+                            if (actor.CurrentTile != CurrentTile)
+                            {
+                                value = 0;
+                            }
+                            // Remove memory if actor is there but value is 0
+                            if (actor.MeatAmount <= 0)
+                            {
+                                mem.Value = 0;
+                                value = 0;
+                            }
+                        }
                         float dist = Vector2.Distance(CurrentTile.position, actor.LevelPosition);
 
                         float timeDifference = (Age - mem.Time);
@@ -417,8 +463,6 @@ namespace Sandbox
         }
         public void PerformAttack(Attack attack, Actor target, bool retaliation = false, bool log = false)
         {
-            // Retaliation is cost less energy than normal attack
-            Energy -= 1f;
 
             if (log)
             {
@@ -651,6 +695,17 @@ namespace Sandbox
             targetTile.AddActor(this);
             // Set current tile to target tile
             CurrentTile = targetTile;
+
+            // Reduce viability of memories of actors that should be here but are not
+            foreach (Actor actor in ActorMemory.Keys)
+            {
+                Memory mem = ActorMemory[actor];
+                if (mem.Tile == targetTile && actor.CurrentTile != mem.Tile)
+                {
+                    mem.Time = 0;
+                }
+            }
+
         }
 
         #endregion
@@ -725,9 +780,7 @@ namespace Sandbox
             // Base cost is based on actor class and terrain
             if (targetTile != null)
             {
-                // Take both start tile and target tile into account
-                float cost = actorClass.GetTerrainMovementCost(CurrentTile.terrain);
-                cost += actorClass.GetTerrainMovementCost(targetTile.terrain);
+                float cost = actorClass.GetTerrainMovementCost(targetTile.terrain);
 
                 // Add additional penalty from elevation difference
                 float elevationDifference = targetTile.elevation - startTile.elevation;
@@ -736,6 +789,19 @@ namespace Sandbox
                     // Target tile is higher
                     cost *= 1 + (elevationDifference / actorClass.steepNavigation);
                 }
+
+                // Temperature penalty
+                float temperaturePenalty = 0;
+                if (targetTile.temperature < actorClass.coldLimit)
+                {
+                    temperaturePenalty = Mathf.Abs(targetTile.temperature - actorClass.coldLimit);
+                }
+                else if (targetTile.temperature > actorClass.heatLimit)
+                {
+                    temperaturePenalty = targetTile.temperature - actorClass.heatLimit;
+                }
+
+                cost *= 1 + temperaturePenalty * 0.1f;
                 return cost;
             }
             return float.MaxValue;
@@ -895,8 +961,8 @@ namespace Sandbox
         // Memory of a certain entity in certain place at certain time
         public Entity Subject { get; private set; }
         public Tile Tile { get; private set; }
-        public int Time { get; private set; }
-        public float Value { get; private set; }
+        public int Time { get; set; }
+        public float Value { get; set; }
         public float Risk { get; private set; }
 
         public Memory(Entity subject, float value, float risk, int time)

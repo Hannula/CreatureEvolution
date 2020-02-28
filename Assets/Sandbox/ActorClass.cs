@@ -34,24 +34,27 @@ public class ActorClass
     public float climbingSpeed;
     public float divingSkill;
 
+    public float coldLimit;
+    public float heatLimit;
 
     public Color baseColor;
     public Color patternColor;
     public float visibility;
     public float noise;
+    public float odor;
 
     public float meatAmount;
 
     // Observation
-    public float ObservationRange { get; private set; }
+    public float observationRange;
 
-    public float visionRange;
     public float lightVision;
     public float darkVision;
 
-    public float smellSenseRange;
+    public float smellSense;
+    public float hearing;
 
-    public float hearingRange;
+    public float tracking;
 
 
     public float height;
@@ -63,6 +66,7 @@ public class ActorClass
     private Dictionary<Attack, float> expectedAttackDamages;
     private Dictionary<ActorClass, float> expectedActorClassDamages;
     private Dictionary<TerrainData, float> visibilityValues;
+    private Dictionary<TerrainData, float> noiseValues;
 
     public float Predatory { get; private set; }
 
@@ -93,9 +97,6 @@ public class ActorClass
         {
             Predatory = 1f;
         }
-
-        // Observation range
-        ObservationRange = Mathf.Max(visionRange, smellSenseRange, hearingRange);
 
         // Resistances
         ParseResistances();
@@ -369,6 +370,7 @@ public class ActorClass
     }
     #endregion
 
+    #region Detection
     public float GetVisibilityValue(TerrainData targetTerrain)
     {
         if (visibilityValues == null)
@@ -383,8 +385,8 @@ public class ActorClass
         }
         else
         {
-            // Visibility is increased with size
-            float terrainVisibility = visibility * size * 0.33f;
+            // Visibility is calculated from actor visibility, terrain cover and camouflage
+            float terrainVisibility = visibility;
 
             terrainVisibility /= 1 + targetTerrain.cover;
 
@@ -400,13 +402,37 @@ public class ActorClass
             terrainVisibility *= 0.35f + (0.65f * Vector3.Distance(baseColorVec, groundColorVec) + Vector3.Distance(patternColorVec, groundSecondaryColorVec));
 
             // Save visibility for this terrain type
-            terrainVisibility = Mathf.Clamp(terrainVisibility, 0.05f, 1f);
+            terrainVisibility = Mathf.Max(terrainVisibility, 0.05f);
             visibilityValues[targetTerrain] = terrainVisibility;
             return terrainVisibility;
         }
     }
 
+    public float GetNoiseValue(TerrainData targetTerrain)
+    {
+        if (noiseValues == null)
+        {
+            // Create new dictionary if it doesn't exist
+            noiseValues = new Dictionary<TerrainData, float>();
+        }
+        // Try to find noise from dictionary
+        if (noiseValues.ContainsKey(targetTerrain))
+        {
+            return noiseValues[targetTerrain];
+        }
+        else
+        {
+            // Noise is terrain noise multiplied by actor noise
+            float terrainNoise = targetTerrain.noise * noise;
 
+            terrainNoise = Mathf.Max(terrainNoise, 0.05f);
+
+            // Save noise for this terrain type
+            noiseValues[targetTerrain] = terrainNoise;
+            return terrainNoise;
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]

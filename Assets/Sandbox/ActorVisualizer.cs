@@ -82,19 +82,21 @@ public class ActorVisualizer : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
-        if (actor.CurrentPath != null && actor.Hitpoints > 0 && showPath)
-        {
-            Vector3 prev = transform.position;
-            foreach (Tile t in actor.CurrentPath)
-            {
-                Vector3 next = new Vector3(t.position.x, -t.position.y, -t.elevation - 1f);
-                Gizmos.DrawLine(prev, next);
-                prev = next;
-            }
-        }
         if (inspector && inspector.selectedActor == actor)
         {
+            Gizmos.color = Color.green;
+            if (actor.CurrentPath != null && actor.Hitpoints > 0 && showPath)
+            {
+                Vector3 prev = transform.position;
+                foreach (Tile t in actor.CurrentPath)
+                {
+                    Vector3 next = new Vector3(t.position.x, -t.position.y, -t.elevation - 1f);
+                    Gizmos.DrawLine(prev, next);
+                    Gizmos.DrawSphere(prev, 0.1f);
+                    prev = next;
+                }
+            }
+
             Gizmos.DrawWireCube(transform.position, Vector3.one * 0.75f);
             if (showMemory)
             {
@@ -106,7 +108,7 @@ public class ActorVisualizer : MonoBehaviour
                     {
                         float colorValue = age / actor.MemoryLength;
                         Gizmos.color = new Color(1, 1 - colorValue, 0);
-                        Gizmos.DrawLine(new Vector3(mem.Tile.position.x, -mem.Tile.position.y, -2f), new Vector3(a.LevelPosition.x, -a.LevelPosition.y, -2f));
+                        Gizmos.DrawLine(new Vector3(mem.Tile.position.x, -mem.Tile.position.y, -1f), new Vector3(a.LevelPosition.x, -a.LevelPosition.y, -1f));
                     }
                 }
             }

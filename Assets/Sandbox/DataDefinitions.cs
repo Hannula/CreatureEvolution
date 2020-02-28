@@ -1,29 +1,39 @@
-﻿using System.Collections;
+﻿using Sandbox;
 using System.Collections.Generic;
 using UnityEngine;
 [System.Serializable]
 public class DataDefinitions
 {
-    public string mapFilePath;
-    public List<IntStringPair> terrainDataFilePaths;
-    public List<IntStringPair> actorClassFilePaths;
-    public List<IntStringPair> resourceClassFilePaths;
+    public string MapFilePath;
+    public List<IntStringPair> TerrainDataFilePaths;
+    public List<IntStringPair> ActorClassFilePaths;
+    public List<IntStringPair> ResourceClassFilePaths;
 
-    public string terrainLayerName;
-    public string actorLayerName;
-    public string resourceLayerName;
-    public string lightLevelLayerName;
-    public string elevationLayerName;
-    public string temperatureLayerName;
+    public string TerrainLayerName;
+    public string ActorLayerName;
+    public string ResourceLayerName;
+    public string LightLevelLayerName;
+    public string ElevationLayerName;
+    public string TemperatureLayerName;
 
-    public float elevationStep;
-    public int elevationStart;
+    public float ElevationStep;
+    public int ElevationStartID;
 
-    public float lightLevelStep;
-    public int lightLevelStart;
+    public float LightLevelStep;
+    public int LightLevelStartID;
 
-    public float globalHungerRate;
-    public float globalResourceAmountMultiplier;
+    public int TemperatureStart;
+    public float TemperatureStep;
+    public int TemperatureStartID;
+
+    public float GlobalHungerRate;
+    public float GlobalObservationDifficulty;
+    public float GlobalResourceAmountMultiplier;
+    public float GlobalMemoryLength;
+
+    public int PopulationSize;
+
+    public List<KeyValuePair<string, Range<int>>> GeneLimits;
 
     public static DataDefinitions LoadFromJson(string path)
     {
@@ -46,4 +56,11 @@ public class IntStringPair
         Key = key;
         Value = value;
     }
+}
+
+[System.Serializable]
+public class Range<T>
+{
+    public T Min;
+    public T Max;
 }

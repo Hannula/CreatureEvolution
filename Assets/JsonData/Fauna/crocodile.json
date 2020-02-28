@@ -26,11 +26,19 @@
     "crampedNavigation" : 5,
     "steepNavigation" : 0.5,
 
-    "visibility" : 1,
+    "visibility" : 1.8,
 
-    "visionRange" : 3.5,
-    "lightVision" : 0.8,
-    "darkVision" : 0.45,
+    "observationRange" : 3.5,
+    "lightVision" : 0.25,
+    "darkVision" : 0.4,
+    "smellSense" : 0.6,
+    "hearing": 0.5, 
+    "odor" : 0.1,
+    "noise" : 0.25,
+    "tracking" : 2.5,
+
+    "heatLimit" : 30,
+    "coldLimit" : 5,
 
     "resourceConsumption" : 7,
     "resourceConsumptionEnergyCost" : 1,

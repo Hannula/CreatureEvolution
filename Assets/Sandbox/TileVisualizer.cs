@@ -24,9 +24,10 @@ public class TileVisualizer : MonoBehaviour
         // Draw movement cost if actor is selected
         if (inspector && inspector.selectedActor != null && tile != null && Input.GetKey(KeyCode.Tab))
         {
-            text.text = "Cost: " + inspector.selectedActor.actorClass.GetTerrainMovementCost(tile.terrain) +
-                   "\nVisibility: " + inspector.selectedActor.actorClass.GetVisibilityValue(tile.terrain) +
-                   "\nRisk: " + inspector.selectedActor.GetMovementCostRisk(tile, tile);
+            text.text = "Cost: " + inspector.selectedActor.GetMovementCost(tile, tile) +
+                    "\nCostRisk: " + inspector.selectedActor.GetMovementCostRisk(tile, tile) +
+                    "\nVisibility: " + inspector.selectedActor.actorClass.GetVisibilityValue(tile.terrain) +
+                    "\nNoise: " + inspector.selectedActor.actorClass.GetNoiseValue(tile.terrain);
         }
         if (Input.GetKeyUp(KeyCode.Tab))
         {
@@ -48,7 +49,15 @@ public class TileVisualizer : MonoBehaviour
         material.SetTextureOffset("_MainTex", offset);
         material.SetTexture("_MainTex", texture);
         float lightLevel = 0.25f + tile.lightLevel * 0.75f;
-        material.color = new Color(lightLevel, lightLevel, lightLevel, 1f);
+        float heat = tile.temperature * 0.005f;
+        if (heat > 0)
+        {
+            material.color = new Color(lightLevel, lightLevel - heat * 0.5f, lightLevel - heat, 1f);
+        }
+        else if (heat < 0)
+        {
+            material.color = new Color(lightLevel + heat, lightLevel + heat, lightLevel, 1f);
+        }
 
         backgroundMesh.material = material;
 
