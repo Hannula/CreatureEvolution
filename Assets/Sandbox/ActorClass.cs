@@ -70,12 +70,12 @@ public class ActorClass
 
     public float Predatory { get; private set; }
 
-    public ActorClass(string name, int hitpoints, int speed, int armorClass, int size, float swimming, float rugged, float soft, float cramped)
+    public ActorClass(string name, int hitpoints, int speed, int evasion, int size, float swimming, float rugged, float soft, float cramped)
     {
         this.name = name;
         maxHitpoints = hitpoints;
         this.speed = speed;
-        this.evasion = armorClass;
+        this.evasion = evasion;
         this.size = size;
         swimmingSpeed = swimming;
         ruggedLandNavigation = rugged;

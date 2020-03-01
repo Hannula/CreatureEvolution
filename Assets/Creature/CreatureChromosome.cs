@@ -54,7 +54,67 @@ namespace Sandbox
             return str;
         }
 
-    }
+
+        public ActorClass ToActorClass()
+        {
+            int size = Genes[(int)CreatureGeneKeys.Size].Value;
+            float resourceConsumption = size;
+            int hitpoints = size;
+
+            float speed = 5 + size;
+
+            int evasion = 50 - size;
+
+            float legSupport = 0;
+
+            float resourceConsumptionEnergyCost = 1;
+            float meatConsumptionEfficiency = 1;
+            float plantConsumptionEfficiency = 0;
+
+            float swimmingSpeed = 0;
+            float ruggedLandNavigation = 1;
+            float softLandNavigation = 1;
+            float crampedNavigation = 1;
+            float steepNavigation = 1;
+
+            float diggingSpeed = 0;
+            float climbingSpeed = 0;
+            float divingSkill = swimmingSpeed;
+               
+            ActorClass actorClass = new ActorClass("Creature", hitpoints, size, evasion, size, swimmingSpeed, ruggedLandNavigation, softLandNavigation, crampedNavigation);
+            actorClass.steepNavigation = steepNavigation;
+            actorClass.diggingSpeed = diggingSpeed;
+            actorClass.climbingSpeed = climbingSpeed;
+
+            actorClass.resourceConsumption = resourceConsumption;
+            actorClass.resourceConsumptionEnergyCost = resourceConsumptionEnergyCost;
+            actorClass.meatConsumptionEfficiency = meatConsumptionEfficiency;
+            actorClass.plantConsumptionEfficiency = plantConsumptionEfficiency;
+
+            actorClass.visibility = 0.5f + size * 0.25f;
+            actorClass.noise = 0;
+            actorClass.odor = 0;
+
+            actorClass.meatAmount = size * 8;
+
+            // Observation
+            actorClass.observationRange = 2;
+
+            actorClass.lightVision = 0.8f;
+            actorClass.darkVision = 0.1f;
+
+            actorClass.smellSense = 0;
+            actorClass.hearing = 0;
+
+            actorClass.tracking = 0;
+
+
+            actorClass.height = size;
+
+            return actorClass;
+        }
+
+}
 
     [System.Serializable]
     public struct CreatureGene
@@ -107,4 +167,5 @@ namespace Sandbox
         HindlimbLength, // 20-300 - 100 = BodyHeight
         HindlimbThickness, // 1-50
     }
+
 }
