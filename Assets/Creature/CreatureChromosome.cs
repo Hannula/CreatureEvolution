@@ -8,6 +8,8 @@ namespace Sandbox
 
         public CreatureGene[] Genes { get; set; }
 
+        public float fitness = float.NegativeInfinity;
+
         public static CreatureChromosome SinglePointCrossover(CreatureChromosome a, CreatureChromosome b)
         {
             throw (new System.NotImplementedException());

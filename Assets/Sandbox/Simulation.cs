@@ -19,6 +19,7 @@ public class Simulation : MonoBehaviour
     private Dictionary<int, ActorClass> actorClasses;
     private Dictionary<int, ResourceClass> resourceClasses;
     private Level level;
+    private int chromosomeIndex = 0;
 
     private float roundDuration = 1f;
     public float roundDurationNormal = 1f;
@@ -276,7 +277,14 @@ public class Simulation : MonoBehaviour
             {
                 // Get actor id from actor layer
                 int actorClassId = actorLayer.data[i];
-                if (actorClassId != 0 && actorClasses.ContainsKey(actorClassId))
+                
+                if (actorClassId == 0)
+                {
+                    // Spawn special custom actor
+                    // KESKEN!!!
+                    ActorClass evolutionActorClass;
+                }
+                else if (actorClasses.ContainsKey(actorClassId))
                 {
                     ActorClass actorClass = actorClasses[actorClassId];
                     //Create actor

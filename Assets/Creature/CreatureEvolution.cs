@@ -36,7 +36,7 @@ public class CreatureEvolution
         }
 
         // Create a new genetic algorithm
-        GA = new GeneticAlgorithm<CreatureChromosome>(populationSize, EvaluateCreatureFitness, GeneticAlgorithm<CreatureChromosome>.FitnessProportionateSelection, SinglePointCrossover, Mutate);
+        GA = new GeneticAlgorithm<CreatureChromosome>(populationSize, GetCreatureFitness, GeneticAlgorithm<CreatureChromosome>.FitnessProportionateSelection, SinglePointCrossover, Mutate);
 
         // Generate the initial population
         List<CreatureChromosome> initialPopulation = new List<CreatureChromosome>();
@@ -48,9 +48,11 @@ public class CreatureEvolution
         // GA.SetPopulation(initialPopulation);
     }
 
-    public static float EvaluateCreatureFitness(CreatureChromosome chromosome)
+
+
+    public static float GetCreatureFitness(CreatureChromosome chromosome)
     {
-        throw (new NotImplementedException());
+        return chromosome.fitness;
     }
 
     public static CreatureChromosome Mutate(CreatureChromosome x)
