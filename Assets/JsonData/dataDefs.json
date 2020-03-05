@@ -1,5 +1,5 @@
 {
-    "PopulationSize": 10,
+    "PopulationSize": 16,
     
     "MapFilePath": "largeMap.json",
     "TerrainLayerName" : "Terrain",

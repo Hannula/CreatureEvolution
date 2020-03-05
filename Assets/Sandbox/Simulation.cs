@@ -32,6 +32,8 @@ public class Simulation : MonoBehaviour
 
     private bool simulationFinished = false;
 
+    private bool simulateAll = false;
+
     private int SimulateRound()
     {
         int evolutionActorsAlive = 0;
@@ -72,6 +74,8 @@ public class Simulation : MonoBehaviour
                 if (totalAge > 0)
                 {
                     Log("Simulation finished! Total age: " + totalAge);
+                    // Set fitness value of chromosome to total age
+                    creatureChromosome.fitness = totalAge;
                     simulationFinished = true;
                 }
                 yield return new WaitForSeconds(roundDuration);
@@ -93,6 +97,7 @@ public class Simulation : MonoBehaviour
             if (totalAge > 0)
             {
                 Log("Simulation finished! Total age: " + totalAge);
+                creatureChromosome.fitness = totalAge;
                 simulationFinished = true;
             }
         }
@@ -176,8 +181,13 @@ public class Simulation : MonoBehaviour
             paused = false;
             roundDuration = 0;
         }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            // Toggle super simulation
+            simulateAll = !simulateAll;
+        }
 
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Return) || simulateAll)
         {
             // Simulate instantly
             StopCoroutine(simulate());
@@ -186,12 +196,13 @@ public class Simulation : MonoBehaviour
 
         if (simulationFinished)
         {
+            float fitness = creatureChromosome.fitness;
+            Log("Fitness value for " + creatureChromosome.Name + " is " + fitness + ".");
             creatureChromosome = creatureEvolution.GetNext();
-
             if (creatureChromosome != null)
             {
                 NewSimulation();
-
+                Log("Starting new simulation for " + creatureChromosome.Name + ".");
             }
         }
     }
@@ -337,6 +348,7 @@ public class Simulation : MonoBehaviour
         simulationFinished = false;
         ActorClass evolutionActorClass = creatureChromosome.ToActorClass();
         evolutionActorClass.id = dataDefs.EvolutionCreatureID;
+        evolutionActorClass.name = creatureChromosome.Name;
         evolutionActorClass.CreatureChromosome = creatureChromosome;
         actorClasses[dataDefs.EvolutionCreatureID] = evolutionActorClass;
 
@@ -360,6 +372,7 @@ public class Simulation : MonoBehaviour
         // Get custom actor class from chromosome
         ActorClass evolutionActorClass = creatureChromosome.ToActorClass();
         evolutionActorClass.id = dataDefs.EvolutionCreatureID;
+        evolutionActorClass.name = creatureChromosome.Name;
         evolutionActorClass.CreatureChromosome = creatureChromosome;
         actorClasses[dataDefs.EvolutionCreatureID] = evolutionActorClass;
 

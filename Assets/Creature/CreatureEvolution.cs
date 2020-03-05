@@ -4,6 +4,7 @@ using UnityEngine;
 using GA;
 using Sandbox;
 using System;
+using System.Linq;
 
 public class CreatureEvolution
 {
@@ -13,7 +14,7 @@ public class CreatureEvolution
     private CreatureChromosome baseChromosome;
     private int currentChromosomeIndex;
     private List<CreatureChromosome> population;
-
+  
     public CreatureEvolution(int populationSize, List<KeyIntRangePair> geneLimits)
     {
         this.populationSize = populationSize;
@@ -57,62 +58,69 @@ public class CreatureEvolution
 
     public static CreatureChromosome Mutate(CreatureChromosome x)
     {
-        throw (new NotImplementedException());
+        // Select a random gene to mutate
+        CreatureGene gene = x.Genes[UnityEngine.Random.Range(0, x.Genes.Length)];
+        gene.Mutate(0.5f);
+
+        return x;
     }
 
     public static CreatureChromosome SinglePointCrossover(CreatureChromosome x, CreatureChromosome y)
     {
-        throw (new NotImplementedException());
+        Simulation.Log("Combining chromosomes " + x.Name + x.fitness + " and " + y.Name + y.fitness);
+        int length = x.Genes.Length;
+        int point = UnityEngine.Random.Range(1, length - 1);
+
+        CreatureGene[] newGenes = new CreatureGene[length];
+
+        for(int i = 0; i < length; i++)
+        {
+            CreatureGene gene;
+            // Pick the gene from one of the parents
+            if (i < point)
+            {
+                // Genes before random point are taken from the first chromosome
+                gene = x.Genes[i];
+            }
+            else
+            {
+                // Genes after random point are taken from the second chromosome
+                gene = y.Genes[i];
+            }
+            // Add gene to new genes array
+            newGenes[i] = gene;
+        }
+
+        // Create new chromosome with new genes
+        CreatureChromosome newChromosome = new CreatureChromosome(newGenes);
+
+        return newChromosome;
     }
 
     public CreatureChromosome GetNext()
     {
-        if (currentChromosomeIndex < population.Count)
+        // Advance genetic algorithm when every chromosome from the current population is explored
+        if (currentChromosomeIndex >= population.Count)
         {
-            return population[currentChromosomeIndex++];
-        }
-        else
-        {
-            return null;
-        }
-    }
-}
-
-[System.Serializable]
-public struct ParameterValueRange
-{
-    public float min;
-    public float max;
-    public float baseScore;
-    public float penalty;
-    public float power;
-
-    public bool Inside(float value)
-    {
-        return value >= min && value <= max;
-    }
-
-    public float Score(float value)
-    {
-        bool inside = Inside(value);
-        float totalPenalty = Mathf.Pow(DistanceToRange(value) * penalty, power);
-
-        return baseScore - totalPenalty;
-    }
-
-    public float DistanceToRange(float value)
-    {
-        if (Inside(value))
-        {
-            return 0;
-        }
-        else
-        {
-            if (value < min)
-                return min - value;
+            if (GA.Generation == 0)
+            {
+                // Set initial population if this is the first generation
+                GA.SetPopulation(population);
+            }
             else
-                return value - max;
-        }
-    }
+            {
+                GA.CalculateFitness();
+            }
+            // Generate new generation after fitness values have been calculated
+            GA.Recombine();
 
+            // Get new generation population
+            population = GA.GetPopulation();
+            currentChromosomeIndex = 0;
+        }
+        CreatureChromosome chromosome = population[currentChromosomeIndex++];
+        chromosome.Name = "Creature " + currentChromosomeIndex + " Gen " + GA.Generation;
+        return chromosome;
+    }
 }
+

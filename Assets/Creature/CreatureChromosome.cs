@@ -5,7 +5,7 @@ namespace Sandbox
 {
     public class CreatureChromosome
     {
-
+        public string Name { get; set; }
         public CreatureGene[] Genes { get; set; }
 
         public float fitness = float.NegativeInfinity;
@@ -19,6 +19,16 @@ namespace Sandbox
         {
 
         }
+
+        /// <summary>
+        /// Create new creature chromosome with given genes
+        /// </summary>
+        /// <param name="genes"></param>
+        public CreatureChromosome(CreatureGene[] genes)
+        {
+            this.Genes = genes;
+        }
+
         /// <summary>
         /// Create new random CreatureChromosome with gene limits from base chromosome
         /// </summary>
@@ -127,11 +137,14 @@ namespace Sandbox
         public int Min { get; private set; }
         public int Max { get; private set; }
 
+        public int Range { get; private set; }
         public CreatureGene(int min, int max)
         {
             Min = min;
             Max = max;
             Value = Random.Range(min, max + 1);
+
+            Range = Max - Min;
         }
 
         public CreatureGene(int value, int min, int max)
@@ -139,6 +152,22 @@ namespace Sandbox
             Value = value;
             Min = min;
             Max = max;
+
+            Range = Max - Min;
+        }
+
+        public int RandomValue()
+        {
+            return Random.Range(Min, Max + 1);
+        }
+
+        public void Mutate(float ratio)
+        {
+            int Amount = Mathf.CeilToInt(Range * ratio);
+            int maxMutation = Mathf.Clamp(Value + Amount, Min, Max);
+            int minMutation = Mathf.Clamp(Value - Amount, Min, Max);
+
+            Value = Random.Range(minMutation, maxMutation + 1);
         }
 
         public override string ToString()

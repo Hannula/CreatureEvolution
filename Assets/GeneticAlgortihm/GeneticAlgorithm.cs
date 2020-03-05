@@ -14,7 +14,7 @@ namespace GA
 
         private int maximumGenerations;
 
-        private int generation = 0;
+        public int Generation { get; private set; }
 
         #region Delegate types
 
@@ -94,7 +94,7 @@ namespace GA
             // Finally calculate fitness
             CalculateFitnessValues(population);
 
-            generation = 0;
+            Generation = 0;
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace GA
         /// <returns></returns>
         public void RunSingleGeneration()
         {
-            Debug.Log("Generation " + generation + " has population of " + population.Count);
+            Debug.Log("Generation " + Generation + " has population of " + population.Count);
             Recombine();
             CalculateFitness();
                        
@@ -140,9 +140,10 @@ namespace GA
                 chromosome = mutator(chromosome);
 
                 population.Add(new ChromosomeFitnessPair<T>(chromosome, 1));
-
-                generation += 1;
             }
+
+
+            Generation += 1;
         }
 
         public void CalculateFitness()
