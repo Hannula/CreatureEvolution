@@ -26,8 +26,8 @@ public class TileVisualizer : MonoBehaviour
         {
             text.text = "Cost: " + inspector.selectedActor.GetMovementCost(tile, tile) +
                     "\nCostRisk: " + inspector.selectedActor.GetMovementCostRisk(tile, tile) +
-                    "\nVisibility: " + inspector.selectedActor.actorClass.GetVisibilityValue(tile.terrain) +
-                    "\nNoise: " + inspector.selectedActor.actorClass.GetNoiseValue(tile.terrain);
+                    "\nVisibility: " + inspector.selectedActor.ActorClass.GetVisibilityValue(tile.terrain) +
+                    "\nNoise: " + inspector.selectedActor.ActorClass.GetNoiseValue(tile.terrain);
         }
         if (Input.GetKeyUp(KeyCode.Tab))
         {

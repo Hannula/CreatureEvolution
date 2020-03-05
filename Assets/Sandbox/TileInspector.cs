@@ -71,7 +71,7 @@ public class TileInspector : MonoBehaviour
         // Draw actor info
         if (selectedActor != null && selectedActor.CurrentTile != null)
         {
-            actorNameText.text = selectedActor.actorClass.name + "(" + selectedActor.CurrentTile.position.x + ", " + selectedActor.CurrentTile.position.y + ")";
+            actorNameText.text = selectedActor.ActorClass.name + "(" + selectedActor.CurrentTile.position.x + ", " + selectedActor.CurrentTile.position.y + ")";
             string info = selectedActor.ToString();
 
 

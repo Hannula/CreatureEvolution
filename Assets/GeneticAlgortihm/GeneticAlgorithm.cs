@@ -113,7 +113,13 @@ namespace GA
         public void RunSingleGeneration()
         {
             Debug.Log("Generation " + generation + " has population of " + population.Count);
+            Recombine();
+            CalculateFitness();
+                       
+        }
 
+        public void Recombine()
+        {
             // Select parents
             List<ChromosomeFitnessPair<T>> parents = parentSelector(population, populationSize);
             Debug.Log("Number of parents: " + parents.Count);
@@ -134,17 +140,20 @@ namespace GA
                 chromosome = mutator(chromosome);
 
                 population.Add(new ChromosomeFitnessPair<T>(chromosome, 1));
-            }
 
-            // Mutate
+                generation += 1;
+            }
+        }
+
+        public void CalculateFitness()
+        {
+
             // Calculate fitness for each chromosome
             CalculateFitnessValues(population);
             NormalizeFitnessValues(population);
 
             // Sort by fitness
             population.Sort((x, y) => y.Fitness.CompareTo(x.Fitness));
-
-            generation += 1;
         }
 
         public List<T> GetPopulation()

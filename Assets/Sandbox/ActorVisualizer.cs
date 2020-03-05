@@ -13,10 +13,10 @@ public class ActorVisualizer : MonoBehaviour
     public MeshRenderer backgroundMesh;
     private Material material;
     public Level level;
-
+    public GameObject customMesh;
     private bool showPath;
     private bool showMemory;
-
+    private CreatureChromosome creatureChromosome;
     private TileInspector inspector;
 
     private void Start()
@@ -28,16 +28,15 @@ public class ActorVisualizer : MonoBehaviour
     {
         if (actor.Hitpoints > 0)
         {
+            transform.localScale = new Vector3(transform.localScale.x, 1, transform.localScale.z);
             UpdatePosition();
         }
         else
         {
             transform.localScale = new Vector3(transform.localScale.x, -1, transform.localScale.z);
-            if (actor.MeatAmount <= 0)
-            {
-                enabled = false;
-            }
         }
+
+        backgroundMesh.enabled = actor.MeatAmount > 0;
 
         if (Input.GetKeyDown(KeyCode.F2))
         {
@@ -51,23 +50,33 @@ public class ActorVisualizer : MonoBehaviour
 
     public void Reload()
     {
-        // Create new material
-        texture = tileset.texture;
-        material = new Material(backgroundMesh.material);
-        material.SetTextureScale("_MainTex", tileset.textureScale);
-        float texturePosition = actor.actorClass.id - 1;
-        Vector2 offset = new Vector2(
-            (texturePosition % tileset.columns) * tileset.textureScale.x,
-            1 - Mathf.Floor(texturePosition / tileset.columns) * tileset.textureScale.y - tileset.textureScale.y
-            );
 
-        material.SetTextureOffset("_MainTex", offset);
-        material.SetTexture("_MainTex", texture);
+        if (actor.ActorClass.CreatureChromosome == null)
+        {
+            // Add texture for default actors
+            // Create new material
+            texture = tileset.texture;
+            material = new Material(backgroundMesh.material);
+            material.SetTextureScale("_MainTex", tileset.textureScale);
+            float texturePosition = actor.ActorClass.id - 1;
+            Vector2 offset = new Vector2(
+                (texturePosition % tileset.columns) * tileset.textureScale.x,
+                1 - Mathf.Floor(texturePosition / tileset.columns) * tileset.textureScale.y - tileset.textureScale.y
+                );
 
-        backgroundMesh.material = material;
+            material.SetTextureOffset("_MainTex", offset);
+            material.SetTexture("_MainTex", texture);
+
+            backgroundMesh.material = material;
+        }
+        else
+        {
+            // Enable custom visuals for evolution creature
+            customMesh.SetActive(true);
+        }
 
         // Rename transform
-        transform.name = actor.actorClass.name;
+        transform.name = actor.ActorClass.name;
 
         UpdatePosition();
     }

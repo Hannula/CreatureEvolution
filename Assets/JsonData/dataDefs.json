@@ -12,6 +12,7 @@
     "GlobalResourceAmountMultiplier" : 1,
     "GlobalObservationDifficulty" : 1,
     "GlobalMemoryLength" : 500,
+    "EvolutionCreatureID": 26,
     "ElevationStartID" : 77,
     "ElevationStep" : 0.2,
     "LightLevelStep" : 0.1,

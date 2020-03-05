@@ -58,5 +58,17 @@ namespace Sandbox
             // Tile is out of bounds.
             return null;
         }
+
+        public void Reset()
+        {
+            foreach (Actor a in actors)
+            {
+                a.Reset();
+            }
+            foreach (Resource r in resources)
+            {
+                r.Reset();
+            }
+        }
     }
 }

@@ -18,8 +18,10 @@ namespace Sandbox
         private float hungerRate;
 
         public float Hitpoints { get; private set; }
-        public readonly ActorClass actorClass;
+        public ActorClass ActorClass;
         public Level level;
+
+        private Tile startingTile;
 
         public int Age { get; private set; }
 
@@ -44,28 +46,47 @@ namespace Sandbox
 
         public Actor(ActorClass actorClass, Level level, float hungerRate, float observationDifficulty, float memoryLength, Tile startingTile)
         {
-            this.name = actorClass.name;
-            this.actorClass = actorClass;
+            this.ActorClass = actorClass;
             this.level = level;
-            Hitpoints = actorClass.maxHitpoints;
+
             this.hungerRate = hungerRate;
             this.observationDifficulty = observationDifficulty;
-            MemoryLength = memoryLength;
-            Hunger = 0;
-            MeatAmount = actorClass.meatAmount;
+            this.startingTile = startingTile;
 
             // Memory
             ActorMemory = new Dictionary<Actor, Memory>();
             ResourceMemory = new Dictionary<Resource, Memory>();
-
+            MemoryLength = memoryLength;
             pathfinder = new AStar<Tile>(GetAdjacentTiles, GetMovementCostRisk, GetMovementCostEstimation);
 
+            Reset();
+
+
+        }
+
+        public void Reset()
+        {
             MoveToTile(startingTile);
+            name = ActorClass.name;
+            Hitpoints = ActorClass.maxHitpoints;
+            Hunger = 0;
+            MeatAmount = ActorClass.meatAmount;
+            Age = 0;
+            CurrentPath = null;
+            Energy = 0;
+
+            // Clear memory
+            ActorMemory.Clear();
+            ResourceMemory.Clear();
+            ResourceTarget = null;
+            HuntTarget = null;
+            state = State.wander;
+
         }
 
         public float GetHitpointRatio()
         {
-            return Hitpoints / actorClass.maxHitpoints;
+            return Hitpoints / ActorClass.maxHitpoints;
         }
 
         #region AI
@@ -86,16 +107,16 @@ namespace Sandbox
 
                 float distance = Vector2Int.Distance(CurrentTile.position, tile.position);
                 // Only process this tile if it's within observation radius
-                if (distance < actorClass.observationRange)
+                if (distance < ActorClass.observationRange)
                 {
                     if (tile.actors.Count > 0 || tile.resources.Count > 0)
                     {
                         // Linear distance falloff
-                        float distanceMultiplier = 1 - distance / actorClass.observationRange;
+                        float distanceMultiplier = 1 - distance / ActorClass.observationRange;
                         // Different senses
-                        float vision = distanceMultiplier * Mathf.Lerp(actorClass.darkVision, actorClass.lightVision, tile.lightLevel);
-                        float smell = distanceMultiplier * actorClass.smellSense;
-                        float hearing = distanceMultiplier * actorClass.hearing;
+                        float vision = distanceMultiplier * Mathf.Lerp(ActorClass.darkVision, ActorClass.lightVision, tile.lightLevel);
+                        float smell = distanceMultiplier * ActorClass.smellSense;
+                        float hearing = distanceMultiplier * ActorClass.hearing;
 
                         float heightDifference = CurrentTile.elevation - tile.elevation;
                         // Gain small vision bonus from higher ground
@@ -107,12 +128,12 @@ namespace Sandbox
                         foreach (Actor actor in tile.actors)
                         {
                             // Process every actor which is not same species
-                            if (actor.actorClass != actorClass)
+                            if (actor.ActorClass != ActorClass)
                             {
-                                float visibility = actor.actorClass.GetVisibilityValue(tile.terrain);
-                                float noise = actor.actorClass.GetNoiseValue(tile.terrain);
+                                float visibility = actor.ActorClass.GetVisibilityValue(tile.terrain);
+                                float noise = actor.ActorClass.GetNoiseValue(tile.terrain);
                                 // Odor is reduced if there are more actors in the same space
-                                float odor = actor.actorClass.odor / tile.actors.Count;
+                                float odor = actor.ActorClass.odor / tile.actors.Count;
 
                                 float detectChance = visibility * vision + odor * smell + noise * hearing;
                                 // Add tracking bonus if actor is already detected lately
@@ -120,7 +141,7 @@ namespace Sandbox
                                 {
                                     Memory mem = ActorMemory[actor];
                                     float memoryAge = Age - mem.Time;
-                                    float trackingBonus = actorClass.tracking * (1 - memoryAge / MemoryLength);
+                                    float trackingBonus = ActorClass.tracking * (1 - memoryAge / MemoryLength);
                                     detectChance *= 1 + trackingBonus;
                                 }
                                 if (Random.Range(0, observationDifficulty) < detectChance)
@@ -344,7 +365,7 @@ namespace Sandbox
                 float value = 0;
                 if (subject.MeatAmount > 0)
                 {
-                    value = Mathf.Min(actorClass.resourceConsumption, subject.MeatAmount * actorClass.meatConsumptionEfficiency);
+                    value = Mathf.Min(ActorClass.resourceConsumption, subject.MeatAmount * ActorClass.meatConsumptionEfficiency);
 
                     // Reduce value if other actor is faster
                     float energyCost = GetMovementCost(subject.CurrentTile, subject.CurrentTile);
@@ -359,12 +380,12 @@ namespace Sandbox
                 float risk = 0;
                 if (subject.Hitpoints > 0)
                 {
-                    risk = actorClass.GetActorClassRiskValues(subject.actorClass);
+                    risk = ActorClass.GetActorClassRiskValues(subject.ActorClass);
                     // Take hitpoints in to account
                     risk *= subject.GetHitpointRatio() / GetHitpointRatio();
 
                     // Risk is reduced if both actors prefer plant based food
-                    risk *= Mathf.Max(actorClass.Predatory, subject.actorClass.Predatory);
+                    risk *= Mathf.Max(ActorClass.Predatory, subject.ActorClass.Predatory);
                 }
 
 
@@ -380,8 +401,8 @@ namespace Sandbox
             }
             else
             {
-                float value = Mathf.Min(actorClass.resourceConsumption, subject.Amount * actorClass.plantConsumptionEfficiency) / EatingEnergyCost(subject);
-                float risk = actorClass.GetResourceClassRiskValues(subject.resourceClass);
+                float value = Mathf.Min(ActorClass.resourceConsumption, subject.Amount * ActorClass.plantConsumptionEfficiency) / EatingEnergyCost(subject);
+                float risk = ActorClass.GetResourceClassRiskValues(subject.resourceClass);
                 // Take hitpoints in to account
                 risk /= GetHitpointRatio();
 
@@ -404,7 +425,7 @@ namespace Sandbox
                 // Start taking damage when too hungry
                 if (Hunger > 100)
                 {
-                    Hitpoints -= actorClass.maxHitpoints * 0.01f;
+                    Hitpoints -= ActorClass.maxHitpoints * 0.01f;
                 }
 
                 if (Energy < 0)
@@ -484,7 +505,7 @@ namespace Sandbox
                 int toHit = attackRoll + attack.attackBonus;
 
                 // Compare toHit -value to target's evasion
-                if (toHit >= target.actorClass.evasion)
+                if (toHit >= target.ActorClass.evasion)
                 {
                     // Attack hits if attackRoll + attack bonus exceeds target's evasion
                     attackSuccess = true;
@@ -539,9 +560,9 @@ namespace Sandbox
             float bestDamage = 0;
             Attack bestAttack = null;
 
-            foreach (Attack attack in actorClass.attacks)
+            foreach (Attack attack in ActorClass.attacks)
             {
-                float damageExpected = target.actorClass.GetAttackExpectedDamage(attack);
+                float damageExpected = target.ActorClass.GetAttackExpectedDamage(attack);
                 if (damageExpected >= bestDamage)
                 {
                     bestAttack = attack;
@@ -575,7 +596,7 @@ namespace Sandbox
                 int toHit = attackRoll + attack.attackBonus;
 
                 // Compare toHit -value to evasion
-                if (toHit >= actorClass.evasion)
+                if (toHit >= ActorClass.evasion)
                 {
                     // Attack hits if attackRoll + attackBonus exceed evasion
                     attackSuccess = true;
@@ -636,16 +657,16 @@ namespace Sandbox
                     // Apply energy cost
                     Energy -= energyCost;
 
-                    float requiredAmount = (Hunger / 100f * actorClass.resourceConsumption) / actorClass.plantConsumptionEfficiency;
+                    float requiredAmount = (Hunger / 100f * ActorClass.resourceConsumption) / ActorClass.plantConsumptionEfficiency;
 
                     // Reduce hunger
                     float foodAmount = Mathf.Min(resource.Amount, requiredAmount);
 
-                    float hungerReduction = foodAmount / actorClass.resourceConsumption * 100;
+                    float hungerReduction = foodAmount / ActorClass.resourceConsumption * 100;
 
                     Hunger -= hungerReduction;
                     resource.Amount -= foodAmount;
-                    Simulation.Log(actorClass.name + " eats " + foodAmount + " units of " + resource.resourceClass.name + " at " + CurrentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
+                    Simulation.Log(ActorClass.name + " eats " + foodAmount + " units of " + resource.resourceClass.name + " at " + CurrentTile.position.ToString() + ". " + ActorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
                     foreach (Attack attack in resource.resourceClass.hazards)
                     {
                         TakeAttack(attack);
@@ -656,25 +677,25 @@ namespace Sandbox
         }
         public void Eat(Actor actor)
         {
-            if (actor.Hitpoints <= 0 && actor.MeatAmount > 0 && actorClass.meatConsumptionEfficiency > 0)
+            if (actor.Hitpoints <= 0 && actor.MeatAmount > 0 && ActorClass.meatConsumptionEfficiency > 0)
             {
-                float energyCost = actorClass.resourceConsumptionEnergyCost / actorClass.meatConsumptionEfficiency;
+                float energyCost = ActorClass.resourceConsumptionEnergyCost / ActorClass.meatConsumptionEfficiency;
 
                 if (energyCost < float.MaxValue)
                 {
                     // Apply energy cost
                     Energy -= energyCost;
 
-                    float requiredAmount = (Hunger / 100f * actorClass.resourceConsumption) / actorClass.meatConsumptionEfficiency;
+                    float requiredAmount = (Hunger / 100f * ActorClass.resourceConsumption) / ActorClass.meatConsumptionEfficiency;
 
                     // Reduce hunger
                     float foodAmount = Mathf.Min(actor.MeatAmount, requiredAmount);
 
-                    float hungerReduction = foodAmount / actorClass.resourceConsumption * 100;
+                    float hungerReduction = foodAmount / ActorClass.resourceConsumption * 100;
 
                     Hunger -= hungerReduction;
                     actor.MeatAmount -= foodAmount;
-                    Simulation.Log(actorClass.name + " eats " + foodAmount + " units of " + actor.actorClass.name + " at " + CurrentTile.position.ToString() + ". " + actorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
+                    Simulation.Log(ActorClass.name + " eats " + foodAmount + " units of " + actor.ActorClass.name + " at " + CurrentTile.position.ToString() + ". " + ActorClass.name + " loses " + energyCost + " energy and " + hungerReduction + " hunger.");
                 }
 
             }
@@ -713,16 +734,16 @@ namespace Sandbox
         public float EatingEnergyCost(Resource resource)
         {
             // Calculate how long eating a singe unit is going to take
-            float energyCost = actorClass.resourceConsumptionEnergyCost * resource.resourceClass.gatheringDifficulty / actorClass.plantConsumptionEfficiency;
+            float energyCost = ActorClass.resourceConsumptionEnergyCost * resource.resourceClass.gatheringDifficulty / ActorClass.plantConsumptionEfficiency;
 
             float resourceDepth = resource.resourceClass.depth;
 
             // If there is water, add diving cost
             if (resource.CurrentTile.terrain.waterDepth > 0 && resourceDepth > 0)
             {
-                if (actorClass.divingSkill > 0)
+                if (ActorClass.divingSkill > 0)
                 {
-                    energyCost += resourceDepth / actorClass.divingSkill;
+                    energyCost += resourceDepth / ActorClass.divingSkill;
                 }
                 else
                 {
@@ -732,21 +753,21 @@ namespace Sandbox
             else if (resourceDepth > 0)
             {
                 // Resource is underground, add digging cost
-                if (actorClass.diggingSpeed > 0)
+                if (ActorClass.diggingSpeed > 0)
                 {
-                    energyCost += resourceDepth / actorClass.diggingSpeed;
+                    energyCost += resourceDepth / ActorClass.diggingSpeed;
                 }
                 else
                 {
                     energyCost = float.MaxValue;
                 }
             }
-            else if (resourceDepth < -actorClass.height)
+            else if (resourceDepth < -ActorClass.height)
             {
                 // Resource is high up, add climbing cost
-                if (actorClass.climbingSpeed > 0)
+                if (ActorClass.climbingSpeed > 0)
                 {
-                    energyCost += (-resourceDepth - actorClass.height) / actorClass.climbingSpeed;
+                    energyCost += (-resourceDepth - ActorClass.height) / ActorClass.climbingSpeed;
                 }
                 else
                 {
@@ -764,12 +785,12 @@ namespace Sandbox
         public Attack GetRandomAttack()
         {
             // Pick a random attack if there are any. Otherwise default to null.
-            return Utility.UtilityFunctions.GetRandomElement(actorClass.attacks);
+            return Utility.UtilityFunctions.GetRandomElement(ActorClass.attacks);
         }
 
         public float GetResistance(DamageTypes damageType)
         {
-            return actorClass.GetResistance(damageType);
+            return ActorClass.GetResistance(damageType);
         }
 
 
@@ -780,25 +801,25 @@ namespace Sandbox
             // Base cost is based on actor class and terrain
             if (targetTile != null)
             {
-                float cost = actorClass.GetTerrainMovementCost(targetTile.terrain);
+                float cost = ActorClass.GetTerrainMovementCost(targetTile.terrain);
 
                 // Add additional penalty from elevation difference
                 float elevationDifference = targetTile.elevation - startTile.elevation;
                 if (elevationDifference > 0)
                 {
                     // Target tile is higher
-                    cost *= 1 + (elevationDifference / actorClass.steepNavigation);
+                    cost *= 1 + (elevationDifference / ActorClass.steepNavigation);
                 }
 
                 // Temperature penalty
                 float temperaturePenalty = 0;
-                if (targetTile.temperature < actorClass.coldLimit)
+                if (targetTile.temperature < ActorClass.coldLimit)
                 {
-                    temperaturePenalty = Mathf.Abs(targetTile.temperature - actorClass.coldLimit);
+                    temperaturePenalty = Mathf.Abs(targetTile.temperature - ActorClass.coldLimit);
                 }
-                else if (targetTile.temperature > actorClass.heatLimit)
+                else if (targetTile.temperature > ActorClass.heatLimit)
                 {
-                    temperaturePenalty = targetTile.temperature - actorClass.heatLimit;
+                    temperaturePenalty = targetTile.temperature - ActorClass.heatLimit;
                 }
 
                 cost *= 1 + temperaturePenalty * 0.1f;
@@ -816,10 +837,10 @@ namespace Sandbox
             // Terrain risk
             foreach (Attack attack in targetTile.terrain.hazards)
             {
-                totalRisk += actorClass.GetAttackExpectedDamage(attack);
+                totalRisk += ActorClass.GetAttackExpectedDamage(attack);
             }
 
-            totalRisk /= actorClass.maxHitpoints;
+            totalRisk /= ActorClass.maxHitpoints;
 
             // Hunter risk
             foreach (Actor actor in ActorMemory.Keys)
@@ -832,7 +853,7 @@ namespace Sandbox
                     Memory mem = ActorMemory[actor];
 
                     // Reduced risk if actor is far away or prefers plants
-                    float actorRisk = mem.Risk / (1 + dist * 0.2f) * actor.actorClass.Predatory;
+                    float actorRisk = mem.Risk / (1 + dist * 0.2f) * actor.ActorClass.Predatory;
 
                     totalRisk += actorRisk;
                 }
@@ -867,19 +888,19 @@ namespace Sandbox
             Tile downTile = level.TileAt(tile.position.x, tile.position.y + 1);
 
             // Add tiles if they exists and are traversable
-            if (leftTile != null && actorClass.IsPassable(leftTile.terrain))
+            if (leftTile != null && ActorClass.IsPassable(leftTile.terrain))
             {
                 adjacentTiles.Add(leftTile);
             }
-            if (rightTile != null && actorClass.IsPassable(rightTile.terrain))
+            if (rightTile != null && ActorClass.IsPassable(rightTile.terrain))
             {
                 adjacentTiles.Add(rightTile);
             }
-            if (upTile != null && actorClass.IsPassable(upTile.terrain))
+            if (upTile != null && ActorClass.IsPassable(upTile.terrain))
             {
                 adjacentTiles.Add(upTile);
             }
-            if (downTile != null && actorClass.IsPassable(downTile.terrain))
+            if (downTile != null && ActorClass.IsPassable(downTile.terrain))
             {
                 adjacentTiles.Add(downTile);
             }
@@ -899,17 +920,17 @@ namespace Sandbox
             if (Hitpoints > 0)
             {
                 info += "\nState: " + state + "\n";
-                info += "Hitpoints: " + Mathf.Ceil(Hitpoints) + "/" + actorClass.maxHitpoints +
+                info += "Hitpoints: " + Mathf.Ceil(Hitpoints) + "/" + ActorClass.maxHitpoints +
                     "\nAge: " + Mathf.Ceil(Age) +
                     "\nHunger: " + Mathf.Ceil(Hunger) +
                     "\nEnergy: " + Energy +
-                    "\nVisibility: " + actorClass.GetVisibilityValue(CurrentTile.terrain);
+                    "\nVisibility: " + ActorClass.GetVisibilityValue(CurrentTile.terrain);
 
                 info += "\nResistances: \n";
                 // Find every resistance
-                foreach (DamageTypes dmgType in actorClass.resistances.Keys)
+                foreach (DamageTypes dmgType in ActorClass.resistances.Keys)
                 {
-                    float value = Mathf.Floor(actorClass.resistances[dmgType] * 100);
+                    float value = Mathf.Floor(ActorClass.resistances[dmgType] * 100);
                     string text = dmgType.ToString() + ": " + value + "%\n";
 
                     info += text;
@@ -921,7 +942,7 @@ namespace Sandbox
                 }
                 if (HuntTarget != null)
                 {
-                    info += "\nHunt target: " + HuntTarget.actorClass.name;
+                    info += "\nHunt target: " + HuntTarget.ActorClass.name;
                 }
 
                 info += "\n\nMemories:";
@@ -935,12 +956,12 @@ namespace Sandbox
                 foreach (Actor actorMemory in ActorMemory.Keys)
                 {
                     Memory mem = ActorMemory[actorMemory];
-                    info += "\n" + actorMemory.actorClass.name + "  Val: " + mem.Value + ", Risk: " + mem.Risk + ", T: " + mem.Time;
+                    info += "\n" + actorMemory.ActorClass.name + "  Val: " + mem.Value + ", Risk: " + mem.Risk + ", T: " + mem.Time;
                 }
             }
             else
             {
-                info += "Hitpoints: " + Mathf.Ceil(Hitpoints) + "/" + actorClass.maxHitpoints +
+                info += "Hitpoints: " + Mathf.Ceil(Hitpoints) + "/" + ActorClass.maxHitpoints +
                     "\nAge: " + Mathf.Ceil(Age) +
                     "\nMeat amount: " + MeatAmount;
             }

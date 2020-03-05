@@ -160,6 +160,7 @@ MonoBehaviour:
     state: 0
   texture: {fileID: 0}
   backgroundMesh: {fileID: 9040193817167200491}
+  customMesh: {fileID: 2807447810596997808}
 --- !u!114 &1988084103638824633
 MonoBehaviour:
   m_ObjectHideFlags: 0

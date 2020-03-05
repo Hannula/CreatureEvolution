@@ -11,6 +11,8 @@ public class CreatureEvolution
     private GeneticAlgorithm<CreatureChromosome> GA;
     private List<KeyIntRangePair> geneLimits;
     private CreatureChromosome baseChromosome;
+    private int currentChromosomeIndex;
+    private List<CreatureChromosome> population;
 
     public CreatureEvolution(int populationSize, List<KeyIntRangePair> geneLimits)
     {
@@ -39,13 +41,11 @@ public class CreatureEvolution
         GA = new GeneticAlgorithm<CreatureChromosome>(populationSize, GetCreatureFitness, GeneticAlgorithm<CreatureChromosome>.FitnessProportionateSelection, SinglePointCrossover, Mutate);
 
         // Generate the initial population
-        List<CreatureChromosome> initialPopulation = new List<CreatureChromosome>();
+        population = new List<CreatureChromosome>();
         for (int i = 0; i < populationSize; i++)
         {
-            initialPopulation.Add(CreatureChromosome.CreateRandom(baseChromosome));
+            population.Add(CreatureChromosome.CreateRandom(baseChromosome));
         }
-
-        // GA.SetPopulation(initialPopulation);
     }
 
 
@@ -63,6 +63,18 @@ public class CreatureEvolution
     public static CreatureChromosome SinglePointCrossover(CreatureChromosome x, CreatureChromosome y)
     {
         throw (new NotImplementedException());
+    }
+
+    public CreatureChromosome GetNext()
+    {
+        if (currentChromosomeIndex < population.Count)
+        {
+            return population[currentChromosomeIndex++];
+        }
+        else
+        {
+            return null;
+        }
     }
 }
 

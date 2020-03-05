@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sandbox;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class ActorClass
 {
     public string name;
     public int id;
+
+    public CreatureChromosome CreatureChromosome { get; set; }
 
     public float maxHitpoints;
     public float speed;

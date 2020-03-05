@@ -7,24 +7,30 @@ namespace Sandbox
     public class Resource : Entity
     {
         public string Name { get; private set; }
-
-        public Tile CurrentTile { get; private set; }
         public float Amount { get; set; }
 
         public float HitPoints { get; private set; }
         public readonly ResourceClass resourceClass;
         private Level level;
 
+        private float amountMultiplier;
+
         public Resource(ResourceClass resourceClass, Level level, float amount, Tile startingTile, string name = "Resource")
         {
             this.Name = name;
             this.resourceClass = resourceClass;
             this.level = level;
-            this.Amount = resourceClass.plantAmount * amount;
+            amountMultiplier = amount;
+            this.Amount = resourceClass.plantAmount * amountMultiplier;
 
             base.CurrentTile = startingTile;
 
             MoveToTile(startingTile);
+        }
+
+        public void Reset()
+        {
+            Amount = resourceClass.plantAmount * amountMultiplier;
         }
 
         public void MoveToTile(Tile targetTile)

@@ -22,8 +22,8 @@ public class ActorPanelManager : MonoBehaviour
     }
     void Update()
     {
-        actorNameText.text = actor.actorClass.name + "(" + actor.CurrentTile.position.x + ", " + actor.CurrentTile.position.y + ")";
-        actorInfoText.text = "Hitpoints: " + Mathf.Ceil(actor.Hitpoints) + "/" + actor.actorClass.maxHitpoints +
+        actorNameText.text = actor.ActorClass.name + "(" + actor.CurrentTile.position.x + ", " + actor.CurrentTile.position.y + ")";
+        actorInfoText.text = "Hitpoints: " + Mathf.Ceil(actor.Hitpoints) + "/" + actor.ActorClass.maxHitpoints +
             "\nHunger: " + Mathf.Ceil(actor.Hunger) +
             "\nEnergy: " + actor.Energy;
     }

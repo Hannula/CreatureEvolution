@@ -19,7 +19,7 @@ public class Simulation : MonoBehaviour
     private Dictionary<int, ActorClass> actorClasses;
     private Dictionary<int, ResourceClass> resourceClasses;
     private Level level;
-    private int chromosomeIndex = 0;
+    private CreatureChromosome creatureChromosome;
 
     private float roundDuration = 1f;
     public float roundDurationNormal = 1f;
@@ -30,21 +30,50 @@ public class Simulation : MonoBehaviour
 
     public bool paused = true;
 
-    private void SimulateRound()
+    private bool simulationFinished = false;
+
+    private int SimulateRound()
     {
+        int evolutionActorsAlive = 0;
+        int totalAge = 0;
         foreach (Actor actor in level.actors)
         {
-            bool actorDead = actor.Act();
+            if (actor.ActorClass.id == dataDefs.EvolutionCreatureID)
+            {
+                totalAge += actor.Age;
+                if (actor.Hitpoints > 0)
+                {
+                    evolutionActorsAlive += 1;
+                }
+            }
+            actor.Act();
+        }
+
+        // Return total age if every creature is dead
+        if (evolutionActorsAlive == 0)
+        {
+            return totalAge;
+        }
+        else
+        {
+            return 0;
         }
     }
 
     IEnumerator simulate()
     {
-        while (true)
+        while (!simulationFinished)
         {
             if (!paused)
             {
-                SimulateRound();
+                int totalAge = SimulateRound();
+
+                // Stop simulation if every creature is dead
+                if (totalAge > 0)
+                {
+                    Log("Simulation finished! Total age: " + totalAge);
+                    simulationFinished = true;
+                }
                 yield return new WaitForSeconds(roundDuration);
             }
             else
@@ -53,6 +82,22 @@ public class Simulation : MonoBehaviour
             }
         }
     }
+
+    public void SimulateAll()
+    {
+        while (!simulationFinished)
+        {
+            int totalAge = SimulateRound();
+
+            // Stop simulation if every creature is dead
+            if (totalAge > 0)
+            {
+                Log("Simulation finished! Total age: " + totalAge);
+                simulationFinished = true;
+            }
+        }
+    }
+
     public static void Log(string text)
     {
         if (logger == null)
@@ -93,6 +138,8 @@ public class Simulation : MonoBehaviour
         // Create tile visualizers for the level
         VisualizeLevel();
 
+        creatureChromosome = creatureEvolution.GetNext();
+        
         // Spawn actors to the level
         SpawnActors();
 
@@ -128,6 +175,24 @@ public class Simulation : MonoBehaviour
         {
             paused = false;
             roundDuration = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            // Simulate instantly
+            StopCoroutine(simulate());
+            SimulateAll();
+        }
+
+        if (simulationFinished)
+        {
+            creatureChromosome = creatureEvolution.GetNext();
+
+            if (creatureChromosome != null)
+            {
+                NewSimulation();
+
+            }
         }
     }
     private void LoadDataDefinitions()
@@ -267,9 +332,37 @@ public class Simulation : MonoBehaviour
 
     }
 
+    public void NewSimulation()
+    {
+        simulationFinished = false;
+        ActorClass evolutionActorClass = creatureChromosome.ToActorClass();
+        evolutionActorClass.id = dataDefs.EvolutionCreatureID;
+        evolutionActorClass.CreatureChromosome = creatureChromosome;
+        actorClasses[dataDefs.EvolutionCreatureID] = evolutionActorClass;
+
+        // Replace custom actor classes with new actor classes
+        foreach (Actor a in level.actors)
+        {
+            if (a.ActorClass.id == dataDefs.EvolutionCreatureID)
+            {
+                a.ActorClass = evolutionActorClass;
+            }
+        }
+
+        // Reset level
+        level.Reset();
+    }
+
     public void SpawnActors()
     {
         MapData.Layer actorLayer = mapData.GetLayer(dataDefs.ActorLayerName);
+
+        // Get custom actor class from chromosome
+        ActorClass evolutionActorClass = creatureChromosome.ToActorClass();
+        evolutionActorClass.id = dataDefs.EvolutionCreatureID;
+        evolutionActorClass.CreatureChromosome = creatureChromosome;
+        actorClasses[dataDefs.EvolutionCreatureID] = evolutionActorClass;
+
         int i = 0;
         for (int y = 0; y < level.dimensions.y; y++)
         {
@@ -278,13 +371,7 @@ public class Simulation : MonoBehaviour
                 // Get actor id from actor layer
                 int actorClassId = actorLayer.data[i];
                 
-                if (actorClassId == 0)
-                {
-                    // Spawn special custom actor
-                    // KESKEN!!!
-                    ActorClass evolutionActorClass;
-                }
-                else if (actorClasses.ContainsKey(actorClassId))
+                if (actorClasses.ContainsKey(actorClassId))
                 {
                     ActorClass actorClass = actorClasses[actorClassId];
                     //Create actor

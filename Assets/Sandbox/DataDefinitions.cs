@@ -17,6 +17,8 @@ public class DataDefinitions
     public string ElevationLayerName;
     public string TemperatureLayerName;
 
+    public int EvolutionCreatureID;
+
     public float ElevationStep;
     public int ElevationStartID;
 
