@@ -67,7 +67,7 @@ public class CreatureEvolution
 
     public static CreatureChromosome SinglePointCrossover(CreatureChromosome x, CreatureChromosome y)
     {
-        Simulation.Log("Combining chromosomes " + x.Name + x.fitness + " and " + y.Name + y.fitness);
+        Simulation.Log("Combining chromosomes " + x.Name + " " + x.fitness + " and " + y.Name + " " + y.fitness);
         int length = x.Genes.Length;
         int point = UnityEngine.Random.Range(1, length - 1);
 

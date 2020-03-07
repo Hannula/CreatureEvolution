@@ -122,7 +122,6 @@ namespace GA
         {
             // Select parents
             List<ChromosomeFitnessPair<T>> parents = parentSelector(population, populationSize);
-            Debug.Log("Number of parents: " + parents.Count);
 
             // Crossover and mutation
             population.Clear();

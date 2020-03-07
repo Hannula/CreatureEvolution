@@ -156,11 +156,49 @@ MonoBehaviour:
   position: {x: 0, y: 0}
   actor:
     name: 
+    ActorClass:
+      name: 
+      id: 0
+      maxHitpoints: 0
+      speed: 0
+      evasion: 0
+      size: 0
+      resistanceStrings: []
+      attacks: []
+      swimmingSpeed: 0
+      ruggedLandNavigation: 0
+      softLandNavigation: 0
+      crampedNavigation: 0
+      steepNavigation: 0
+      resourceConsumption: 0
+      resourceConsumptionEnergyCost: 0
+      meatConsumptionEfficiency: 0
+      plantConsumptionEfficiency: 0
+      diggingSpeed: 0
+      climbingSpeed: 0
+      divingSkill: 0
+      coldLimit: 0
+      heatLimit: 0
+      baseColor: {r: 0, g: 0, b: 0, a: 0}
+      patternColor: {r: 0, g: 0, b: 0, a: 0}
+      visibility: 0
+      noise: 0
+      odor: 0
+      meatAmount: 0
+      observationRange: 0
+      lightVision: 0
+      darkVision: 0
+      smellSense: 0
+      hearing: 0
+      tracking: 0
+      height: 0
     MemoryLength: 0
     state: 0
   texture: {fileID: 0}
   backgroundMesh: {fileID: 9040193817167200491}
   customMesh: {fileID: 2807447810596997808}
+  bodyRenderer: {fileID: 5239595059860799639}
+  headRenderer: {fileID: 7567627155732983613}
 --- !u!114 &1988084103638824633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,6 +223,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mesh Head
       objectReference: {fileID: 0}
+    - target: {fileID: 4242822299191906882, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4242822299191906883, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4242822299191906883, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0f4f65077ee382b49bb141cce905c5ad, type: 2}
+    - target: {fileID: 4242822299191906908, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 4242822299191906909, guid: 57b124fb3439ff242aecbebe437ae3a9,
         type: 3}
       propertyPath: meshLumps.Array.data[0].radius
@@ -208,7 +266,7 @@ PrefabInstance:
     - target: {fileID: 4242822299191906910, guid: 57b124fb3439ff242aecbebe437ae3a9,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.67
       objectReference: {fileID: 0}
     - target: {fileID: 4242822299191906910, guid: 57b124fb3439ff242aecbebe437ae3a9,
         type: 3}
@@ -255,11 +313,23 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 4242822299191906910, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4242822299191906909, guid: 57b124fb3439ff242aecbebe437ae3a9, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 57b124fb3439ff242aecbebe437ae3a9, type: 3}
 --- !u!4 &7567627155732983584 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4242822299191906910, guid: 57b124fb3439ff242aecbebe437ae3a9,
+    type: 3}
+  m_PrefabInstance: {fileID: 6044979325824990590}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &7567627155732983613 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4242822299191906883, guid: 57b124fb3439ff242aecbebe437ae3a9,
     type: 3}
   m_PrefabInstance: {fileID: 6044979325824990590}
   m_PrefabAsset: {fileID: 0}
@@ -275,10 +345,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mesh Body
       objectReference: {fileID: 0}
+    - target: {fileID: 4242822299191906883, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4242822299191906883, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0f4f65077ee382b49bb141cce905c5ad, type: 2}
+    - target: {fileID: 4242822299191906908, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 4242822299191906909, guid: 57b124fb3439ff242aecbebe437ae3a9,
         type: 3}
       propertyPath: meshLumps.Array.data[0].radius
       value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4242822299191906909, guid: 57b124fb3439ff242aecbebe437ae3a9,
+        type: 3}
+      propertyPath: steps
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4242822299191906910, guid: 57b124fb3439ff242aecbebe437ae3a9,
         type: 3}
@@ -335,11 +425,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4242822299191906909, guid: 57b124fb3439ff242aecbebe437ae3a9, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 57b124fb3439ff242aecbebe437ae3a9, type: 3}
 --- !u!4 &5239595059860799626 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4242822299191906910, guid: 57b124fb3439ff242aecbebe437ae3a9,
+    type: 3}
+  m_PrefabInstance: {fileID: 8239141542813864660}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &5239595059860799639 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4242822299191906883, guid: 57b124fb3439ff242aecbebe437ae3a9,
     type: 3}
   m_PrefabInstance: {fileID: 8239141542813864660}
   m_PrefabAsset: {fileID: 0}

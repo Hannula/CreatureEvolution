@@ -161,25 +161,29 @@ public class Simulation : MonoBehaviour
             paused = !paused;
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKey(KeyCode.Alpha1))
         {
             paused = false;
             roundDuration = roundDurationNormal;
+            simulateAll = false;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKey(KeyCode.Alpha2))
         {
             paused = false;
             roundDuration = roundDurationFast;
+            simulateAll = false;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (Input.GetKey(KeyCode.Alpha3))
         {
             paused = false;
             roundDuration = roundDurationFastest;
+            simulateAll = false;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
+        if (Input.GetKey(KeyCode.Alpha4))
         {
             paused = false;
             roundDuration = 0;
+            simulateAll = false;
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
@@ -359,6 +363,12 @@ public class Simulation : MonoBehaviour
             {
                 a.ActorClass = evolutionActorClass;
             }
+        }
+
+        foreach(ActorVisualizer actorVisualizer in FindObjectsOfType<ActorVisualizer>())
+        {
+            // Update every actor visualizer
+            actorVisualizer.Reload();
         }
 
         // Reset level

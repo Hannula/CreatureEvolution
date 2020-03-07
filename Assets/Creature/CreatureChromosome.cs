@@ -69,7 +69,7 @@ namespace Sandbox
 
         public ActorClass ToActorClass()
         {
-            int size = Genes[(int)CreatureGeneKeys.Size].Value;
+            int size = GetGeneValue(CreatureGeneKeys.Size);
             float resourceConsumption = size;
             int hitpoints = size;
 
@@ -123,10 +123,28 @@ namespace Sandbox
 
             actorClass.height = size;
 
+            // Base color and pattern color
+            actorClass.baseColor = new Color(GetGeneRatio(CreatureGeneKeys.BaseColorRed), GetGeneRatio(CreatureGeneKeys.BaseColorGreen), GetGeneRatio(CreatureGeneKeys.BaseColorBlue));
+            actorClass.patternColor = new Color(GetGeneRatio(CreatureGeneKeys.PatternColorRed), GetGeneRatio(CreatureGeneKeys.PatternColorGreen), GetGeneRatio(CreatureGeneKeys.PatternColorBlue));
+
+
             return actorClass;
         }
 
-}
+        public int GetGeneValue(CreatureGeneKeys geneKey)
+        {
+            int index = (int)geneKey;
+
+            return Genes[index].Value;
+        }
+
+        public float GetGeneRatio(CreatureGeneKeys geneKey)
+        {
+            int index = (int)geneKey;
+
+            return Genes[index].Ratio;
+        }
+    }
 
     [System.Serializable]
     public struct CreatureGene
@@ -134,6 +152,8 @@ namespace Sandbox
         public int Value {
             get; private set;
         }
+
+        public float Ratio { get; private set; }
         public int Min { get; private set; }
         public int Max { get; private set; }
 
@@ -145,6 +165,14 @@ namespace Sandbox
             Value = Random.Range(min, max + 1);
 
             Range = Max - Min;
+            if (Range == 0)
+            {
+                Ratio = 1;
+            }
+            else
+            {
+                Ratio = (Value - Min) / Range;
+            }
         }
 
         public CreatureGene(int value, int min, int max)
@@ -154,6 +182,15 @@ namespace Sandbox
             Max = max;
 
             Range = Max - Min;
+
+            if (Range == 0)
+            {
+                Ratio = 1;
+            }
+            else
+            {
+                Ratio = (Value - Min) / Range;
+            }
         }
 
         public int RandomValue()
@@ -197,6 +234,12 @@ namespace Sandbox
         ForelimbThickness, // 1-50
         HindlimbLength, // 20-300 - 100 = BodyHeight
         HindlimbThickness, // 1-50
+        BaseColorRed, // 0-255
+        BaseColorGreen, // 0-255
+        BaseColorBlue, // 0-255
+        PatternColorRed, // 0-255
+        PatternColorGreen, // 0-255
+        PatternColorBlue // 0-255
     }
 
 }

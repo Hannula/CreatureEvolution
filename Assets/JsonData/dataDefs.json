@@ -64,6 +64,12 @@
         { "Key": "ForelimbLength", "Min":15, "Max":300},
         { "Key": "ForelimbThickness", "Min":1, "Max":50},
         { "Key": "HindlimbLength", "Min":15, "Max":300},
-        { "Key": "HindlimbThickness", "Min":1, "Max":50}
+        { "Key": "HindlimbThickness", "Min":1, "Max":50},
+        { "Key": "BaseColorRed", "Min":0, "Max":255},
+        { "Key": "BaseColorGreen", "Min":0, "Max":255},
+        { "Key": "BaseColorBlue", "Min":0, "Max":255},
+        { "Key": "PatternColorRed", "Min":0, "Max":255},
+        { "Key": "PatternColorGreen", "Min":0, "Max":255},
+        { "Key": "PatternColorBlue", "Min":0, "Max":255}
     ]
 }

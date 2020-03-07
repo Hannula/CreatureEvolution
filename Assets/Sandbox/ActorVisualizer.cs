@@ -19,6 +19,9 @@ public class ActorVisualizer : MonoBehaviour
     private CreatureChromosome creatureChromosome;
     private TileInspector inspector;
 
+    public MeshRenderer bodyRenderer;
+    public MeshRenderer headRenderer;
+
     private void Start()
     {
         inspector = FindObjectOfType<TileInspector>();
@@ -73,6 +76,15 @@ public class ActorVisualizer : MonoBehaviour
         {
             // Enable custom visuals for evolution creature
             customMesh.SetActive(true);
+
+            CreatureChromosome chromosome = actor.ActorClass.CreatureChromosome;
+            float size = chromosome.GetGeneValue(CreatureGeneKeys.Size) / 10f;
+            customMesh.transform.localScale = new Vector3(size, size, size);
+
+            // Body
+            bodyRenderer.material.color = actor.ActorClass.baseColor;
+            bodyRenderer.sharedMaterials[1].color = actor.ActorClass.patternColor;
+
         }
 
         // Rename transform
