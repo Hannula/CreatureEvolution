@@ -144,7 +144,7 @@ public class Simulation : MonoBehaviour
         VisualizeLevel();
 
         creatureChromosome = creatureEvolution.GetNext();
-        
+
         // Spawn actors to the level
         SpawnActors();
 
@@ -196,6 +196,11 @@ public class Simulation : MonoBehaviour
             // Simulate instantly
             StopCoroutine(simulate());
             SimulateAll();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            GUIUtility.systemCopyBuffer = JsonUtility.ToJson(creatureChromosome.ToActorClass(), true);
         }
 
         if (simulationFinished)
@@ -365,7 +370,7 @@ public class Simulation : MonoBehaviour
             }
         }
 
-        foreach(ActorVisualizer actorVisualizer in FindObjectsOfType<ActorVisualizer>())
+        foreach (ActorVisualizer actorVisualizer in FindObjectsOfType<ActorVisualizer>())
         {
             // Update every actor visualizer
             actorVisualizer.Reload();
@@ -393,7 +398,7 @@ public class Simulation : MonoBehaviour
             {
                 // Get actor id from actor layer
                 int actorClassId = actorLayer.data[i];
-                
+
                 if (actorClasses.ContainsKey(actorClassId))
                 {
                     ActorClass actorClass = actorClasses[actorClassId];

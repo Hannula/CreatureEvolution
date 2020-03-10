@@ -37,7 +37,7 @@ namespace Sandbox
         {
             CreatureChromosome chromosome = new CreatureChromosome();
             chromosome.Genes = new CreatureGene[baseChromosome.Genes.Length];
-            for(int i = 0; i < baseChromosome.Genes.Length; i++)
+            for (int i = 0; i < baseChromosome.Genes.Length; i++)
             {
                 CreatureGene baseGene = baseChromosome.Genes[i];
                 chromosome.Genes[i] = new CreatureGene(baseGene.Min, baseGene.Max);
@@ -54,7 +54,7 @@ namespace Sandbox
             string str = "";
             for (int i = 0; i < Genes.Length; i++)
             {
-                str += ((CreatureGeneKeys)i) + ":"+ Genes[i].ToString();
+                str += ((CreatureGeneKeys)i) + ":" + Genes[i].ToString();
 
                 // Add comma if not the last one
                 if (i != Genes.Length - 1)
@@ -70,8 +70,8 @@ namespace Sandbox
         public ActorClass ToActorClass()
         {
             int size = GetGeneValue(CreatureGeneKeys.Size);
-            float resourceConsumption = size;
-            int hitpoints = size;
+            float resourceConsumption = size * (1 + GetGeneRatio(CreatureGeneKeys.EyeSize)) * (1 + GetGeneValue(CreatureGeneKeys.EyeNumber));
+            int hitpoints = size * 10;
 
             float speed = 5 + size;
 
@@ -80,8 +80,8 @@ namespace Sandbox
             float legSupport = 0;
 
             float resourceConsumptionEnergyCost = 1;
-            float meatConsumptionEfficiency = 1;
-            float plantConsumptionEfficiency = 0;
+            float meatConsumptionEfficiency = 0.5f;
+            float plantConsumptionEfficiency = 0.5f;
 
             float swimmingSpeed = 0;
             float ruggedLandNavigation = 1;
@@ -92,7 +92,7 @@ namespace Sandbox
             float diggingSpeed = 0;
             float climbingSpeed = 0;
             float divingSkill = swimmingSpeed;
-               
+
             ActorClass actorClass = new ActorClass("Creature", hitpoints, size, evasion, size, swimmingSpeed, ruggedLandNavigation, softLandNavigation, crampedNavigation);
             actorClass.steepNavigation = steepNavigation;
             actorClass.diggingSpeed = diggingSpeed;
@@ -112,11 +112,11 @@ namespace Sandbox
             // Observation
             actorClass.observationRange = 2;
 
-            actorClass.lightVision = 0.8f;
-            actorClass.darkVision = 0.1f;
+            actorClass.lightVision = GetGeneRatio(CreatureGeneKeys.EyeSize) * GetGeneValue(CreatureGeneKeys.EyeNumber);
+            actorClass.darkVision = GetGeneRatio(CreatureGeneKeys.EyeSize) * GetGeneValue(CreatureGeneKeys.EyeNumber);
 
             actorClass.smellSense = 0;
-            actorClass.hearing = 0;
+            actorClass.hearing = GetGeneRatio(CreatureGeneKeys.EarSize);
 
             actorClass.tracking = 0;
 
@@ -149,7 +149,8 @@ namespace Sandbox
     [System.Serializable]
     public struct CreatureGene
     {
-        public int Value {
+        public int Value
+        {
             get; private set;
         }
 
