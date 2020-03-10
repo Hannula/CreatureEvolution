@@ -22,6 +22,13 @@ public class ActorVisualizer : MonoBehaviour
     public MeshRenderer bodyRenderer;
     public MeshRenderer headRenderer;
 
+    public Transform headPosition;
+    public Transform forelimbPosition;
+    public Transform hindlimbPosition;
+
+    public MeshRenderer forelimbRenderer;
+    public MeshRenderer hindlimbRenderer;
+
     private void Start()
     {
         inspector = FindObjectOfType<TileInspector>();
@@ -78,13 +85,18 @@ public class ActorVisualizer : MonoBehaviour
             customMesh.SetActive(true);
 
             CreatureChromosome chromosome = actor.ActorClass.CreatureChromosome;
-            float size = chromosome.GetGeneValue(CreatureGeneKeys.Size) / 10f;
-            customMesh.transform.localScale = new Vector3(size, size, size);
+            float size = 0.5f + actor.ActorClass.size * 0.05f;
 
             // Body
             bodyRenderer.material.color = actor.ActorClass.baseColor;
             bodyRenderer.sharedMaterials[1].color = actor.ActorClass.patternColor;
+            bodyRenderer.transform.localScale = new Vector3(size * chromosome.GetGeneValue(CreatureGeneKeys.BodyWidth) * 0.01f, size, size);
 
+            // Head
+            headRenderer.material.color = actor.ActorClass.baseColor;
+            headRenderer.sharedMaterials[1].color = actor.ActorClass.patternColor;
+            headRenderer.transform.localPosition = headPosition.localPosition;
+            headRenderer.transform.localScale = new Vector3(size * chromosome.GetGeneValue(CreatureGeneKeys.HeadWidth) * 0.01f, size * chromosome.GetGeneValue(CreatureGeneKeys.HeadHeight) * 0.01f, size);
         }
 
         // Rename transform

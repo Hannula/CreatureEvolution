@@ -1,7 +1,7 @@
 {
-    "PopulationSize": 16,
+    "PopulationSize": 20,
     
-    "MapFilePath": "largeMap.json",
+    "MapFilePath": "tinyMap.json",
     "TerrainLayerName" : "Terrain",
     "ActorLayerName" : "Fauna",
     "ResourceLayerName" : "Flora",
@@ -47,9 +47,8 @@
 
     "GeneLimits" :
     [
-        { "Key": "Size", "Min":1, "Max":10 },
-        { "Key": "BodyWidth", "Min":33, "Max":300},
-        { "Key": "Posture", "Min":0, "Max":1},
+        { "Key": "Size", "Min":1, "Max":100 },
+        { "Key": "BodyWidth", "Min":33, "Max":150},
         { "Key": "Skin", "Min":0, "Max":3} ,
         { "Key": "SkinThickness", "Min":1, "Max":100} ,
         { "Key": "HeadWidth", "Min":10, "Max":80},

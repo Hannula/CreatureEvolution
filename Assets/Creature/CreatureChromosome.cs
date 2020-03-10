@@ -69,64 +69,92 @@ namespace Sandbox
 
         public ActorClass ToActorClass()
         {
-            int size = GetGeneValue(CreatureGeneKeys.Size);
-            float resourceConsumption = size * (1 + GetGeneRatio(CreatureGeneKeys.EyeSize)) * (1 + GetGeneValue(CreatureGeneKeys.EyeNumber));
-            int hitpoints = size * 10;
+            float size = GetGeneValue(CreatureGeneKeys.Size) * 0.1f;
 
-            float speed = 5 + size;
+            float bodyWidth = GetGeneValue(CreatureGeneKeys.BodyWidth) * 0.01f;
+            float headHeight = GetGeneValue(CreatureGeneKeys.HeadHeight) * 0.01f;
+            float headWidth = GetGeneValue(CreatureGeneKeys.HeadWidth) * 0.01f;
+            float headPosition = GetGeneValue(CreatureGeneKeys.HeadPosition) * 0.01f;
+            float resourceConsumption = 5 * size * bodyWidth;
 
-            int evasion = 50 - size;
+            float height = size + size * headHeight + size * headPosition;
 
-            float legSupport = 0;
-
-            float resourceConsumptionEnergyCost = 1;
-            float meatConsumptionEfficiency = 0.5f;
-            float plantConsumptionEfficiency = 0.5f;
-
-            float swimmingSpeed = 0;
-            float ruggedLandNavigation = 1;
-            float softLandNavigation = 1;
-            float crampedNavigation = 1;
-            float steepNavigation = 1;
-
-            float diggingSpeed = 0;
-            float climbingSpeed = 0;
-            float divingSkill = swimmingSpeed;
-
-            ActorClass actorClass = new ActorClass("Creature", hitpoints, size, evasion, size, swimmingSpeed, ruggedLandNavigation, softLandNavigation, crampedNavigation);
-            actorClass.steepNavigation = steepNavigation;
-            actorClass.diggingSpeed = diggingSpeed;
-            actorClass.climbingSpeed = climbingSpeed;
-
+            ActorClass actorClass = new ActorClass("Creature");
+            actorClass.size = size;
+            actorClass.height = size;
+            actorClass.maxHitpoints = 5 + size * 5 * bodyWidth + headWidth * 5 + headHeight * 5;
             actorClass.resourceConsumption = resourceConsumption;
-            actorClass.resourceConsumptionEnergyCost = resourceConsumptionEnergyCost;
-            actorClass.meatConsumptionEfficiency = meatConsumptionEfficiency;
-            actorClass.plantConsumptionEfficiency = plantConsumptionEfficiency;
+            actorClass.steepNavigation = 1;
+            actorClass.ruggedLandNavigation = 1;
+            actorClass.softLandNavigation = 1;
+            actorClass.crampedNavigation = 1;
 
-            actorClass.visibility = 0.5f + size * 0.25f;
-            actorClass.noise = 0;
-            actorClass.odor = 0;
+            actorClass.diggingSpeed = 1;
+            actorClass.climbingSpeed = 1;
+            #region Legs
+            actorClass.speed = 5 + (size * 0.5f);
 
-            actorClass.meatAmount = size * 8;
+            float hindlimbLength = GetGeneValue(CreatureGeneKeys.HindlimbLength) * 0.01f;
+            float hindlimbThickness = GetGeneValue(CreatureGeneKeys.HindlimbThickness) * 0.01f;
+
+            float forelimbLength = GetGeneValue(CreatureGeneKeys.ForelimbLength) * 0.01f;
+            float forelimbThickness = GetGeneValue(CreatureGeneKeys.ForelimbThickness) * 0.01f;
+
+            actorClass.maxHitpoints *= 1 + (hindlimbThickness + forelimbThickness) * 0.2f;
+            actorClass.speed *= Mathf.Sqrt(1 + hindlimbLength + forelimbLength);
+
+            actorClass.speed /= 1 + Mathf.Abs(forelimbLength - hindlimbLength);
+
+            actorClass.resourceConsumption += Mathf.Pow(1 + hindlimbLength * hindlimbThickness + forelimbLength * forelimbThickness, 1.5f) * 4f;
+            #endregion
+
+
+            actorClass.ruggedLandNavigation += forelimbLength + hindlimbLength * 2f;
+            actorClass.softLandNavigation += forelimbThickness + hindlimbThickness * 2f;
+            actorClass.resourceConsumptionEnergyCost = 5f;
+            actorClass.meatConsumptionEfficiency = 0.5f;
+            actorClass.plantConsumptionEfficiency = 0.5f;
+
+            actorClass.visibility = 0.35f + height * 0.2f;
+            actorClass.noise = 0.25f;
+            actorClass.odor = 0.25f;
+
+            actorClass.meatAmount = size * bodyWidth * 5;
+
+
+            float eyeSize = GetGeneValue(CreatureGeneKeys.EyeSize) * 0.01f;
+            int eyeNumber = GetGeneValue(CreatureGeneKeys.EyeNumber);
+            float eyePosition = GetGeneValue(CreatureGeneKeys.EyePosition) * 0.01f;
+            float eyeHeight = height;
+
+            actorClass.lightVision = eyeSize * 0.25f + Mathf.Sqrt(eyeNumber) * 0.5f + eyePosition * headWidth;
+            actorClass.darkVision = eyeSize * 0.5f + eyeNumber * 0.15f;
+
+            actorClass.tracking = 2 / (0.1f + eyePosition);
+
+            actorClass.resourceConsumption += size * eyeSize * 6f + Mathf.Pow(eyeNumber, 2) * 3f;
 
             // Observation
-            actorClass.observationRange = 2;
-
-            actorClass.lightVision = GetGeneRatio(CreatureGeneKeys.EyeSize) * GetGeneValue(CreatureGeneKeys.EyeNumber);
-            actorClass.darkVision = GetGeneRatio(CreatureGeneKeys.EyeSize) * GetGeneValue(CreatureGeneKeys.EyeNumber);
+            actorClass.observationRange = 2 + Mathf.Sqrt(1 + eyeHeight);
 
             actorClass.smellSense = 0;
-            actorClass.hearing = GetGeneRatio(CreatureGeneKeys.EarSize);
-
-            actorClass.tracking = 0;
-
-
-            actorClass.height = size;
+            float earSize = GetGeneValue(CreatureGeneKeys.EarSize) * 0.01f;
+            actorClass.hearing = earSize;
+            actorClass.resourceConsumption += earSize * 5f;
 
             // Base color and pattern color
-            actorClass.baseColor = new Color(GetGeneRatio(CreatureGeneKeys.BaseColorRed), GetGeneRatio(CreatureGeneKeys.BaseColorGreen), GetGeneRatio(CreatureGeneKeys.BaseColorBlue));
+            actorClass.baseColor = new Color(GetGeneValue(CreatureGeneKeys.BaseColorRed) / 255f, GetGeneValue(CreatureGeneKeys.BaseColorGreen) / 255f, GetGeneValue(CreatureGeneKeys.BaseColorBlue) / 255f);
             actorClass.patternColor = new Color(GetGeneRatio(CreatureGeneKeys.PatternColorRed), GetGeneRatio(CreatureGeneKeys.PatternColorGreen), GetGeneRatio(CreatureGeneKeys.PatternColorBlue));
 
+            #region Attacks
+            int hitBonus = 20 / (int)(1 + eyePosition * 20);
+
+            // Kick
+            float kickDamage = size * (1 + (hindlimbLength * 0.25f) + (hindlimbThickness * 0.5f));
+            float kickDamageBonus = kickDamage;
+            actorClass.AddAttacks(new Attack("Kick", Mathf.CeilToInt(hindlimbLength * 2 + hitBonus), DamageTypes.Crushing, Mathf.CeilToInt(kickDamage), Mathf.CeilToInt(kickDamageBonus)));
+
+            #endregion
 
             return actorClass;
         }
@@ -144,6 +172,7 @@ namespace Sandbox
 
             return Genes[index].Ratio;
         }
+
     }
 
     [System.Serializable]
@@ -166,13 +195,14 @@ namespace Sandbox
             Value = Random.Range(min, max + 1);
 
             Range = Max - Min;
+
             if (Range == 0)
             {
                 Ratio = 1;
             }
             else
             {
-                Ratio = (Value - Min) / Range;
+                Ratio = (Value - Min) / (float)Range;
             }
         }
 
@@ -190,7 +220,7 @@ namespace Sandbox
             }
             else
             {
-                Ratio = (Value - Min) / Range;
+                Ratio = (Value - Min) / (float)Range;
             }
         }
 
@@ -218,7 +248,6 @@ namespace Sandbox
     {
         Size, // 1 - 10
         BodyWidth, // 50-200 // Body width relative to height
-        Posture, // 0 for quadrupedal and 1 for bipedal 
         Skin, // 0 for hide, 1 for scales, 2 for feathers, 3 for fur
         SkinThickness, // 1-100
         HeadWidth, // 10-50
@@ -231,9 +260,9 @@ namespace Sandbox
         MouthType, // 0=Sharp teeth,1=blunt teeth, 2=beak, 3=trunk
         EarSize, // Ear size relative to head size
         EarPosition, // Ear y-position relative to head height
-        ForelimbLength, // 20-300 - 100 = BodyHeight
+        ForelimbLength, // 20-300 - 100 = Size
         ForelimbThickness, // 1-50
-        HindlimbLength, // 20-300 - 100 = BodyHeight
+        HindlimbLength, // 20-300 - 100 = Size
         HindlimbThickness, // 1-50
         BaseColorRed, // 0-255
         BaseColorGreen, // 0-255

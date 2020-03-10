@@ -59,8 +59,11 @@ public class CreatureEvolution
     public static CreatureChromosome Mutate(CreatureChromosome x)
     {
         // Select a random gene to mutate
-        CreatureGene gene = x.Genes[UnityEngine.Random.Range(0, x.Genes.Length)];
-        gene.Mutate(0.5f);
+        for (int i = 0; i < 3; i++)
+        { 
+            CreatureGene gene = x.Genes[UnityEngine.Random.Range(0, x.Genes.Length)];
+            gene.Mutate(0.5f);
+        }
 
         return x;
     }

@@ -88,6 +88,13 @@ public class ActorClass
         resistances = new Dictionary<DamageTypes, float>();
     }
 
+    public ActorClass(string name)
+    {
+        this.name = name;
+        attacks = new List<Attack>();
+        resistances = new Dictionary<DamageTypes, float>();
+    }
+
     public void Initialize()
     {
 
