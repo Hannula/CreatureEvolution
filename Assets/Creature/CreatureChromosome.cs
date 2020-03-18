@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace Sandbox
@@ -74,15 +75,14 @@ namespace Sandbox
             float bodyWidth = GetGeneValue(CreatureGeneKeys.BodyWidth) * 0.01f;
             float headHeight = GetGeneValue(CreatureGeneKeys.HeadHeight) * 0.01f;
             float headWidth = GetGeneValue(CreatureGeneKeys.HeadWidth) * 0.01f;
-            float headPosition = GetGeneValue(CreatureGeneKeys.HeadPosition) * 0.01f;
             float resourceConsumption = 5 * size * bodyWidth;
 
-            float height = size + size * headHeight + size * headPosition;
+            float height = size + size * headHeight + size;
 
             ActorClass actorClass = new ActorClass("Creature");
             actorClass.size = size;
             actorClass.height = size;
-            actorClass.maxHitpoints = 5 + size * 5 * bodyWidth + headWidth * 5 + headHeight * 5;
+            actorClass.maxHitpoints = 5 + size * 5 * bodyWidth + headWidth * 2 + headHeight * 2;
             actorClass.resourceConsumption = resourceConsumption;
             actorClass.steepNavigation = 1;
             actorClass.ruggedLandNavigation = 1;
@@ -106,6 +106,7 @@ namespace Sandbox
             actorClass.speed /= 1 + Mathf.Abs(forelimbLength - hindlimbLength);
 
             actorClass.resourceConsumption += Mathf.Pow(1 + hindlimbLength * hindlimbThickness + forelimbLength * forelimbThickness, 1.5f) * 4f;
+
             #endregion
 
 
@@ -116,8 +117,51 @@ namespace Sandbox
             actorClass.plantConsumptionEfficiency = 0.5f;
 
             actorClass.visibility = 0.35f + height * 0.2f;
-            actorClass.noise = 0.25f;
-            actorClass.odor = 0.25f;
+            actorClass.noise = 0.1f;
+            actorClass.odor = 0.1f;
+
+            #region Feet Type
+            float kickDamage = 1;
+            int feetType = GetGeneValue(CreatureGeneKeys.FeetType);
+            switch (feetType)
+            {
+                case 1: // Hoof 
+                    actorClass.noise += 0.4f;
+                    actorClass.speed *= 1 + Mathf.Sqrt(forelimbLength + hindlimbLength);
+                    actorClass.swimmingSpeed = 1f + 0.25f * size;
+                    actorClass.softLandNavigation = 1.5f * (hindlimbThickness + forelimbThickness);
+                    actorClass.ruggedLandNavigation = 4f * (hindlimbLength + forelimbLength);
+                    actorClass.steepNavigation = 4f * (hindlimbLength + forelimbLength);
+                    kickDamage = 1.25f;
+                    break;
+                case 2: // Webbed feet
+                    actorClass.noise += 0.2f;
+                    actorClass.speed *= 0.7f;
+                    actorClass.swimmingSpeed = 8f + size;
+                    actorClass.softLandNavigation = 10f * (hindlimbThickness + forelimbThickness);
+                    actorClass.ruggedLandNavigation = 1f * (hindlimbLength + forelimbLength);
+                    actorClass.steepNavigation = 1f * (hindlimbLength + forelimbLength);
+                    kickDamage = 0.75f;
+                    break;
+                case 3: // Toes
+                    actorClass.speed *= 0.85f;
+                    actorClass.swimmingSpeed = 2f + size * 0.5f;
+                    actorClass.softLandNavigation = 3f * (hindlimbThickness + forelimbThickness);
+                    actorClass.ruggedLandNavigation = 6f * (hindlimbLength + forelimbLength);
+                    actorClass.steepNavigation = 6f * (hindlimbLength + forelimbLength);
+                    kickDamage = 1f;
+                    break;
+                case 4: // Claws
+                    actorClass.noise += 0.1f;
+                    actorClass.speed *= 1f;
+                    actorClass.swimmingSpeed = 1.75f + size * 0.25f;
+                    actorClass.softLandNavigation = 4f * (hindlimbThickness + forelimbThickness);
+                    actorClass.ruggedLandNavigation = 4f * (hindlimbLength + forelimbLength);
+                    actorClass.steepNavigation = 4f * (hindlimbLength + forelimbLength);
+                    kickDamage = 0.75f;
+                    break;
+            }
+            #endregion
 
             actorClass.meatAmount = size * bodyWidth * 5;
 
@@ -150,9 +194,18 @@ namespace Sandbox
             int hitBonus = 20 / (int)(1 + eyePosition * 20);
 
             // Kick
-            float kickDamage = size * (1 + (hindlimbLength * 0.25f) + (hindlimbThickness * 0.5f));
+            kickDamage *= size * (1 + (hindlimbLength * 0.25f) + (hindlimbThickness * 0.5f));
             float kickDamageBonus = kickDamage;
-            actorClass.AddAttacks(new Attack("Kick", Mathf.CeilToInt(hindlimbLength * 2 + hitBonus), DamageTypes.Crushing, Mathf.CeilToInt(kickDamage), Mathf.CeilToInt(kickDamageBonus)));
+            Attack kick = new Attack("Kick", Mathf.CeilToInt(hindlimbLength * 2 + hitBonus), DamageTypes.Crushing, Mathf.CeilToInt(kickDamage), Mathf.CeilToInt(kickDamageBonus));
+
+            // Add extra slashing damage for claws
+            if (feetType == 3)
+            {
+                kick.AddDamage(new Attack.Damage(DamageTypes.Slashing, Mathf.CeilToInt(kickDamage), Mathf.CeilToInt(kickDamageBonus)));
+            }
+
+            actorClass.AddAttacks(kick);
+
 
             #endregion
 
@@ -173,6 +226,19 @@ namespace Sandbox
             return Genes[index].Ratio;
         }
 
+
+        public string ToString()
+        {
+            string str = Name;
+            foreach (CreatureGeneKeys geneKey in Enum.GetValues(typeof(CreatureGeneKeys)))
+            {
+                CreatureGene gene = Genes[(int)geneKey];
+
+                str += "\n";
+            }
+
+            return str;
+        }
     }
 
     [System.Serializable]
@@ -192,7 +258,7 @@ namespace Sandbox
         {
             Min = min;
             Max = max;
-            Value = Random.Range(min, max + 1);
+            Value = UnityEngine.Random.Range(min, max + 1);
 
             Range = Max - Min;
 
@@ -226,7 +292,7 @@ namespace Sandbox
 
         public int RandomValue()
         {
-            return Random.Range(Min, Max + 1);
+            return UnityEngine.Random.Range(Min, Max + 1);
         }
 
         public void Mutate(float ratio)
@@ -235,7 +301,7 @@ namespace Sandbox
             int maxMutation = Mathf.Clamp(Value + Amount, Min, Max);
             int minMutation = Mathf.Clamp(Value - Amount, Min, Max);
 
-            Value = Random.Range(minMutation, maxMutation + 1);
+            Value = UnityEngine.Random.Range(minMutation, maxMutation + 1);
         }
 
         public override string ToString()
@@ -252,7 +318,6 @@ namespace Sandbox
         SkinThickness, // 1-100
         HeadWidth, // 10-50
         HeadHeight, // 10-50
-        HeadPosition, // 0-200 - 0=head completely inside body, 100=head completely outside, but no neck, 200=long neck
         EyeNumber, // 0-10
         EyeSize, // 1-100
         EyePosition, // Eye position relative to head size
@@ -269,7 +334,9 @@ namespace Sandbox
         BaseColorBlue, // 0-255
         PatternColorRed, // 0-255
         PatternColorGreen, // 0-255
-        PatternColorBlue // 0-255
+        PatternColorBlue, // 0-255
+        FeetType, // 0 for hoof, 1 for webbed foot, 2 for toes, 3 for claws
+
     }
 
 }

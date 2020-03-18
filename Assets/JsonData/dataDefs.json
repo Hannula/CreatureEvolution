@@ -69,6 +69,7 @@
         { "Key": "BaseColorBlue", "Min":0, "Max":255},
         { "Key": "PatternColorRed", "Min":0, "Max":255},
         { "Key": "PatternColorGreen", "Min":0, "Max":255},
-        { "Key": "PatternColorBlue", "Min":0, "Max":255}
+        { "Key": "PatternColorBlue", "Min":0, "Max":255},
+        { "Key": "FeetType", "Min":0, "Max":3}
     ]
 }

@@ -200,7 +200,7 @@ public class Simulation : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F5))
         {
-            GUIUtility.systemCopyBuffer = JsonUtility.ToJson(creatureChromosome.ToActorClass(), true);
+            GUIUtility.systemCopyBuffer = JsonUtility.ToJson(creatureChromosome.ToActorClass(), true) + "\n\n" + JsonUtility.ToJson(creatureChromosome, true);
         }
 
         if (simulationFinished)

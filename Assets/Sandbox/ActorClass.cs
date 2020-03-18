@@ -478,6 +478,11 @@ public class Attack
         damage.Add(new Damage(dmgType, dmgRoll, dmgBonus));
     }
 
+    public void AddDamage(Damage dmg)
+    {
+        damage.Add(dmg);
+    }
+
     [System.Serializable]
     public struct Damage
     {
