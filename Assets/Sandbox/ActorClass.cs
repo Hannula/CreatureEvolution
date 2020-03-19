@@ -408,8 +408,11 @@ public class ActorClass
             Vector3 groundColorVec = new Vector3(targetTerrain.groundColor.r, targetTerrain.groundColor.g, targetTerrain.groundColor.b);
             Vector3 groundSecondaryColorVec = new Vector3(targetTerrain.secondaryColor.r, targetTerrain.secondaryColor.g, targetTerrain.secondaryColor.b);
 
+            float baseVisibility = Mathf.Pow(Vector3.Distance(baseColorVec, groundColorVec), 2);
+            float patternVisibility = Mathf.Pow(Vector3.Distance(patternColorVec, groundSecondaryColorVec), 1.5f);
+
             // Apply camouflage modifier
-            terrainVisibility *= 0.35f + (0.65f * Vector3.Distance(baseColorVec, groundColorVec) + Vector3.Distance(patternColorVec, groundSecondaryColorVec));
+            terrainVisibility *= 1 + 0.75f * baseVisibility + 0.25f * patternVisibility;
 
             // Save visibility for this terrain type
             terrainVisibility = Mathf.Max(terrainVisibility, 0.05f);

@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33c803146fa71134aa6fa9450430c2e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataDefsPath: JsonData/dataDefs.json
+  dataDefsPath: JsonData/DataDefs.json
   tilePrefab: {fileID: 3265913840937391545, guid: 212bb92392ffe0848b639f6b8798142e,
     type: 3}
   actorPrefab: {fileID: 9040193817167200470, guid: 7064308679213a04f99f16c6756929ad,
@@ -157,8 +157,8 @@ MonoBehaviour:
   resourcePrefab: {fileID: 8704273238801682838, guid: 5256605e11700844abf5a1e4fd552398,
     type: 3}
   roundDurationNormal: 0.2
-  roundDurationFast: 0.1
-  roundDurationFastest: 0.05
+  roundDurationFast: 0.03
+  roundDurationFastest: 0
   paused: 0
 --- !u!4 &334052795
 Transform:
@@ -378,13 +378,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 380128831}
-  panSpeed: 3
-  mousePanSpeed: 1
-  panLerpSpeed: 100
-  zoomSpeed: 200
-  zoomLerpSpeed: 20
-  zoomRange: {x: 1, y: 20}
-  rotationSpeed: 100
+  panSpeed: 4
+  mousePanSpeed: 5
+  panLerpSpeed: 10
+  zoomSpeed: 600
+  zoomLerpSpeed: 10
+  zoomRange: {x: 2, y: 20}
+  rotationSpeed: 200
 --- !u!4 &1309924158
 Transform:
   m_ObjectHideFlags: 0
@@ -694,12 +694,12 @@ PrefabInstance:
     - target: {fileID: 3870014958252328824, guid: f4535a0707de7b44e9319e44ee8f817a,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 17.00026
+      value: 17.000027
       objectReference: {fileID: 0}
     - target: {fileID: 4616612829394157948, guid: f4535a0707de7b44e9319e44ee8f817a,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00042300517
+      value: 0.00005060772
       objectReference: {fileID: 0}
     - target: {fileID: 6017488214092767247, guid: f4535a0707de7b44e9319e44ee8f817a,
         type: 3}

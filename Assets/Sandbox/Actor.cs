@@ -501,8 +501,9 @@ namespace Sandbox
             }
             else if (attackRoll >= 5)
             {
+                float targetVisibility = target.ActorClass.GetVisibilityValue(target.CurrentTile.terrain);
                 // Attack didn't miss but no critical hit
-                int toHit = attackRoll + attack.attackBonus;
+                int toHit = attackRoll + attack.attackBonus + Mathf.CeilToInt(targetVisibility * 10f);
 
                 // Compare toHit -value to target's evasion
                 if (toHit >= target.ActorClass.evasion)

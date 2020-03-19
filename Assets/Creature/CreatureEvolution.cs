@@ -14,7 +14,7 @@ public class CreatureEvolution
     private CreatureChromosome baseChromosome;
     private int currentChromosomeIndex;
     private List<CreatureChromosome> population;
-  
+
     public CreatureEvolution(int populationSize, List<KeyIntRangePair> geneLimits)
     {
         this.populationSize = populationSize;
@@ -59,10 +59,10 @@ public class CreatureEvolution
     public static CreatureChromosome Mutate(CreatureChromosome x)
     {
         // Select a random gene to mutate
-        for (int i = 0; i < 3; i++)
-        { 
+        for (int i = 0; i < UnityEngine.Random.Range(0, 10); i++)
+        {
             CreatureGene gene = x.Genes[UnityEngine.Random.Range(0, x.Genes.Length)];
-            gene.Mutate(0.5f);
+            gene.Mutate(0.15f);
         }
 
         return x;
@@ -70,13 +70,12 @@ public class CreatureEvolution
 
     public static CreatureChromosome SinglePointCrossover(CreatureChromosome x, CreatureChromosome y)
     {
-        Simulation.Log("Combining chromosomes " + x.Name + " " + x.fitness + " and " + y.Name + " " + y.fitness);
         int length = x.Genes.Length;
         int point = UnityEngine.Random.Range(1, length - 1);
 
         CreatureGene[] newGenes = new CreatureGene[length];
 
-        for(int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++)
         {
             CreatureGene gene;
             // Pick the gene from one of the parents

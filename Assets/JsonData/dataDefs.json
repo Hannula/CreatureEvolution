@@ -49,7 +49,7 @@
     [
         { "Key": "Size", "Min":1, "Max":100 },
         { "Key": "BodyWidth", "Min":33, "Max":150},
-        { "Key": "Skin", "Min":0, "Max":3} ,
+        { "Key": "Skin", "Min":0, "Max":5} ,
         { "Key": "SkinThickness", "Min":1, "Max":100} ,
         { "Key": "HeadWidth", "Min":10, "Max":80},
         { "Key": "HeadHeight", "Min":10, "Max":80},
@@ -60,16 +60,14 @@
         { "Key": "MouthType", "Min":0, "Max":3},
         { "Key": "EarSize", "Min":0, "Max":100},
         { "Key": "EarPosition", "Min":0, "Max":100},
-        { "Key": "ForelimbLength", "Min":15, "Max":300},
-        { "Key": "ForelimbThickness", "Min":1, "Max":50},
-        { "Key": "HindlimbLength", "Min":15, "Max":300},
-        { "Key": "HindlimbThickness", "Min":1, "Max":50},
+        { "Key": "LimbLength", "Min":15, "Max":300},
+        { "Key": "LimbThickness", "Min":1, "Max":50},
         { "Key": "BaseColorRed", "Min":0, "Max":255},
         { "Key": "BaseColorGreen", "Min":0, "Max":255},
         { "Key": "BaseColorBlue", "Min":0, "Max":255},
         { "Key": "PatternColorRed", "Min":0, "Max":255},
         { "Key": "PatternColorGreen", "Min":0, "Max":255},
         { "Key": "PatternColorBlue", "Min":0, "Max":255},
-        { "Key": "FeetType", "Min":0, "Max":3}
+        { "Key": "FeetType", "Min":0, "Max":4}
     ]
 }

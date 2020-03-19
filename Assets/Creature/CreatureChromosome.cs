@@ -8,7 +8,7 @@ namespace Sandbox
     {
         public string Name { get; set; }
         public CreatureGene[] Genes { get; set; }
-
+        private string description = "";
         public float fitness = float.NegativeInfinity;
 
         public static CreatureChromosome SinglePointCrossover(CreatureChromosome a, CreatureChromosome b)
@@ -52,7 +52,7 @@ namespace Sandbox
 
         public override string ToString()
         {
-            string str = "";
+            string str = description + "\n";
             for (int i = 0; i < Genes.Length; i++)
             {
                 str += ((CreatureGeneKeys)i) + ":" + Genes[i].ToString();
@@ -60,7 +60,7 @@ namespace Sandbox
                 // Add comma if not the last one
                 if (i != Genes.Length - 1)
                 {
-                    str += ", ";
+                    str += ",\n ";
                 }
             }
 
@@ -94,25 +94,26 @@ namespace Sandbox
             #region Legs
             actorClass.speed = 5 + (size * 0.5f);
 
-            float hindlimbLength = GetGeneValue(CreatureGeneKeys.HindlimbLength) * 0.01f;
-            float hindlimbThickness = GetGeneValue(CreatureGeneKeys.HindlimbThickness) * 0.01f;
+            actorClass.coldLimit = 0;
+            actorClass.heatLimit = 20;
 
-            float forelimbLength = GetGeneValue(CreatureGeneKeys.ForelimbLength) * 0.01f;
-            float forelimbThickness = GetGeneValue(CreatureGeneKeys.ForelimbThickness) * 0.01f;
+            float resistanceCrush = 0;
+            float resistanceSlash = 0;
+            float resistancePiercing = 0;
+            float resistanceFire = 0;
 
-            actorClass.maxHitpoints *= 1 + (hindlimbThickness + forelimbThickness) * 0.2f;
-            actorClass.speed *= Mathf.Sqrt(1 + hindlimbLength + forelimbLength);
+            float limbLength = GetGeneValue(CreatureGeneKeys.LimbLength) * 0.01f;
+            float limbThickness = GetGeneValue(CreatureGeneKeys.LimbThickness) * 0.01f;
 
-            actorClass.speed /= 1 + Mathf.Abs(forelimbLength - hindlimbLength);
+            actorClass.maxHitpoints *= 1 + (limbThickness) * 0.2f;
+            actorClass.speed *= Mathf.Sqrt(1 + limbLength);
 
-            actorClass.resourceConsumption += Mathf.Pow(1 + hindlimbLength * hindlimbThickness + forelimbLength * forelimbThickness, 1.5f) * 4f;
+            actorClass.resourceConsumption += Mathf.Pow(1 + limbLength * limbThickness, 1.5f) * 3f;
 
             #endregion
 
 
-            actorClass.ruggedLandNavigation += forelimbLength + hindlimbLength * 2f;
-            actorClass.softLandNavigation += forelimbThickness + hindlimbThickness * 2f;
-            actorClass.resourceConsumptionEnergyCost = 5f;
+            actorClass.resourceConsumptionEnergyCost = 10f;
             actorClass.meatConsumptionEfficiency = 0.5f;
             actorClass.plantConsumptionEfficiency = 0.5f;
 
@@ -123,48 +124,148 @@ namespace Sandbox
             #region Feet Type
             float kickDamage = 1;
             int feetType = GetGeneValue(CreatureGeneKeys.FeetType);
+            description += "Foot type: ";
             switch (feetType)
             {
-                case 1: // Hoof 
+                case 0: // Hoof 
                     actorClass.noise += 0.4f;
-                    actorClass.speed *= 1 + Mathf.Sqrt(forelimbLength + hindlimbLength);
+                    actorClass.speed *= 1 + Mathf.Sqrt(limbLength);
                     actorClass.swimmingSpeed = 1f + 0.25f * size;
-                    actorClass.softLandNavigation = 1.5f * (hindlimbThickness + forelimbThickness);
-                    actorClass.ruggedLandNavigation = 4f * (hindlimbLength + forelimbLength);
-                    actorClass.steepNavigation = 4f * (hindlimbLength + forelimbLength);
+                    actorClass.softLandNavigation = 2f * limbThickness;
+                    actorClass.ruggedLandNavigation = 4f * Mathf.Sqrt(1 + limbLength);
+                    actorClass.steepNavigation = 4f * Mathf.Sqrt(1 + limbLength);
+                    actorClass.meatConsumptionEfficiency -= 0.5f;
+                    actorClass.plantConsumptionEfficiency += 0.5f;
+                    actorClass.diggingSpeed = 2f;
                     kickDamage = 1.25f;
+                    description += "Hoof";
                     break;
-                case 2: // Webbed feet
+                case 1: // Webbed feet
                     actorClass.noise += 0.2f;
                     actorClass.speed *= 0.7f;
                     actorClass.swimmingSpeed = 8f + size;
-                    actorClass.softLandNavigation = 10f * (hindlimbThickness + forelimbThickness);
-                    actorClass.ruggedLandNavigation = 1f * (hindlimbLength + forelimbLength);
-                    actorClass.steepNavigation = 1f * (hindlimbLength + forelimbLength);
+                    actorClass.softLandNavigation = 10f * limbThickness;
+                    actorClass.ruggedLandNavigation = 2f * Mathf.Sqrt(0.5f + limbLength);
+                    actorClass.steepNavigation = 2f * limbLength;
+                    actorClass.divingSkill = 10f;
+                    actorClass.climbingSpeed = 2f;
+                    actorClass.diggingSpeed = 1f;
                     kickDamage = 0.75f;
+                    description += "Webbed foot";
                     break;
-                case 3: // Toes
+                case 2: // Toes
                     actorClass.speed *= 0.85f;
                     actorClass.swimmingSpeed = 2f + size * 0.5f;
-                    actorClass.softLandNavigation = 3f * (hindlimbThickness + forelimbThickness);
-                    actorClass.ruggedLandNavigation = 6f * (hindlimbLength + forelimbLength);
-                    actorClass.steepNavigation = 6f * (hindlimbLength + forelimbLength);
+                    actorClass.softLandNavigation = 5f * limbThickness;
+                    actorClass.ruggedLandNavigation = 6f * limbLength;
+                    actorClass.steepNavigation = 6f * limbLength;
+                    actorClass.diggingSpeed = 10f;
+                    actorClass.climbingSpeed = 10f;
                     kickDamage = 1f;
+                    actorClass.coldLimit += 5;
+                    description += "Toes";
                     break;
-                case 4: // Claws
+                case 3: // Claws
                     actorClass.noise += 0.1f;
                     actorClass.speed *= 1f;
                     actorClass.swimmingSpeed = 1.75f + size * 0.25f;
-                    actorClass.softLandNavigation = 4f * (hindlimbThickness + forelimbThickness);
-                    actorClass.ruggedLandNavigation = 4f * (hindlimbLength + forelimbLength);
-                    actorClass.steepNavigation = 4f * (hindlimbLength + forelimbLength);
+                    actorClass.softLandNavigation = 4f * limbThickness;
+                    actorClass.ruggedLandNavigation = 4f * limbLength;
+                    actorClass.steepNavigation = 4f * limbLength;
+                    actorClass.meatConsumptionEfficiency += 0.35f;
+                    actorClass.plantConsumptionEfficiency -= 0.35f;
+                    actorClass.diggingSpeed = 2f;
+                    actorClass.climbingSpeed = 5f;
                     kickDamage = 0.75f;
+                    description += "Claws";
+                    break;
+                case 4: // Fins
+                    actorClass.speed *= 0.3f;
+                    actorClass.swimmingSpeed = 5f + size + limbThickness * 10f + limbLength * 5f;
+                    actorClass.softLandNavigation = 3f * limbThickness;
+                    actorClass.ruggedLandNavigation = 3f * limbLength;
+                    actorClass.steepNavigation = 1f * limbLength;
+                    actorClass.divingSkill = 20f;
+                    kickDamage = 0.5f;
+                    description += "Fins";
+                    break;
+            }
+            #endregion
+
+            #region Skin Type
+            description += "\nSkin type: ";
+            int skinType = GetGeneValue(CreatureGeneKeys.Skin);
+            switch (skinType)
+            {
+                case 0: // Fur 
+                    actorClass.noise *= 0.75f;
+                    actorClass.odor *= 1.5f;
+                    actorClass.heatLimit = -5;
+                    actorClass.coldLimit = -15;
+                    actorClass.softLandNavigation *= 0.6f;
+                    actorClass.swimmingSpeed *= 0.75f;
+                    description += "Fur";
+
+                    resistanceCrush = 0.3f;
+                    resistanceFire = 0.2f;
+                    resistancePiercing = 0.1f;
+                    resistanceSlash = 0.3f;
+
+                    actorClass.resourceConsumption *= 1.2f;
+                    break;
+                case 1: // Skin
+                    actorClass.heatLimit = +5;
+                    actorClass.coldLimit = +5;
+                    description += "Skin";
+                    break;
+                case 2: // Wet scales
+                    actorClass.heatLimit = +5;
+                    actorClass.coldLimit = -5;
+
+                    actorClass.swimmingSpeed *= 1.25f;
+
+                    description += "Small Scales";
+                    break;
+
+                case 3: // Armor scales
+                    actorClass.heatLimit = +10;
+                    actorClass.coldLimit = +10;
+
+                    actorClass.speed *= 0.6f;
+                    actorClass.swimmingSpeed *= 0.25f;
+
+                    resistanceCrush = 0.5f;
+                    resistanceFire = 0.5f;
+                    resistancePiercing = 0.1f;
+                    resistanceSlash = 0.5f;
+                    actorClass.resourceConsumption *= 1.3f;
+                    description += "Armor Scales";
+                    break;
+                case 4: // Feathers
+                    actorClass.swimmingSpeed *= 1.35f;
+
+                    kickDamage = 0.75f;
+                    description += "Feathers";
+
+                    resistanceCrush = 0.2f;
+                    break;
+                case 5: // Magic scales
+                    actorClass.heatLimit = +10;
+                    actorClass.coldLimit = -10;
+
+                    resistanceCrush = 0.2f;
+                    resistanceFire = 1f;
+                    resistancePiercing = 0.2f;
+                    resistanceSlash = 0.4f;
+
+                    actorClass.resourceConsumption *= 3f;
+
+                    description += "Magic Scales";
                     break;
             }
             #endregion
 
             actorClass.meatAmount = size * bodyWidth * 5;
-
 
             float eyeSize = GetGeneValue(CreatureGeneKeys.EyeSize) * 0.01f;
             int eyeNumber = GetGeneValue(CreatureGeneKeys.EyeNumber);
@@ -188,15 +289,15 @@ namespace Sandbox
 
             // Base color and pattern color
             actorClass.baseColor = new Color(GetGeneValue(CreatureGeneKeys.BaseColorRed) / 255f, GetGeneValue(CreatureGeneKeys.BaseColorGreen) / 255f, GetGeneValue(CreatureGeneKeys.BaseColorBlue) / 255f);
-            actorClass.patternColor = new Color(GetGeneRatio(CreatureGeneKeys.PatternColorRed), GetGeneRatio(CreatureGeneKeys.PatternColorGreen), GetGeneRatio(CreatureGeneKeys.PatternColorBlue));
+            actorClass.patternColor = new Color(GetGeneValue(CreatureGeneKeys.PatternColorRed) / 255f, GetGeneValue(CreatureGeneKeys.PatternColorGreen) / 255f, GetGeneValue(CreatureGeneKeys.PatternColorBlue) / 255f);
 
             #region Attacks
             int hitBonus = 20 / (int)(1 + eyePosition * 20);
 
             // Kick
-            kickDamage *= size * (1 + (hindlimbLength * 0.25f) + (hindlimbThickness * 0.5f));
+            kickDamage *= size * (1 + limbLength * 0.25f + limbThickness * 0.5f);
             float kickDamageBonus = kickDamage;
-            Attack kick = new Attack("Kick", Mathf.CeilToInt(hindlimbLength * 2 + hitBonus), DamageTypes.Crushing, Mathf.CeilToInt(kickDamage), Mathf.CeilToInt(kickDamageBonus));
+            Attack kick = new Attack("Kick", Mathf.CeilToInt(limbLength * 2 + hitBonus), DamageTypes.Crushing, Mathf.CeilToInt(kickDamage), Mathf.CeilToInt(kickDamageBonus));
 
             // Add extra slashing damage for claws
             if (feetType == 3)
@@ -206,6 +307,14 @@ namespace Sandbox
 
             actorClass.AddAttacks(kick);
 
+
+            #endregion
+
+            #region Resistances
+            actorClass.resistances[DamageTypes.Crushing] = resistanceCrush;
+            actorClass.resistances[DamageTypes.Slashing] = resistanceSlash;
+            actorClass.resistances[DamageTypes.Piercing] = resistancePiercing;
+            actorClass.resistances[DamageTypes.Fire] = resistanceFire;
 
             #endregion
 
@@ -226,19 +335,6 @@ namespace Sandbox
             return Genes[index].Ratio;
         }
 
-
-        public string ToString()
-        {
-            string str = Name;
-            foreach (CreatureGeneKeys geneKey in Enum.GetValues(typeof(CreatureGeneKeys)))
-            {
-                CreatureGene gene = Genes[(int)geneKey];
-
-                str += "\n";
-            }
-
-            return str;
-        }
     }
 
     [System.Serializable]
@@ -325,10 +421,8 @@ namespace Sandbox
         MouthType, // 0=Sharp teeth,1=blunt teeth, 2=beak, 3=trunk
         EarSize, // Ear size relative to head size
         EarPosition, // Ear y-position relative to head height
-        ForelimbLength, // 20-300 - 100 = Size
-        ForelimbThickness, // 1-50
-        HindlimbLength, // 20-300 - 100 = Size
-        HindlimbThickness, // 1-50
+        LimbLength, // 20-300 - 100 = Size
+        LimbThickness, // 1-50
         BaseColorRed, // 0-255
         BaseColorGreen, // 0-255
         BaseColorBlue, // 0-255

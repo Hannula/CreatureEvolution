@@ -1,16 +1,16 @@
 {
     "name": "Rough Cavern Floor",
     "groundColor": {
-        "r": 0.5,
-        "g": 0.5,
-        "b": 0.5,
+        "r": 0.25,
+        "g": 0.25,
+        "b": 0.25,
         "a": 1.0
     },
     "symbol": 176,
     "secondaryColor": {
-        "r": 0.6,
-        "g": 0.6,
-        "b": 0.6,
+        "r": 0.15,
+        "g": 0.15,
+        "b": 0.15,
         "a": 1.0
     },
     "cover": 0.5,
