@@ -423,9 +423,10 @@ namespace Sandbox
 
                 Hunger += hungerRate;
                 // Start taking damage when too hungry
-                if (Hunger > 100)
+                if (Hunger >= 100)
                 {
                     Hitpoints -= ActorClass.maxHitpoints * 0.01f;
+                    Hunger = 100;
                 }
 
                 if (Energy < 0)
@@ -501,12 +502,13 @@ namespace Sandbox
             }
             else if (attackRoll >= 5)
             {
-                float targetVisibility = target.ActorClass.GetVisibilityValue(target.CurrentTile.terrain);
+                float targetVisibility = Mathf.Pow(1 + target.ActorClass.GetVisibilityValue(target.CurrentTile.terrain), 2);
+                float targetEvasionPenalty = Mathf.Pow(1 + target.ActorClass.GetTerrainMovementCost(target.CurrentTile.terrain), 2);
                 // Attack didn't miss but no critical hit
-                int toHit = attackRoll + attack.attackBonus + Mathf.CeilToInt(targetVisibility * 10f);
+                int toHit = attackRoll + attack.attackBonus + Mathf.CeilToInt(targetVisibility);
 
                 // Compare toHit -value to target's evasion
-                if (toHit >= target.ActorClass.evasion)
+                if (toHit >= target.ActorClass.evasion - targetEvasionPenalty)
                 {
                     // Attack hits if attackRoll + attack bonus exceeds target's evasion
                     attackSuccess = true;

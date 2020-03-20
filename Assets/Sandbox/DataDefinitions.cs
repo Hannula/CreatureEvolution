@@ -35,6 +35,8 @@ public class DataDefinitions
     public float GlobalMemoryLength;
 
     public int PopulationSize;
+    public int EliteProportion;
+    public float FitnessPower = 1f;
 
     [SerializeField]
     public List<KeyIntRangePair> GeneLimits;

@@ -13,6 +13,7 @@ namespace GA
         private List<ChromosomeFitnessPair<T>> population;
 
         private int maximumGenerations;
+        private int eliteProportion;
 
         public int Generation { get; private set; }
 
@@ -69,13 +70,15 @@ namespace GA
         private RecombinationHandler recombinator;
         private Mutator mutator;
 
-        public GeneticAlgorithm(int populationSize, FitnessEvaluator fitnessEvaluator, ParentSelector parentSelector, RecombinationHandler recombinator, Mutator mutator)
+
+        public GeneticAlgorithm(int populationSize, int eliteProportion, FitnessEvaluator fitnessEvaluator, ParentSelector parentSelector, RecombinationHandler recombinator, Mutator mutator)
         {
             this.populationSize = populationSize;
             this.fitnessEvaluator = fitnessEvaluator;
             this.parentSelector = parentSelector;
             this.recombinator = recombinator;
             this.mutator = mutator;
+            this.eliteProportion = eliteProportion;
         }
 
         /// <summary>
@@ -120,8 +123,15 @@ namespace GA
 
         public void Recombine()
         {
+
             // Select parents
-            List<ChromosomeFitnessPair<T>> parents = parentSelector(population, populationSize);
+            List<ChromosomeFitnessPair<T>> parents = parentSelector(population, populationSize - eliteProportion);
+
+            // Add previous best solutions
+            for (int i = 0; i < eliteProportion; i++)
+            {
+                parents.Add(parents[i]);
+            }
 
             // Crossover and mutation
             population.Clear();
@@ -220,12 +230,12 @@ namespace GA
         public static List<ChromosomeFitnessPair<T>> FitnessProportionateSelection(List<ChromosomeFitnessPair<T>> parentCandidates, int populationSize)
         {
             List<ChromosomeFitnessPair<T>> parents = new List<ChromosomeFitnessPair<T>>();
-
+            
             // Calculate the sum of fitnesses
             float totalFitness = 0;
             foreach (ChromosomeFitnessPair<T> parentCandidate in parentCandidates)
             {
-                totalFitness += parentCandidate.Fitness;
+                totalFitness += Mathf.Max(0, parentCandidate.Fitness);
             }
 
             // Get random parents
@@ -248,7 +258,6 @@ namespace GA
                 }
                 while (!found && j < parentCandidates.Count);
             }
-
             return parents;
         }
 

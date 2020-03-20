@@ -90,13 +90,13 @@ public class ActorVisualizer : MonoBehaviour
             // Body
             bodyRenderer.material.color = actor.ActorClass.baseColor;
             bodyRenderer.sharedMaterials[1].color = actor.ActorClass.patternColor;
-            bodyRenderer.transform.localScale = new Vector3(size * chromosome.GetGeneValue(CreatureGeneKeys.BodyWidth) * 0.01f, size, size);
+            bodyRenderer.transform.localScale = new Vector3(size, size, size);
 
             // Head
             headRenderer.material.color = actor.ActorClass.baseColor;
             headRenderer.sharedMaterials[1].color = actor.ActorClass.patternColor;
             headRenderer.transform.localPosition = headPosition.localPosition;
-            headRenderer.transform.localScale = new Vector3(size * chromosome.GetGeneValue(CreatureGeneKeys.HeadWidth) * 0.01f, size * chromosome.GetGeneValue(CreatureGeneKeys.HeadHeight) * 0.01f, size);
+            headRenderer.transform.localScale = new Vector3(size * chromosome.GetGeneValue(CreatureGeneKeys.HeadSize) * 0.01f, size * chromosome.GetGeneValue(CreatureGeneKeys.HeadSize) * 0.01f, size);
         }
 
         // Rename transform

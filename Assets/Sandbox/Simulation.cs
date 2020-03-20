@@ -75,7 +75,7 @@ public class Simulation : MonoBehaviour
                 {
                     Log("Simulation finished! Total age: " + totalAge);
                     // Set fitness value of chromosome to total age
-                    creatureChromosome.fitness = totalAge;
+                    creatureChromosome.fitness = Mathf.Pow(totalAge, dataDefs.FitnessPower);
                     simulationFinished = true;
                 }
                 yield return new WaitForSeconds(roundDuration);
@@ -97,7 +97,7 @@ public class Simulation : MonoBehaviour
             if (totalAge > 0)
             {
                 Log("Simulation finished! Total age: " + totalAge);
-                creatureChromosome.fitness = totalAge;
+                creatureChromosome.fitness = Mathf.Pow(totalAge, dataDefs.FitnessPower);
                 simulationFinished = true;
             }
         }
@@ -123,7 +123,7 @@ public class Simulation : MonoBehaviour
         LoadDataDefinitions();
 
         // Create CreatureEvolution GA-handler
-        creatureEvolution = new CreatureEvolution(dataDefs.PopulationSize, dataDefs.GeneLimits);
+        creatureEvolution = new CreatureEvolution(dataDefs.PopulationSize, dataDefs.EliteProportion, dataDefs.GeneLimits);
 
         // Load map data
         LoadMapData(Path.Combine(projectPath, dataDefs.MapFilePath));

@@ -15,7 +15,7 @@ public class CreatureEvolution
     private int currentChromosomeIndex;
     private List<CreatureChromosome> population;
 
-    public CreatureEvolution(int populationSize, List<KeyIntRangePair> geneLimits)
+    public CreatureEvolution(int populationSize, int eliteProportion, List<KeyIntRangePair> geneLimits)
     {
         this.populationSize = populationSize;
         this.geneLimits = geneLimits;
@@ -39,7 +39,7 @@ public class CreatureEvolution
         }
 
         // Create a new genetic algorithm
-        GA = new GeneticAlgorithm<CreatureChromosome>(populationSize, GetCreatureFitness, GeneticAlgorithm<CreatureChromosome>.FitnessProportionateSelection, SinglePointCrossover, Mutate);
+        GA = new GeneticAlgorithm<CreatureChromosome>(populationSize, Mathf.Min(eliteProportion, populationSize - 1),  GetCreatureFitness, GeneticAlgorithm<CreatureChromosome>.FitnessProportionateSelection, SinglePointCrossover, Mutate);
 
         // Generate the initial population
         population = new List<CreatureChromosome>();
@@ -58,11 +58,11 @@ public class CreatureEvolution
 
     public static CreatureChromosome Mutate(CreatureChromosome x)
     {
-        // Select a random gene to mutate
-        for (int i = 0; i < UnityEngine.Random.Range(0, 10); i++)
+        // Select random genes to mutate
+        for (int i = 0; i < UnityEngine.Random.Range(1, 5); i++)
         {
             CreatureGene gene = x.Genes[UnityEngine.Random.Range(0, x.Genes.Length)];
-            gene.Mutate(0.15f);
+            gene.Mutate(0.5f);
         }
 
         return x;

@@ -97,7 +97,8 @@ public class ActorClass
 
     public void Initialize()
     {
-
+        plantConsumptionEfficiency = Mathf.Clamp(plantConsumptionEfficiency, 0, 1f);
+        meatConsumptionEfficiency = Mathf.Clamp(meatConsumptionEfficiency, 0, 1f);
         // If this actor can consume plants, calculate ratio of predatory
         if (plantConsumptionEfficiency > 0)
         {
@@ -115,32 +116,35 @@ public class ActorClass
     public void ParseResistances()
     {
         resistances = new Dictionary<DamageTypes, float>();
-        foreach (string resistanceString in resistanceStrings)
+        if (resistanceStrings != null)
         {
-            try
+            foreach (string resistanceString in resistanceStrings)
             {
-                string[] parts = resistanceString.Split(':');
-                // Find damage type
-                DamageTypes type = DamageTypes.None;
-                foreach (DamageTypes damageType in Enum.GetValues(typeof(DamageTypes)))
+                try
                 {
-                    if (parts[0] == damageType.ToString())
+                    string[] parts = resistanceString.Split(':');
+                    // Find damage type
+                    DamageTypes type = DamageTypes.None;
+                    foreach (DamageTypes damageType in Enum.GetValues(typeof(DamageTypes)))
                     {
-                        type = damageType;
+                        if (parts[0] == damageType.ToString())
+                        {
+                            type = damageType;
+                        }
                     }
-                }
-                // Continue only if damage type is found
-                if (type != DamageTypes.None)
-                {
-                    float resistance = float.Parse(parts[1]);
-                    // Set resistance of given damage type
-                    resistances[type] = resistance;
-                }
+                    // Continue only if damage type is found
+                    if (type != DamageTypes.None)
+                    {
+                        float resistance = float.Parse(parts[1]);
+                        // Set resistance of given damage type
+                        resistances[type] = resistance;
+                    }
 
-            }
-            catch (Exception)
-            {
-                Simulation.Log("Failed to parse resistance strings. Correct format is \"DamageType:ResistanceValue\".");
+                }
+                catch (Exception)
+                {
+                    Simulation.Log("Failed to parse resistance strings. Correct format is \"DamageType:ResistanceValue\".");
+                }
             }
         }
     }
@@ -408,11 +412,11 @@ public class ActorClass
             Vector3 groundColorVec = new Vector3(targetTerrain.groundColor.r, targetTerrain.groundColor.g, targetTerrain.groundColor.b);
             Vector3 groundSecondaryColorVec = new Vector3(targetTerrain.secondaryColor.r, targetTerrain.secondaryColor.g, targetTerrain.secondaryColor.b);
 
-            float baseVisibility = Mathf.Pow(Vector3.Distance(baseColorVec, groundColorVec), 2);
-            float patternVisibility = Mathf.Pow(Vector3.Distance(patternColorVec, groundSecondaryColorVec), 1.5f);
+            float baseVisibility = Mathf.Pow(Vector3.Distance(baseColorVec, groundColorVec), 2) + Mathf.Pow(Vector3.Distance(baseColorVec,groundSecondaryColorVec), 1.5f);
+            float patternVisibility = Mathf.Pow(Vector3.Distance(patternColorVec, groundSecondaryColorVec), 2f) + Mathf.Pow(Vector3.Distance(patternColorVec, groundColorVec), 1.5f);
 
             // Apply camouflage modifier
-            terrainVisibility *= 1 + 0.75f * baseVisibility + 0.25f * patternVisibility;
+            terrainVisibility *= 1 + 0.3f * baseVisibility + 0.2f * patternVisibility;
 
             // Save visibility for this terrain type
             terrainVisibility = Mathf.Max(terrainVisibility, 0.05f);

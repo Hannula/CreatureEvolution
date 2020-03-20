@@ -72,50 +72,56 @@ namespace Sandbox
         {
             float size = GetGeneValue(CreatureGeneKeys.Size) * 0.1f;
 
-            float bodyWidth = GetGeneValue(CreatureGeneKeys.BodyWidth) * 0.01f;
-            float headHeight = GetGeneValue(CreatureGeneKeys.HeadHeight) * 0.01f;
-            float headWidth = GetGeneValue(CreatureGeneKeys.HeadWidth) * 0.01f;
-            float resourceConsumption = 5 * size * bodyWidth;
 
-            float height = size + size * headHeight + size;
+            float headSize = GetGeneValue(CreatureGeneKeys.HeadSize) * 0.01f;
+            float resourceConsumption = 2f * size * (1 + headSize);
+
+            float height = size + size * headSize;
 
             ActorClass actorClass = new ActorClass("Creature");
             actorClass.size = size;
             actorClass.height = size;
-            actorClass.maxHitpoints = 5 + size * 5 * bodyWidth + headWidth * 2 + headHeight * 2;
+            actorClass.meatAmount = height * 5;
+            actorClass.maxHitpoints = Mathf.CeilToInt( 10 * size);
             actorClass.resourceConsumption = resourceConsumption;
             actorClass.steepNavigation = 1;
             actorClass.ruggedLandNavigation = 1;
             actorClass.softLandNavigation = 1;
             actorClass.crampedNavigation = 1;
 
-            actorClass.diggingSpeed = 1;
-            actorClass.climbingSpeed = 1;
-            #region Legs
-            actorClass.speed = 5 + (size * 0.5f);
+            actorClass.diggingSpeed = 0;
+            actorClass.climbingSpeed = 0;
+            actorClass.evasion = Mathf.FloorToInt(50f - headSize * 10f); // Reduced evasion for having bigger head
 
-            actorClass.coldLimit = 0;
-            actorClass.heatLimit = 20;
+            actorClass.coldLimit = 5;
+            actorClass.heatLimit = 25;
 
             float resistanceCrush = 0;
             float resistanceSlash = 0;
             float resistancePiercing = 0;
             float resistanceFire = 0;
 
+
+            #region Legs
+            actorClass.speed = 5 + (size * 0.5f);
+
             float limbLength = GetGeneValue(CreatureGeneKeys.LimbLength) * 0.01f;
             float limbThickness = GetGeneValue(CreatureGeneKeys.LimbThickness) * 0.01f;
 
-            actorClass.maxHitpoints *= 1 + (limbThickness) * 0.2f;
-            actorClass.speed *= Mathf.Sqrt(1 + limbLength);
+            actorClass.maxHitpoints += size * ( 1 + (limbThickness) * 0.2f); // Add health for thick legs
+            actorClass.speed *= Mathf.Sqrt(1 + limbLength); // Add speed for long legs
 
-            actorClass.resourceConsumption += Mathf.Pow(1 + limbLength * limbThickness, 1.5f) * 3f;
+            actorClass.resourceConsumption += Mathf.Pow(1 + limbLength + limbThickness, 1.5f) * size * 0.25f;
 
+            actorClass.coldLimit -= limbThickness * 10;
+            actorClass.coldLimit += limbLength * 3f;
             #endregion
 
 
             actorClass.resourceConsumptionEnergyCost = 10f;
             actorClass.meatConsumptionEfficiency = 0.5f;
             actorClass.plantConsumptionEfficiency = 0.5f;
+
 
             actorClass.visibility = 0.35f + height * 0.2f;
             actorClass.noise = 0.1f;
@@ -124,7 +130,7 @@ namespace Sandbox
             #region Feet Type
             float kickDamage = 1;
             int feetType = GetGeneValue(CreatureGeneKeys.FeetType);
-            description += "Foot type: ";
+            description += "\nFoot type: ";
             switch (feetType)
             {
                 case 0: // Hoof 
@@ -194,7 +200,7 @@ namespace Sandbox
 
             #region Skin Type
             description += "\nSkin type: ";
-            int skinType = GetGeneValue(CreatureGeneKeys.Skin);
+            int skinType = GetGeneValue(CreatureGeneKeys.SkinType);
             switch (skinType)
             {
                 case 0: // Fur 
@@ -265,39 +271,149 @@ namespace Sandbox
             }
             #endregion
 
-            actorClass.meatAmount = size * bodyWidth * 5;
 
+            #region Eyes
             float eyeSize = GetGeneValue(CreatureGeneKeys.EyeSize) * 0.01f;
             int eyeNumber = GetGeneValue(CreatureGeneKeys.EyeNumber);
-            float eyePosition = GetGeneValue(CreatureGeneKeys.EyePosition) * 0.01f;
             float eyeHeight = height;
 
-            actorClass.lightVision = eyeSize * 0.25f + Mathf.Sqrt(eyeNumber) * 0.5f + eyePosition * headWidth;
-            actorClass.darkVision = eyeSize * 0.5f + eyeNumber * 0.15f;
+            resistancePiercing -= eyeNumber * eyeSize * 0.33f; // Large eyes make creature less resilient to attacks
+            resistanceSlash -= eyeNumber * eyeSize * 0.15f;
 
-            actorClass.tracking = 2 / (0.1f + eyePosition);
 
-            actorClass.resourceConsumption += size * eyeSize * 6f + Mathf.Pow(eyeNumber, 2) * 3f;
+            actorClass.lightVision = eyeSize * Mathf.Sqrt(eyeNumber);
+            actorClass.darkVision = Mathf.Pow(eyeSize, 2) * eyeNumber * 0.1f;
+
+            actorClass.tracking = eyeNumber; // Number of eyes help tracking
+
+            actorClass.resourceConsumption += size * (Mathf.Pow(1 + eyeSize, 2f) + Mathf.Pow(eyeNumber, 3f)) * 0.1f;
 
             // Observation
-            actorClass.observationRange = 2 + Mathf.Sqrt(1 + eyeHeight);
+            actorClass.observationRange = 2.5f + eyeSize; // Eye size increases observation range
 
-            actorClass.smellSense = 0;
-            float earSize = GetGeneValue(CreatureGeneKeys.EarSize) * 0.01f;
-            actorClass.hearing = earSize;
-            actorClass.resourceConsumption += earSize * 5f;
+            if (eyeNumber >= 2) // Add bonus for stereoscopic vision
+            {
+                actorClass.lightVision *= 1.25f;
+                actorClass.darkVision *= 1.25f;
+                actorClass.observationRange += 0.75f;
+            }
+            #endregion
+
+
+            #region Ears
+            int earType = GetGeneValue(CreatureGeneKeys.EarType);
+            description += "\nEar type: ";
+            switch (earType)
+            {
+                case 0: // No ear 
+                    description += "No ears";
+                    break;
+                case 1: // Ear hole
+                    actorClass.hearing = 0.25f;
+                    actorClass.resourceConsumption += size * 0.05f;
+                    description += "Large ears";
+                    break;
+                case 2: // Large ear
+                    actorClass.visibility += 0.3f;
+                    actorClass.heatLimit += 10;
+                    actorClass.coldLimit += 10;
+                    actorClass.hearing = 0.5f;
+                    actorClass.tracking += 0.35f;
+                    actorClass.resourceConsumption += size * 0.2f;
+                    description += "Large ears";
+                    break;
+                case 3: // Aimed ears
+                    actorClass.coldLimit += 5;
+                    actorClass.visibility += 0.15f;
+                    actorClass.hearing = 0.65f;
+                    actorClass.tracking += 1f;
+                    actorClass.resourceConsumption += size * 0.3f;
+                    description += "Aimed ears";
+                    break;
+                case 4: // Small ears
+                    actorClass.coldLimit += 2;
+                    actorClass.hearing = 0.35f;
+                    actorClass.tracking += 0.25f;
+                    actorClass.resourceConsumption += size * 0.15f;
+                    description += "Small ears";
+                    break;
+            }
+            #endregion
+
+            #region Mouth
+            int mouthType = GetGeneValue(CreatureGeneKeys.MouthType);
+            description += "\nMouth type: ";
+            float biteCrush = (4 + size * headSize * 0.65f);
+            float bitePiercing = (4 + size * headSize * 0.65f);
+            int biteAttackBonus = -10;
+            switch (mouthType)
+            {
+                case 0: // Snout
+                    description += "Snout";
+                    actorClass.observationRange += 0.5f;
+                    actorClass.smellSense = 0.5f;
+                    actorClass.diggingSpeed += 1f;
+                    biteCrush *= 0.75f;
+                    bitePiercing *= 0.25f;
+                    break;
+                case 1: // Trunk
+                    description += "Trunk";
+                    actorClass.observationRange += 0.25f;
+                    actorClass.smellSense = 0.25f;
+                    actorClass.diggingSpeed += 2f;
+                    actorClass.climbingSpeed += 2f; // Trunk makes it easier to get food from trees
+                    actorClass.swimmingSpeed *= 0.85f;
+                    actorClass.meatConsumptionEfficiency -= 0.25f;
+                    actorClass.plantConsumptionEfficiency += 0.25f;
+                    actorClass.resourceConsumption += size * 0.1f;
+                    biteAttackBonus += 5;
+                    biteCrush *= 0.9f;
+                    bitePiercing *= 0.1f;
+                    actorClass.resourceConsumptionEnergyCost -= 3f;
+
+                    break;
+                case 2: // Beak
+                    description += "Beak";
+                    actorClass.diggingSpeed += 0.5f;
+                    actorClass.smellSense = 0.2f;
+                    actorClass.meatConsumptionEfficiency += 0.2f;
+                    actorClass.plantConsumptionEfficiency -= 0.33f;
+                    biteCrush *= 0.25f;
+                    bitePiercing *= 1f;
+                    actorClass.resourceConsumption += size * 0.3f;
+                    actorClass.resourceConsumptionEnergyCost += 3f;
+
+                    biteAttackBonus += 5;
+
+                    break;
+                case 3: // Fangs
+                    description += "Fangs";
+                    actorClass.smellSense = 0.3f;
+                    actorClass.observationRange += 0.25f;
+                    actorClass.meatConsumptionEfficiency += 0.5f;
+                    actorClass.plantConsumptionEfficiency -= 0.5f;
+                    biteCrush *= 0.65f;
+                    bitePiercing *= 0.65f;
+                    break;
+
+            }
+
+            Attack bite = new Attack("Bite", biteAttackBonus, DamageTypes.Crushing, Mathf.CeilToInt(biteCrush), Mathf.CeilToInt(biteCrush));
+            
+            bite.AddDamage(new Attack.Damage(DamageTypes.Piercing, Mathf.CeilToInt(bitePiercing), Mathf.CeilToInt(bitePiercing)));
+
+            actorClass.AddAttacks(bite);
+            #endregion
 
             // Base color and pattern color
             actorClass.baseColor = new Color(GetGeneValue(CreatureGeneKeys.BaseColorRed) / 255f, GetGeneValue(CreatureGeneKeys.BaseColorGreen) / 255f, GetGeneValue(CreatureGeneKeys.BaseColorBlue) / 255f);
             actorClass.patternColor = new Color(GetGeneValue(CreatureGeneKeys.PatternColorRed) / 255f, GetGeneValue(CreatureGeneKeys.PatternColorGreen) / 255f, GetGeneValue(CreatureGeneKeys.PatternColorBlue) / 255f);
 
             #region Attacks
-            int hitBonus = 20 / (int)(1 + eyePosition * 20);
-
             // Kick
             kickDamage *= size * (1 + limbLength * 0.25f + limbThickness * 0.5f);
             float kickDamageBonus = kickDamage;
-            Attack kick = new Attack("Kick", Mathf.CeilToInt(limbLength * 2 + hitBonus), DamageTypes.Crushing, Mathf.CeilToInt(kickDamage), Mathf.CeilToInt(kickDamageBonus));
+            Attack kick = new Attack("Kick", Mathf.CeilToInt(limbLength * 2), DamageTypes.Crushing, Mathf.CeilToInt(kickDamage), Mathf.CeilToInt(kickDamageBonus));
 
             // Add extra slashing damage for claws
             if (feetType == 3)
@@ -310,14 +426,14 @@ namespace Sandbox
 
             #endregion
 
+            actorClass.Initialize();
+
             #region Resistances
             actorClass.resistances[DamageTypes.Crushing] = resistanceCrush;
             actorClass.resistances[DamageTypes.Slashing] = resistanceSlash;
             actorClass.resistances[DamageTypes.Piercing] = resistancePiercing;
             actorClass.resistances[DamageTypes.Fire] = resistanceFire;
-
             #endregion
-
             return actorClass;
         }
 
@@ -409,18 +525,12 @@ namespace Sandbox
     public enum CreatureGeneKeys
     {
         Size, // 1 - 10
-        BodyWidth, // 50-200 // Body width relative to height
-        Skin, // 0 for hide, 1 for scales, 2 for feathers, 3 for fur
-        SkinThickness, // 1-100
-        HeadWidth, // 10-50
-        HeadHeight, // 10-50
+        SkinType, // 0 for hide, 1 for scales, 2 for feathers, 3 for fur
+        HeadSize, // 10-50
         EyeNumber, // 0-10
         EyeSize, // 1-100
-        EyePosition, // Eye position relative to head size
-        MouthSize, // Mouth size relative to head size
         MouthType, // 0=Sharp teeth,1=blunt teeth, 2=beak, 3=trunk
-        EarSize, // Ear size relative to head size
-        EarPosition, // Ear y-position relative to head height
+        EarType,
         LimbLength, // 20-300 - 100 = Size
         LimbThickness, // 1-50
         BaseColorRed, // 0-255
