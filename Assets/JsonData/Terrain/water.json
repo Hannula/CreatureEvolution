@@ -1,20 +1,20 @@
 {
     "name": "Water",
     "groundColor": {
-        "r": 0.28,
-        "g": 0.5,
-        "b": 0.6,
+        "r": 0.22,
+        "g": 0.44,
+        "b": 0.8,
         "a": 1.0
     },
     "symbol": 240,
     "secondaryColor": {
-        "r": 0.48,
-        "g": 0.7,
+        "r": 0.22,
+        "g": 0.44,
         "b": 0.8,
         "a": 1.0
     },
     "cover": 0,
-    "noise": 2,
+    "noise": 1,
     "passable": true,
     "ruggedness":0,
     "softness":1.5,

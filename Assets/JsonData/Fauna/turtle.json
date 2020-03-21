@@ -1,0 +1,61 @@
+{
+    "name": "Turtle",
+    "baseColor": {
+        "r": 0.3,
+        "g": 0.8,
+        "b": 0,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.5,
+        "g": 0.8,
+        "b": 0.2,
+        "a": 1.0
+    },
+    "maxHitpoints": 25,
+    "speed": 6,
+    "evasion" : 30,
+    "size": 1,
+    "meatAmount" : 15,
+    "resistances":[
+    ],
+    "height" : 0.25,
+    "swimmingSpeed" : 12,
+    "softLandNavigation" : 8,
+    "ruggedLandNavigation" : 3,
+    "crampedNavigation" : 7,
+    "steepNavigation" : 3,
+
+    "visibility" : 0.75,
+    "observationRange" : 2.5,
+    "lightVision" : 0.9,
+    "darkVision" : 0.3,
+    "smellSense" : 0.4,
+    "hearing": 0.4, 
+    "odor" : 0.2,
+    "noise" : 0.2,
+
+    "tracking" : 0,
+
+    "heatLimit" : 35,
+    "coldLimit" : 10,
+
+    "resourceConsumption" : 1,
+    "resourceConsumptionEnergyCost" : 1,
+    "plantConsumptionEfficiency" : 1,
+    "climbingSpeed" : 0,
+    "diggingSpeed" : 1,
+
+    "attacks": [
+        {
+            "name" : "Bite",
+            "damage" : [
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
+                }
+            ]
+        }
+    ]
+}

@@ -3,7 +3,7 @@
     "EliteProportion": 4,
     "FitnessPower" : 1,
     
-    "MapFilePath": "mediumMap.json",
+    "MapFilePath": "mediumVolcanic.json",
     "TerrainLayerName" : "Terrain",
     "ActorLayerName" : "Fauna",
     "ResourceLayerName" : "Flora",
@@ -26,19 +26,33 @@
         {"Key" : 1, "Value" : "Terrain/smoothCavernFloor.json"},
         {"Key" : 2, "Value" : "Terrain/roughCavernFloor.json"},
         {"Key" : 3, "Value" : "Terrain/difficultCavernFloor.json"},
+        {"Key" : 4, "Value" : "Terrain/lavaCavernFloor.json"},
+        {"Key" : 5, "Value" : "Terrain/lavaPool.json"},
         {"Key" : 6, "Value" : "Terrain/shallowWater.json"},
         {"Key" : 7, "Value" : "Terrain/water.json"},
         {"Key" : 8, "Value" : "Terrain/deepWater.json"},
         {"Key" : 9, "Value" : "Terrain/reedWater.json"},
         {"Key" : 10, "Value" : "Terrain/mud.json"},
-        {"Key" : 11, "Value" : "Terrain/tallGrass.json"}
+        {"Key" : 11, "Value" : "Terrain/tallGrass.json"},
+        {"Key" : 12, "Value" : "Terrain/shortGrass.json"},
+        {"Key" : 13, "Value" : "Terrain/rockyGrass.json"},
+        {"Key" : 14, "Value" : "Terrain/swampWater.json"},
+        {"Key" : 16, "Value" : "Terrain/sand.json"},
+        {"Key" : 17, "Value" : "Terrain/rockySand.json"},
+        {"Key" : 21, "Value" : "Terrain/snow.json"},
+        {"Key" : 22, "Value" : "Terrain/ice.json"},
+        {"Key" : 23, "Value" : "Terrain/icyWater.json"}
     ],
     "ActorClassFilePaths" :[
         {"Key" : 27, "Value" : "Fauna/rat.json"},
         {"Key" : 28, "Value" : "Fauna/bear.json"},
         {"Key" : 29, "Value" : "Fauna/fish.json"},
         {"Key" : 30, "Value" : "Fauna/crocodile.json"},
-        {"Key" : 31, "Value" : "Fauna/elk.json"}
+        {"Key" : 31, "Value" : "Fauna/elk.json"},
+        {"Key" : 32, "Value" : "Fauna/drake.json"},
+        {"Key" : 33, "Value" : "Fauna/lavaSlime.json"},
+        {"Key" : 34, "Value" : "Fauna/turtle.json"},
+        {"Key" : 35, "Value" : "Fauna/bird.json"}
     ],
     "ResourceClassFilePaths" :[
         {"Key" : 52, "Value" : "Flora/berryBush.json"},

@@ -1,0 +1,62 @@
+{
+    "name": "Lava Slime",
+    "baseColor": {
+        "r": 0.9,
+        "g": 0.5,
+        "b": 0,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.9,
+        "g": 0.5,
+        "b": 0,
+        "a": 1.0
+    },
+    "maxHitpoints": 50,
+    "speed": 6,
+    "evasion" : 20,
+    "size": 1,
+    "meatAmount" : 15,
+    "resistances":[
+    ],
+    "height" : 0.75,
+    "swimmingSpeed" : 4,
+    "softLandNavigation" : 10,
+    "ruggedLandNavigation" : 6,
+    "crampedNavigation" : 7,
+    "steepNavigation" : 3,
+
+    "visibility" : 1,
+    "observationRange" : 2,
+    "lightVision" : 0.1,
+    "darkVision" : 0.1,
+    "smellSense" : 1,
+    "hearing": 1, 
+    "odor" : 0,
+    "noise" : 0.2,
+
+    "tracking" : 0,
+
+    "heatLimit" : 1000,
+    "coldLimit" : 25,
+
+    "resourceConsumption" : 1,
+    "resourceConsumptionEnergyCost" : 1,
+    "plantConsumptionEfficiency" : 1,
+    "climbingSpeed" : 0,
+    "diggingSpeed" : 0,
+
+    "attacks": [
+        {
+            "name" : "Fire breath",
+            "damage" : [
+                {
+                    "damageType" : 4,
+                    "damageRoll" : 20,
+                    "damageBonus" : 20
+                }
+            ]
+        }
+
+    ]
+}

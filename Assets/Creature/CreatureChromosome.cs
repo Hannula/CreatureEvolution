@@ -76,7 +76,7 @@ namespace Sandbox
             float headSize = GetGeneValue(CreatureGeneKeys.HeadSize) * 0.01f;
             float resourceConsumption = 2f * size * (1 + headSize);
 
-            float height = size + size * headSize;
+            float height = size + size * headSize * 0.3f;
 
             ActorClass actorClass = new ActorClass("Creature");
             actorClass.size = size;

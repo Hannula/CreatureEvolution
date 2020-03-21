@@ -1,0 +1,81 @@
+{
+    "name": "Drake",
+    "baseColor": {
+        "r": 0.25,
+        "g": 0.25,
+        "b": 0.25,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.2,
+        "g": 0.2,
+        "b": 0.2,
+        "a": 0
+    },
+    "maxHitpoints": 100,
+    "speed": 11,
+    "evasion": 40,
+    "size": 8,
+    "meatAmount" : 45,
+    "resistances":[
+    ],
+    "height" : 2,
+    "swimmingSpeed" : 8,
+    "softLandNavigation" : 3,
+    "ruggedLandNavigation" : 5,
+    "crampedNavigation" : 5,
+    "steepNavigation" : 5,
+
+    "visibility" : 2.3,
+
+    "observationRange" : 3.5,
+    "lightVision" : 0.3,
+    "darkVision" : 0.4,
+    "smellSense" : 0.3,
+    "hearing": 0.8, 
+    "odor" : 0.1,
+    "noise" : 0.5,
+    "tracking" : 3.5,
+
+    "heatLimit" : 100,
+    "coldLimit" : 20,
+
+    "resourceConsumption" : 7,
+    "resourceConsumptionEnergyCost" : 1,
+    "meatConsumptionEfficiency" : 1,
+
+    "attacks": [
+        {
+            "name" : "Fiery Bite",
+            "attackBonus" : -8,
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
+                },
+                {
+                    "damageType" : 4,
+                    "damageRoll" : 8,
+                    "damageBonus" : 8
+                }
+            ]
+        },
+        {
+            "name" : "Tail attack",
+            "attackBonus" : 15,
+            "damage" : [
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 10,
+                    "damageBonus" : 10
+                }
+            ]
+        }
+    ],
+    "resistanceStrings":[
+        "Slashing:0,25",
+        "Piercing:0,25",
+        "Crush:0,4"
+    ]
+}

@@ -54,18 +54,29 @@
             "damage" : [
                 {
                     "damageType" : 3,
-                    "damageRoll" : 10,
-                    "damageBonus" : 10
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
+                },
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
                 }
             ]
         },
         {
             "name" : "Bite",
+            "attackBonus" : -10,
             "damage" : [
                 {
                     "damageType" : 2,
-                    "damageRoll" : 8,
-                    "damageBonus" : 8
+                    "damageRoll" : 6,
+                    "damageBonus" : 6
+                },
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 6,
+                    "damageBonus" : 6
                 }
             ]
         }

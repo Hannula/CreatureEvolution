@@ -1,24 +1,24 @@
 {
-    "name": "Shallow Water",
+    "name": "Sand",
     "groundColor": {
-        "r": 0.22,
-        "g": 0.44,
-        "b": 0.8,
+        "r": 0.64,
+        "g": 0.62,
+        "b": 0.39,
         "a": 1.0
     },
-    "symbol": 176,
+    "symbol": 32,
     "secondaryColor": {
-        "r": 0.3,
-        "g": 0.3,
-        "b": 0.3,
+        "r": 0.64,
+        "g": 0.62,
+        "b": 0.39,
         "a": 1.0
     },
     "cover": 0,
     "noise": 1,
     "passable": true,
     "ruggedness":0,
-    "softness":1.5,
+    "softness":3,
     "density":0,
-    "waterDepth": 1,
+    "waterDepth": 0,
     "hazards": []
 }

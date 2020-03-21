@@ -1,0 +1,24 @@
+{
+    "name": "Rocky Sand",
+    "groundColor": {
+        "r": 0.64,
+        "g": 0.62,
+        "b": 0.39,
+        "a": 1.0
+    },
+    "symbol": 32,
+    "secondaryColor": {
+        "r": 0.5,
+        "g": 0.34,
+        "b": 0.2,
+        "a": 1.0
+    },
+    "cover": 0.3,
+    "noise": 1.8,
+    "passable": true,
+    "ruggedness": 3,
+    "softness":2.5,
+    "density":0,
+    "waterDepth": 0,
+    "hazards": []
+}

@@ -1,0 +1,64 @@
+{
+    "name": "Bird",
+    "baseColor": {
+        "r": 0.2,
+        "g": 0.2,
+        "b": 0.2,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.2,
+        "g": 0.2,
+        "b": 0.2,
+        "a": 0
+    },
+    "maxHitpoints": 50,
+    "speed": 15,
+    "evasion": 60,
+    "size": 4,
+    "meatAmount" : 25,
+    "resistances":[
+    ],
+    "height" : 1.1,
+    "swimmingSpeed" : 15,
+    "softLandNavigation" : 12,
+    "ruggedLandNavigation" : 12,
+    "crampedNavigation" : 12,
+    "steepNavigation" : 12,
+
+    "visibility" : 2,
+
+    "observationRange" : 3.5,
+    "lightVision" : 0.8,
+    "darkVision" : 0.1,
+    "smellSense" : 0.1,
+    "hearing": 0.1, 
+    "odor" : 0.1,
+    "noise" : 0.2,
+    "tracking" : 2,
+
+    "heatLimit" : 30,
+    "coldLimit" : 5,
+
+    "resourceConsumption" : 5,
+    "resourceConsumptionEnergyCost" : 1,
+    "meatConsumptionEfficiency" : 1,
+
+    "attacks": [
+        {
+            "name" : "Peck",
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 7,
+                    "damageBonus" : 7
+                },
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
+                }
+            ]
+        }
+    ]
+}

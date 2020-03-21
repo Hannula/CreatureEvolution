@@ -47,11 +47,28 @@
     "attacks": [
         {
             "name" : "Bite",
+            "attackBonus" : -5,
             "damage" : [
                 {
                     "damageType" : 2,
-                    "damageRoll" : 12,
-                    "damageBonus" : 12
+                    "damageRoll" : 7,
+                    "damageBonus" : 7
+                },
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 6,
+                    "damageBonus" : 6
+                }
+            ]
+        },
+        {
+            "name" : "Tail attack",
+            "attackBonus" : 15,
+            "damage" : [
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 9,
+                    "damageBonus" : 9
                 }
             ]
         }

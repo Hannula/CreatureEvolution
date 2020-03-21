@@ -1,0 +1,35 @@
+{
+    "name": "Lava Pool",
+    "groundColor": {
+        "r": 1,
+        "g": 0.3,
+        "b": 0,
+        "a": 1.0
+
+    },
+    "symbol": 176,
+    "secondaryColor": {
+        "r": 0.25,
+        "g": 0.25,
+        "b": 0.25,
+        "a": 1.0
+    },
+    "cover": 0,
+    "noise": 0,
+    "passable": true,
+    "ruggedness":0,
+    "softness":0,
+    "density":0,
+    "waterDepth": 2,
+    "hazards": [{
+        "name" : "Lava pool",
+        "damage" : [
+            {
+                "attackBonus" : 500,
+                "damageType" : 4,
+                "damageRoll" : 10,
+                "damageBonus" : 10
+            }
+        ]
+    }]
+}

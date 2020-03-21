@@ -53,13 +53,13 @@
             "damage" : [
                 {
                     "damageType" : 2, 
-                    "damageRoll" : 5,
-                    "damageBonus" : 5
+                    "damageRoll" : 6,
+                    "damageBonus" : 6
                 },
                 {
                     "damageType" : 1, 
-                    "damageRoll" : 5,
-                    "damageBonus" : 5
+                    "damageRoll" : 8,
+                    "damageBonus" : 8
                 }
             ]
 
@@ -69,8 +69,8 @@
             "damage" : [
                 {
                     "damageType" : 1, 
-                    "damageRoll" : 7,
-                    "damageBonus" : 7
+                    "damageRoll" : 8,
+                    "damageBonus" : 8
                 }
             ]
         }

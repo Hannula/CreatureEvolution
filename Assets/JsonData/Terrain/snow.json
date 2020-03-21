@@ -1,23 +1,23 @@
 {
-    "name": "Smooth Cavern Floor",
+    "name": "Snow",
     "groundColor": {
-        "r": 0.25,
-        "g": 0.25,
-        "b": 0.25,
+        "r": 0.95,
+        "g": 0.95,
+        "b": 0.95,
         "a": 1.0
     },
     "symbol": 32,
     "secondaryColor": {
-        "r": 0.25,
-        "g": 0.25,
-        "b": 0.25,
+        "r": 0.7,
+        "g": 0.9,
+        "b": 0.95,
         "a": 1.0
     },
     "cover": 0,
-    "noise": 1.5,
+    "noise": 0.1,
     "passable": true,
-    "ruggedness":0,
-    "softness":0,
+    "ruggedness":2,
+    "softness":2,
     "density":0,
     "waterDepth": 0,
     "hazards": []
