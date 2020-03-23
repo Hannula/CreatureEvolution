@@ -431,9 +431,9 @@ public class ActorClass
             float hueDiffBase = Mathf.Abs(Mathf.DeltaAngle(baseColorH * 360, groundColorH * 360) / 360);
             float hueDiffPattern = Mathf.Abs(Mathf.DeltaAngle(patternColorH * 360, groundPatternColorH * 360) / 360);
 
-            float hueDiff = 0.75f * hueDiffBase + 0.25f * hueDiffPattern;
-            float saturationDiff = 0.75f * Mathf.Abs(baseColorS - groundColorS) + 0.25f * Mathf.Abs(patternColorS - groundPatternColorS);
-            float valueDiff = 0.75f * Mathf.Abs(baseColorV - groundColorV) + 0.25f * Mathf.Abs(patternColorV - groundPatternColorV);
+            float hueDiff = 0.5f * hueDiffBase + 0.5f * hueDiffPattern;
+            float saturationDiff = 0.5f * Mathf.Abs(baseColorS - groundColorS) + 0.5f * Mathf.Abs(patternColorS - groundPatternColorS);
+            float valueDiff = 0.5f * Mathf.Abs(baseColorV - groundColorV) + 0.5f * Mathf.Abs(patternColorV - groundPatternColorV);
 
             float contrast = (hueDiff * 2 + valueDiff * 2 + saturationDiff) / 5;
             // Save visibility for this terrain type

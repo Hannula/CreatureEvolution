@@ -90,6 +90,7 @@ namespace Sandbox
             actorClass.crampedNavigation = 1;
 
             actorClass.diggingSpeed = 0;
+            actorClass.divingSkill = 0;
             actorClass.climbingSpeed = 0;
             actorClass.evasion = Mathf.FloorToInt(50f - headSize * 10f); // Reduced evasion for having bigger head
 
@@ -124,8 +125,8 @@ namespace Sandbox
 
 
             actorClass.visibility = 0.35f + height * 0.5f;
-            actorClass.noise = 0.1f;
-            actorClass.odor = 0.1f;
+            actorClass.noise = 0.5f;
+            actorClass.odor = 0.5f;
 
             #region Feet Type
             float kickDamage = 1;
@@ -134,7 +135,7 @@ namespace Sandbox
             switch (feetType)
             {
                 case 0: // Hoof 
-                    actorClass.noise += 0.4f;
+                    actorClass.noise += 0.5f;
                     actorClass.speed *= 1 + Mathf.Sqrt(limbLength);
                     actorClass.swimmingSpeed = 1f + 0.25f * size;
                     actorClass.softLandNavigation = 2f * limbThickness;
@@ -143,17 +144,18 @@ namespace Sandbox
                     actorClass.meatConsumptionEfficiency -= 0.5f;
                     actorClass.plantConsumptionEfficiency += 0.5f;
                     actorClass.diggingSpeed = 2f;
+                    actorClass.divingSkill -= 8f;
                     kickDamage = 1.25f;
                     description += "Hoof";
                     break;
                 case 1: // Webbed feet
-                    actorClass.noise += 0.2f;
+                    actorClass.noise += 0.25f;
                     actorClass.speed *= 0.5f;
-                    actorClass.swimmingSpeed = 8f + size;
+                    actorClass.swimmingSpeed = 6f + size;
                     actorClass.softLandNavigation = 10f * limbThickness;
                     actorClass.ruggedLandNavigation = 2f * Mathf.Sqrt(0.5f + limbLength);
                     actorClass.steepNavigation = 2f * limbLength;
-                    actorClass.divingSkill = 10f;
+                    actorClass.divingSkill += 4f;
                     actorClass.climbingSpeed = 2f;
                     actorClass.diggingSpeed = 1f;
                     kickDamage = 0.75f;
@@ -169,10 +171,11 @@ namespace Sandbox
                     actorClass.climbingSpeed = 10f;
                     kickDamage = 1f;
                     actorClass.coldLimit += 5;
+                    actorClass.noise -= 0.15f;
                     description += "Toes";
                     break;
                 case 3: // Claws
-                    actorClass.noise += 0.1f;
+                    actorClass.noise += 0.3f;
                     actorClass.speed *= 1f;
                     actorClass.swimmingSpeed = 1.75f + size * 0.25f;
                     actorClass.softLandNavigation = 4f * limbThickness;
@@ -182,16 +185,18 @@ namespace Sandbox
                     actorClass.plantConsumptionEfficiency -= 0.35f;
                     actorClass.diggingSpeed = 2f;
                     actorClass.climbingSpeed = 5f;
+                    actorClass.divingSkill -= 3f;
                     kickDamage = 0.75f;
                     description += "Claws";
                     break;
                 case 4: // Fins
+
                     actorClass.speed *= 0.3f;
                     actorClass.swimmingSpeed = 5f + size + limbThickness * 10f + limbLength * 5f;
                     actorClass.softLandNavigation = 3f * limbThickness;
                     actorClass.ruggedLandNavigation = 3f * limbLength;
                     actorClass.steepNavigation = 1f * limbLength;
-                    actorClass.divingSkill = 20f;
+                    actorClass.divingSkill += 8f;
                     kickDamage = 0.5f;
                     description += "Fins";
                     break;
@@ -218,6 +223,8 @@ namespace Sandbox
                     resistanceSlash = 0.3f;
 
                     actorClass.resourceConsumption *= 1.25f;
+
+                    actorClass.divingSkill -= 3f;
                     break;
                 case 1: // Skin
                     actorClass.heatLimit += 5;
@@ -227,10 +234,11 @@ namespace Sandbox
                 case 2: // Wet scales
                     actorClass.heatLimit += 5;
                     actorClass.coldLimit -= 5;
-                    actorClass.divingSkill += 2;
+                    actorClass.divingSkill += 3.5f;
                     actorClass.swimmingSpeed *= 1.25f;
                     actorClass.resourceConsumption *= 1.35f;
-
+                    actorClass.odor *= 1.5f;
+                    resistanceFire = 0.9f;
                     description += "Small Scales";
                     break;
 
@@ -245,7 +253,10 @@ namespace Sandbox
                     resistanceFire = 0.5f;
                     resistancePiercing = 0.1f;
                     resistanceSlash = 0.5f;
+                    resistanceFire = 1f;
                     actorClass.resourceConsumption *= 1.5f;
+                    actorClass.divingSkill -= 10f;
+                    actorClass.noise *= 1.5f;
                     description += "Armor Scales";
                     break;
                 case 4: // Feathers
@@ -253,7 +264,7 @@ namespace Sandbox
                     actorClass.resourceConsumption *= 1.25f;
                     kickDamage = 0.75f;
                     description += "Feathers";
-
+                    actorClass.noise *= 0.5f;
                     resistanceCrush = 0.2f;
                     break;
 
@@ -265,7 +276,7 @@ namespace Sandbox
                     resistanceFire = 1f;
                     resistancePiercing = 0.2f;
                     resistanceSlash = 0.4f;
-
+                    actorClass.noise *= 1.5f;
                     actorClass.resourceConsumption *= 2.5f;
 
                     description += "Magic Scales";
@@ -297,7 +308,8 @@ namespace Sandbox
             {
                 actorClass.lightVision *= 1.25f;
                 actorClass.darkVision *= 1.25f;
-                actorClass.observationRange += 0.75f;
+                actorClass.observationRange += 1f;
+                actorClass.tracking += 1f;
             }
             #endregion
 
@@ -322,14 +334,20 @@ namespace Sandbox
                     actorClass.hearing = 0.5f;
                     actorClass.tracking += 0.35f;
                     actorClass.resourceConsumption += size * 0.2f;
+
+                    actorClass.odor *= 1.25f;
+                    actorClass.noise *= 1.25f;
+
+                    actorClass.swimmingSpeed *= 0.6f;
                     description += "Large ears";
                     break;
                 case 3: // Aimed ears
                     actorClass.coldLimit += 5;
                     actorClass.visibility += 0.15f;
                     actorClass.hearing = 0.65f;
-                    actorClass.tracking += 1f;
+                    actorClass.tracking += 1.5f;
                     actorClass.resourceConsumption += size * 0.3f;
+                    actorClass.swimmingSpeed *= 0.8f;
                     description += "Aimed ears";
                     break;
                 case 4: // Small ears
@@ -337,6 +355,7 @@ namespace Sandbox
                     actorClass.hearing = 0.35f;
                     actorClass.tracking += 0.25f;
                     actorClass.resourceConsumption += size * 0.15f;
+                    actorClass.swimmingSpeed *= 0.9f;
                     description += "Small ears";
                     break;
             }
@@ -357,6 +376,8 @@ namespace Sandbox
                     actorClass.diggingSpeed += 1f;
                     biteCrush *= 0.75f;
                     bitePiercing *= 0.25f;
+                    actorClass.divingSkill -= 3f;
+                    actorClass.swimmingSpeed *= 0.8f;
                     break;
                 case 1: // Trunk
                     description += "Trunk";
@@ -365,7 +386,7 @@ namespace Sandbox
                     actorClass.smellSense = 0.25f;
                     actorClass.diggingSpeed += 2f;
                     actorClass.climbingSpeed += 2f; // Trunk makes it easier to get food from trees
-                    actorClass.swimmingSpeed *= 0.85f;
+                    actorClass.swimmingSpeed *= 0.6f;
                     actorClass.meatConsumptionEfficiency -= 0.25f;
                     actorClass.plantConsumptionEfficiency += 0.25f;
                     actorClass.resourceConsumption += size * 0.1f;
@@ -373,6 +394,7 @@ namespace Sandbox
                     biteCrush *= 0.9f;
                     bitePiercing *= 0.1f;
                     actorClass.resourceConsumptionEnergyCost -= 3f;
+                    actorClass.divingSkill -= 5f;
 
                     break;
                 case 2: // Beak
@@ -430,6 +452,7 @@ namespace Sandbox
 
             #endregion
 
+            actorClass.divingSkill = Mathf.Max(0, actorClass.divingSkill);
             actorClass.Initialize();
 
             #region Resistances

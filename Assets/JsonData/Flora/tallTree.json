@@ -1,0 +1,8 @@
+{
+    "name": "Tall Trees",
+    "plantAmount" : 100,
+    "gatheringDifficulty" : 1,
+    "depth" : -6,
+    "visibility" : 0.75,
+    "odor" : 1
+}

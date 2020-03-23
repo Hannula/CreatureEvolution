@@ -4,7 +4,7 @@
     "gatheringDifficulty" : 1,
     "depth" : 0,
     "visibility" : 0.5,
-    "smell" : 2,
+    "odor" : 1.5,
     "hazards" : [
         {
             "name" : "Poisonous Berry",

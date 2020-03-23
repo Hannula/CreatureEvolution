@@ -1,0 +1,8 @@
+{
+    "name": "Deep Roots",
+    "plantAmount" : 100,
+    "gatheringDifficulty" : 2,
+    "depth" : 4,
+    "visibility" : 0.1,
+    "odor" : 0.8
+}

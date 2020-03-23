@@ -3,7 +3,7 @@
     "EliteProportion": 4,
     "FitnessPower" : 1,
     
-    "MapFilePath": "largeSnow.json",
+    "MapFilePath": "largeSwamp.json",
     "TerrainLayerName" : "Terrain",
     "ActorLayerName" : "Fauna",
     "ResourceLayerName" : "Flora",
