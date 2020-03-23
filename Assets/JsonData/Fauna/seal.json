@@ -1,0 +1,78 @@
+{
+    "name": "Seal",
+    "baseColor": {
+        "r": 0.95,
+        "g": 0.95,
+        "b": 1,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.95,
+        "g": 0.95,
+        "b": 1,
+        "a": 0
+    },
+    "maxHitpoints": 60,
+    "speed": 5,
+    "evasion": 40,
+    "size": 4,
+    "meatAmount" : 100,
+    "resistances":[
+    ],
+
+    "height" : 1,
+    "swimmingSpeed" : 19,
+    "softLandNavigation" : 5,
+    "ruggedLandNavigation" : 4,
+    "crampedNavigation" : 3,
+    "steepNavigation" : 1,
+
+    "observationRange" : 3,
+    "lightVision" : 0.6,
+    "darkVision" : 0.3,
+    "smellSense" : 0.55,
+    "hearing": 0.3, 
+
+    "tracking" : 2,
+
+    "visibility" : 1.4,
+    "odor" : 0.6,
+    "noise" : 0.4,
+
+    "heatLimit" : 0,
+    "coldLimit" : -40,
+
+    "meatConsumptionEfficiency" : 1,
+    "resourceConsumption" : 4,
+    "resourceConsumptionEnergyCost" : 1,
+    "climbingSpeed" : 0,
+    "diggingSpeed" : 2,
+    "attacks": [
+        {
+            "name" : "Tackle",
+            "damage" : [
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 4,
+                    "damageBonus" : 4
+                }
+            ]
+        },
+        {
+            "name" : "Bite",
+            "attackBonus" : -10,
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 3,
+                    "damageBonus" : 3
+                },
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 3,
+                    "damageBonus" : 3
+                }
+            ]
+        }
+    ]
+}

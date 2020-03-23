@@ -25,6 +25,8 @@ namespace Utility
     /// </summary>
     public static class UtilityFunctions
     {
+
+        #region List
         /// <summary>
         /// Shuffles a list in place.
         /// </summary>
@@ -73,6 +75,9 @@ namespace Utility
             return defaultValue;
         }
 
+        #endregion
+
+        #region String
         /// <summary>Makes the string start with capital letter.</summary>
         public static string CapitalizeFirst(this string str)
         {
@@ -82,5 +87,6 @@ namespace Utility
                 return str.ToUpper();
             return str.Remove(1).ToUpper() + str.Substring(1);
         }
+        #endregion
     }
 }

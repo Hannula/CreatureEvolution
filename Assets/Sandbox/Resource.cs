@@ -36,7 +36,7 @@ namespace Sandbox
         public void MoveToTile(Tile targetTile)
         {
             if (CurrentTile != null)
-            { 
+            {
                 // Remove this actor from previous tile
                 CurrentTile.RemoveResource(this);
             }

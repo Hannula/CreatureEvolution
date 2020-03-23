@@ -203,6 +203,15 @@ public class Simulation : MonoBehaviour
             GUIUtility.systemCopyBuffer = JsonUtility.ToJson(creatureChromosome.ToActorClass(), true) + "\n\n" + creatureChromosome.ToString();
         }
 
+        if (Input.GetKeyDown(KeyCode.F6))
+        {
+            CreatureChromosome best = creatureEvolution.GetBestSolution();
+            if (best != null)
+            {
+                GUIUtility.systemCopyBuffer = JsonUtility.ToJson(best.ToActorClass(), true) + "\n\n" + best.ToString();
+            }
+        }
+
         if (simulationFinished)
         {
             float fitness = creatureChromosome.fitness;
@@ -370,14 +379,20 @@ public class Simulation : MonoBehaviour
             }
         }
 
+        // Reset level
+        level.Reset();
+
         foreach (ActorVisualizer actorVisualizer in FindObjectsOfType<ActorVisualizer>())
         {
             // Update every actor visualizer
             actorVisualizer.Reload();
         }
 
-        // Reset level
-        level.Reset();
+        foreach (ResourceVisualizer resourceVisualizer in FindObjectsOfType<ResourceVisualizer>())
+        {
+            // Update every resource visualizer
+            resourceVisualizer.Reload();
+        }
     }
 
     public void SpawnActors()

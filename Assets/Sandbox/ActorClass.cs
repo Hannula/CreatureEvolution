@@ -404,22 +404,40 @@ public class ActorClass
 
             terrainVisibility /= 1 + targetTerrain.cover;
 
-            // Own colors
-            Vector3 baseColorVec = new Vector3(baseColor.r, baseColor.g, baseColor.b);
-            Vector3 patternColorVec = new Vector3(patternColor.r, patternColor.g, patternColor.b);
+            float baseColorH;
+            float baseColorS;
+            float baseColorV;
 
-            // Terrain colors
-            Vector3 groundColorVec = new Vector3(targetTerrain.groundColor.r, targetTerrain.groundColor.g, targetTerrain.groundColor.b);
-            Vector3 groundSecondaryColorVec = new Vector3(targetTerrain.secondaryColor.r, targetTerrain.secondaryColor.g, targetTerrain.secondaryColor.b);
+            Color.RGBToHSV(baseColor, out baseColorH, out baseColorS, out baseColorV);
 
-            float baseVisibility = Mathf.Pow(Vector3.Distance(baseColorVec, groundColorVec), 2) + Mathf.Pow(Vector3.Distance(baseColorVec,groundSecondaryColorVec), 1.5f);
-            float patternVisibility = Mathf.Pow(Vector3.Distance(patternColorVec, groundSecondaryColorVec), 2f) + Mathf.Pow(Vector3.Distance(patternColorVec, groundColorVec), 1.5f);
+            float groundColorH;
+            float groundColorS;
+            float groundColorV;
 
-            // Apply camouflage modifier
-            terrainVisibility *= 1 + 0.3f * baseVisibility + 0.2f * patternVisibility;
+            Color.RGBToHSV(targetTerrain.groundColor, out groundColorH, out groundColorS, out groundColorV);
 
+            float patternColorH;
+            float patternColorS;
+            float patternColorV;
+
+            Color.RGBToHSV(patternColor, out patternColorH, out patternColorS, out patternColorV);
+
+            float groundPatternColorH;
+            float groundPatternColorS;
+            float groundPatternColorV;
+
+            Color.RGBToHSV(targetTerrain.secondaryColor, out groundPatternColorH, out groundPatternColorS, out groundPatternColorV);
+
+            float hueDiffBase = Mathf.Abs(Mathf.DeltaAngle(baseColorH * 360, groundColorH * 360) / 360);
+            float hueDiffPattern = Mathf.Abs(Mathf.DeltaAngle(patternColorH * 360, groundPatternColorH * 360) / 360);
+
+            float hueDiff = 0.75f * hueDiffBase + 0.25f * hueDiffPattern;
+            float saturationDiff = 0.75f * Mathf.Abs(baseColorS - groundColorS) + 0.25f * Mathf.Abs(patternColorS - groundPatternColorS);
+            float valueDiff = 0.75f * Mathf.Abs(baseColorV - groundColorV) + 0.25f * Mathf.Abs(patternColorV - groundPatternColorV);
+
+            float contrast = (hueDiff * 2 + valueDiff * 2 + saturationDiff) / 5;
             // Save visibility for this terrain type
-            terrainVisibility = Mathf.Max(terrainVisibility, 0.05f);
+            terrainVisibility = Mathf.Max(terrainVisibility, 0.05f) * Mathf.Pow(1 + contrast, 1.5f);
             visibilityValues[targetTerrain] = terrainVisibility;
             return terrainVisibility;
         }

@@ -10,6 +10,8 @@ namespace GA
     {
         public int populationSize;
 
+        public ChromosomeFitnessPair<T> BestSolution;
+
         private List<ChromosomeFitnessPair<T>> population;
 
         private int maximumGenerations;
@@ -79,6 +81,8 @@ namespace GA
             this.recombinator = recombinator;
             this.mutator = mutator;
             this.eliteProportion = eliteProportion;
+
+            BestSolution = new ChromosomeFitnessPair<T>(default(T), 0);
         }
 
         /// <summary>
@@ -118,7 +122,7 @@ namespace GA
             Debug.Log("Generation " + Generation + " has population of " + population.Count);
             Recombine();
             CalculateFitness();
-                       
+
         }
 
         public void Recombine()
@@ -160,10 +164,19 @@ namespace GA
 
             // Calculate fitness for each chromosome
             CalculateFitnessValues(population);
-            NormalizeFitnessValues(population);
 
             // Sort by fitness
             population.Sort((x, y) => y.Fitness.CompareTo(x.Fitness));
+
+            // Best of population
+            ChromosomeFitnessPair<T> best = population[0];
+            if (best.Fitness > BestSolution.Fitness)
+            {
+                BestSolution = best;
+            }
+
+
+            NormalizeFitnessValues(population);
         }
 
         public List<T> GetPopulation()
@@ -230,7 +243,7 @@ namespace GA
         public static List<ChromosomeFitnessPair<T>> FitnessProportionateSelection(List<ChromosomeFitnessPair<T>> parentCandidates, int populationSize)
         {
             List<ChromosomeFitnessPair<T>> parents = new List<ChromosomeFitnessPair<T>>();
-            
+
             // Calculate the sum of fitnesses
             float totalFitness = 0;
             foreach (ChromosomeFitnessPair<T> parentCandidate in parentCandidates)

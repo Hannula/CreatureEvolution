@@ -1,52 +1,51 @@
 {
-    "name": "Bear",
+    "name": "Arctic Wolf",
     "baseColor": {
-        "r": 0.35,
-        "g": 0.3,
-        "b": 0.25,
+        "r": 0.95,
+        "g": 0.95,
+        "b": 1,
         "a": 1.0
     },
     "patternColor": {
-        "r": 0.35,
-        "g": 0.3,
-        "b": 0.25,
+        "r": 0.95,
+        "g": 0.95,
+        "b": 1,
         "a": 0
     },
-    "maxHitpoints": 150,
-    "speed": 15,
-    "evasion": 50,
-    "size": 10,
-    "meatAmount" : 150,
+    "maxHitpoints": 80,
+    "speed": 18,
+    "evasion": 60,
+    "size": 5,
+    "meatAmount" : 90,
     "resistances":[
     ],
 
-    "height" : 2,
+    "height" : 1.25,
     "swimmingSpeed" : 7,
     "softLandNavigation" : 1.5,
-    "ruggedLandNavigation" : 3,
+    "ruggedLandNavigation" : 7,
     "crampedNavigation" : 3,
-    "steepNavigation" : 5,
+    "steepNavigation" : 7,
 
     "observationRange" : 4,
-    "lightVision" : 0.5,
-    "darkVision" : 0.2,
-    "smellSense" : 0.5,
-    "hearing": 0.5, 
+    "lightVision" : 0.55,
+    "darkVision" : 0.55,
+    "smellSense" : 0.55,
+    "hearing": 0.55, 
 
     "tracking" : 4,
 
-    "visibility" : 2.4,
-    "odor" : 0.5,
+    "visibility" : 1.5,
+    "odor" : 0.7,
     "noise" : 0.4,
 
-    "heatLimit" : 20,
-    "coldLimit" : -10,
+    "heatLimit" : 0,
+    "coldLimit" : -40,
 
-    "plantConsumptionEfficiency" : 1,
     "meatConsumptionEfficiency" : 1,
-    "resourceConsumption" : 7,
+    "resourceConsumption" : 5,
     "resourceConsumptionEnergyCost" : 1,
-    "climbingSpeed" : 3,
+    "climbingSpeed" : 0,
     "diggingSpeed" : 2,
     "attacks": [
         {
@@ -59,8 +58,8 @@
                 },
                 {
                     "damageType" : 1,
-                    "damageRoll" : 5,
-                    "damageBonus" : 5
+                    "damageRoll" : 4,
+                    "damageBonus" : 4
                 }
             ]
         },
@@ -70,13 +69,13 @@
             "damage" : [
                 {
                     "damageType" : 2,
-                    "damageRoll" : 6,
-                    "damageBonus" : 6
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
                 },
                 {
                     "damageType" : 1,
-                    "damageRoll" : 6,
-                    "damageBonus" : 6
+                    "damageRoll" : 4,
+                    "damageBonus" : 4
                 }
             ]
         }

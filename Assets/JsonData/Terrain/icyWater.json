@@ -19,6 +19,6 @@
     "ruggedness":3,
     "softness":0,
     "density":0,
-    "waterDepth": 5,
+    "waterDepth": 15,
     "hazards": []
 }

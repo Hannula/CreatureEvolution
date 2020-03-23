@@ -1,0 +1,81 @@
+{
+    "name": "Walrus",
+    "baseColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.6,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.6,
+        "a": 1
+    },
+    "maxHitpoints": 180,
+    "speed": 6,
+    "evasion": 35,
+    "size": 10,
+    "meatAmount" : 200,
+    "resistances":[
+        "Crushing:0,3"
+    ],
+
+    "height" : 1.5,
+    "swimmingSpeed" : 12,
+    "softLandNavigation" : 3,
+    "ruggedLandNavigation" : 4,
+    "crampedNavigation" : 3,
+    "steepNavigation" : 3,
+
+    "observationRange" : 3,
+    "lightVision" : 0.4,
+    "darkVision" : 0.2,
+    "smellSense" : 0.5,
+    "hearing": 0.4, 
+
+    "tracking" : 2,
+
+    "visibility" : 2.7,
+    "odor" : 0.5,
+    "noise" : 1,
+
+    "heatLimit" : 0,
+    "coldLimit" : -40,
+
+    "divingSkill" : 15,
+
+    "meatConsumptionEfficiency" : 1,
+    "resourceConsumption" : 8,
+    "resourceConsumptionEnergyCost" : 1,
+    "climbingSpeed" : 3,
+    "diggingSpeed" : 2,
+    "attacks": [
+        {
+            "name" : "Tackle",
+            "damage" : [
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 12,
+                    "damageBonus" : 12
+                }
+            ]
+        },
+        {
+            "name" : "Bite",
+            "attackBonus" : -15,
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
+                },
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 14,
+                    "damageBonus" : 14
+                }
+            ]
+        }
+    ]
+}

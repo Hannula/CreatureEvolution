@@ -1,0 +1,80 @@
+{
+    "name": "Polar Bear",
+    "baseColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 0
+    },
+    "maxHitpoints": 200,
+    "speed": 0,
+    "evasion": 50,
+    "size": 13,
+    "meatAmount" : 220,
+    "resistances":[
+        "Crushing:0,3"
+    ],
+
+    "height" : 1.5,
+    "swimmingSpeed" : 18,
+    "softLandNavigation" : 1,
+    "ruggedLandNavigation" : 1,
+    "crampedNavigation" : 1,
+    "steepNavigation" : 1,
+
+    "observationRange" : 3,
+    "lightVision" : 0.7,
+    "darkVision" : 0.35,
+    "smellSense" : 0.5,
+    "hearing": 0.5, 
+
+    "tracking" : 2.5,
+
+    "visibility" : 1,
+    "odor" : 0,
+    "noise" : 0,
+
+    "heatLimit" : 20,
+    "coldLimit" : -40,
+
+    "divingSkill" : 50,
+
+    "meatConsumptionEfficiency" : 1,
+    "resourceConsumption" : 7,
+    "resourceConsumptionEnergyCost" : 1,
+    "climbingSpeed" : 0,
+    "diggingSpeed" : 0,
+    "attacks": [
+        {
+            "name" : "Tackle",
+            "damage" : [
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 8,
+                    "damageBonus" : 8
+                }
+            ]
+        },
+        {
+            "name" : "Bite",
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 10,
+                    "damageBonus" : 10
+                },
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 6,
+                    "damageBonus" : 6
+                }
+            ]
+        }
+    ]
+}

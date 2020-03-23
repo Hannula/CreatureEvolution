@@ -16,7 +16,7 @@
     "speed": 15,
     "evasion": 60,
     "size": 4,
-    "meatAmount" : 25,
+    "meatAmount" : 75,
     "resistances":[
     ],
     "height" : 1.1,
@@ -33,9 +33,11 @@
     "darkVision" : 0.1,
     "smellSense" : 0.1,
     "hearing": 0.1, 
-    "odor" : 0.1,
+    "odor" : 0.4,
     "noise" : 0.2,
     "tracking" : 2,
+
+    "divingSkill" : 3,
 
     "heatLimit" : 30,
     "coldLimit" : 5,

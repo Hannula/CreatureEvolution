@@ -16,7 +16,7 @@
     "speed": 15,
     "evasion": 50,
     "size": 8,
-    "meatAmount" : 60,
+    "meatAmount" : 160,
     "resistances":[
     ],
     "height" : 2,
@@ -41,7 +41,7 @@
     "coldLimit" : -15,
 
     "plantConsumptionEfficiency" : 1,
-    "resourceConsumption" : 35,
+    "resourceConsumption" : 6,
     "resourceConsumptionEnergyCost" : 1,
     "diggingSpeed" : 1,
 

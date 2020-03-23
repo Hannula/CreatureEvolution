@@ -1,15 +1,15 @@
 {
-    "name": "Bear",
+    "name": "Polar Bear",
     "baseColor": {
-        "r": 0.35,
-        "g": 0.3,
-        "b": 0.25,
+        "r": 0.95,
+        "g": 0.95,
+        "b": 1,
         "a": 1.0
     },
     "patternColor": {
-        "r": 0.35,
-        "g": 0.3,
-        "b": 0.25,
+        "r": 0.95,
+        "g": 0.95,
+        "b": 1,
         "a": 0
     },
     "maxHitpoints": 150,
@@ -39,8 +39,8 @@
     "odor" : 0.5,
     "noise" : 0.4,
 
-    "heatLimit" : 20,
-    "coldLimit" : -10,
+    "heatLimit" : 0,
+    "coldLimit" : -40,
 
     "plantConsumptionEfficiency" : 1,
     "meatConsumptionEfficiency" : 1,

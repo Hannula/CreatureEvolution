@@ -16,7 +16,7 @@
     "speed": 10,
     "evasion" : 50,
     "size": 1,
-    "meatAmount" : 10,
+    "meatAmount" : 40,
     "resistances":[
     ],
     "height" : 0.25,
@@ -32,7 +32,7 @@
     "darkVision" : 0.8,
     "smellSense" : 0.7,
     "hearing": 0.7, 
-    "odor" : 0.4,
+    "odor" : 0.6,
     "noise" : 0.2,
 
     "tracking" : 3,

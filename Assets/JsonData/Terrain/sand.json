@@ -16,9 +16,9 @@
     "cover": 0,
     "noise": 1,
     "passable": true,
-    "ruggedness":0,
+    "ruggedness":1,
     "softness":3,
-    "density":0,
+    "density":1,
     "waterDepth": 0,
     "hazards": []
 }

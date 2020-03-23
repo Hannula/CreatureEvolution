@@ -1,0 +1,70 @@
+{
+    "name": "Elephant",
+    "baseColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5,
+        "a": 0
+    },
+    "maxHitpoints": 300,
+    "speed": 14,
+    "evasion": 35,
+    "size": 20,
+    "meatAmount" : 250,
+    "resistances":[
+    ],
+
+    "height" : 4,
+    "swimmingSpeed" : 7,
+    "softLandNavigation" : 3,
+    "ruggedLandNavigation" : 2,
+    "crampedNavigation" : 3,
+    "steepNavigation" : 2,
+
+    "observationRange" : 3.5,
+    "lightVision" : 0.25,
+    "darkVision" : 0.1,
+    "smellSense" : 0.8,
+    "hearing": 0.65, 
+
+    "visibility" : 4,
+    "odor" : 0.5,
+    "noise" : 0.4,
+
+    "heatLimit" : 40,
+    "coldLimit" : 15,
+
+    "plantConsumptionEfficiency" : 1,
+    "resourceConsumption" : 8,
+    "resourceConsumptionEnergyCost" : 1,
+    "climbingSpeed" : 5,
+    "diggingSpeed" : 1,
+    "attacks": [
+        {
+            "name" : "Trample",
+            "damage" : [
+                 {
+                    "damageType" : 1,
+                    "damageRoll" : 12,
+                    "damageBonus" : 12
+                }
+            ]
+        },
+        {
+            "name" : "Tusk",
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 12,
+                    "damageBonus" : 12
+                }
+            ]
+        }
+    ]
+}

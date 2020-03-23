@@ -155,8 +155,9 @@ namespace Sandbox
                         foreach (Resource resource in tile.resources)
                         {
                             float visibility = resource.resourceClass.visibility;
+                            float odor = resource.resourceClass.odor / tile.resources.Count;
 
-                            if (Random.Range(0, 1f) < visibility * vision)
+                            if (Random.Range(0, 1f) < visibility * vision + odor * smell)
                             {
                                 UpdateMemory(resource);
                             }
@@ -448,6 +449,10 @@ namespace Sandbox
                 }
 
             }
+            else if (MeatAmount > 0)
+            {
+                MeatAmount -= 0.001f * ActorClass.meatAmount;
+            }
             // Return true if actor is still alive
             return Hitpoints > 0;
         }
@@ -720,6 +725,12 @@ namespace Sandbox
             // Set current tile to target tile
             CurrentTile = targetTile;
 
+            // Take damage from terrain hazards
+            foreach (Attack attack in CurrentTile.terrain.hazards)
+            {
+                TakeAttack(attack);
+            }
+
             // Reduce viability of memories of actors that should be here but are not
             foreach (Actor actor in ActorMemory.Keys)
             {
@@ -862,7 +873,8 @@ namespace Sandbox
                 }
 
             }
-            return cost * (1 + totalRisk);
+
+            return cost + totalRisk;
 
         }
         /// <summary>

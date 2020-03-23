@@ -16,7 +16,7 @@
     "speed": 0.1,
     "evasion" : 65,
     "size": 2,
-    "meatAmount" : 30,
+    "meatAmount" : 75,
     "resistances":[
     ],
     "height" : 0.35,
@@ -40,11 +40,11 @@
     "heatLimit" : 20,
     "coldLimit" : 0,
 
-    "resourceConsumption" : 5,
+    "resourceConsumption" : 4,
     "resourceConsumptionEnergyCost" : 1,
     "meatConsumptionEfficiency" : 1,
     "plantConsumptionEfficiency" : 1,
-    "divingSkill" : 10,
+    "divingSkill" : 50,
 
     "attacks": [
         {

@@ -3,15 +3,15 @@
     "EliteProportion": 4,
     "FitnessPower" : 1,
     
-    "MapFilePath": "mediumVolcanic.json",
+    "MapFilePath": "largeSnow.json",
     "TerrainLayerName" : "Terrain",
     "ActorLayerName" : "Fauna",
     "ResourceLayerName" : "Flora",
     "LightLevelLayerName" : "Light",
     "ElevationLayerName" : "Elevation",
     "TemperatureLayerName" : "Temperature",
-    "GlobalHungerRate" : 0.33,
-    "GlobalResourceAmountMultiplier" : 1,
+    "GlobalHungerRate" : 0.5,
+    "GlobalResourceAmountMultiplier" : 0.5,
     "GlobalObservationDifficulty" : 1,
     "GlobalMemoryLength" : 500,
     "EvolutionCreatureID": 26,
@@ -39,9 +39,11 @@
         {"Key" : 14, "Value" : "Terrain/swampWater.json"},
         {"Key" : 16, "Value" : "Terrain/sand.json"},
         {"Key" : 17, "Value" : "Terrain/rockySand.json"},
+        {"Key" : 20, "Value" : "Terrain/savanna.json"},
         {"Key" : 21, "Value" : "Terrain/snow.json"},
         {"Key" : 22, "Value" : "Terrain/ice.json"},
         {"Key" : 23, "Value" : "Terrain/icyWater.json"}
+        
     ],
     "ActorClassFilePaths" :[
         {"Key" : 27, "Value" : "Fauna/rat.json"},
@@ -52,7 +54,16 @@
         {"Key" : 32, "Value" : "Fauna/drake.json"},
         {"Key" : 33, "Value" : "Fauna/lavaSlime.json"},
         {"Key" : 34, "Value" : "Fauna/turtle.json"},
-        {"Key" : 35, "Value" : "Fauna/bird.json"}
+        {"Key" : 35, "Value" : "Fauna/bird.json"},
+        {"Key" : 36, "Value" : "Fauna/polarBear.json"},
+        {"Key" : 37, "Value" : "Fauna/walrus.json"},
+        {"Key" : 38, "Value" : "Fauna/killerWhale.json"},
+        {"Key" : 39, "Value" : "Fauna/arcticWolf.json"},
+        {"Key" : 40, "Value" : "Fauna/seal.json"},
+        {"Key" : 41, "Value" : "Fauna/wolf.json"},
+        {"Key" : 42, "Value" : "Fauna/rabbit.json"},
+        {"Key" : 43, "Value" : "Fauna/lion.json"},
+        {"Key" : 44, "Value" : "Fauna/elephant.json"}
     ],
     "ResourceClassFilePaths" :[
         {"Key" : 52, "Value" : "Flora/berryBush.json"},
@@ -72,12 +83,12 @@
         { "Key": "EarType", "Min":0, "Max":4},
         { "Key": "LimbLength", "Min":15, "Max":200},
         { "Key": "LimbThickness", "Min":1, "Max":50},
-        { "Key": "BaseColorRed", "Min":0, "Max":128},
-        { "Key": "BaseColorGreen", "Min":0, "Max":128},
-        { "Key": "BaseColorBlue", "Min":0, "Max":128},
-        { "Key": "PatternColorRed", "Min":0, "Max":128},
-        { "Key": "PatternColorGreen", "Min":0, "Max":128},
-        { "Key": "PatternColorBlue", "Min":0, "Max":128},
+        { "Key": "BaseColorRed", "Min":0, "Max":255},
+        { "Key": "BaseColorGreen", "Min":0, "Max":255},
+        { "Key": "BaseColorBlue", "Min":0, "Max":255},
+        { "Key": "PatternColorRed", "Min":0, "Max":255},
+        { "Key": "PatternColorGreen", "Min":0, "Max":255},
+        { "Key": "PatternColorBlue", "Min":0, "Max":255},
         { "Key": "FeetType", "Min":0, "Max":4}
     ]
 }

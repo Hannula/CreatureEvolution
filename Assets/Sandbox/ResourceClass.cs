@@ -11,6 +11,7 @@ public class ResourceClass
     public float gatheringDifficulty;
 
     public float visibility;
+    public float odor;
 
     // How deep or high this resource is located
     public float depth;

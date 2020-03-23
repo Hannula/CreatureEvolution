@@ -76,13 +76,13 @@ namespace Sandbox
             float headSize = GetGeneValue(CreatureGeneKeys.HeadSize) * 0.01f;
             float resourceConsumption = 2f * size * (1 + headSize);
 
-            float height = size + size * headSize * 0.3f;
+            float height = (size + size * headSize) * 0.3f;
 
             ActorClass actorClass = new ActorClass("Creature");
             actorClass.size = size;
             actorClass.height = size;
-            actorClass.meatAmount = height * 5;
-            actorClass.maxHitpoints = Mathf.CeilToInt( 10 * size);
+            actorClass.meatAmount = height * 6;
+            actorClass.maxHitpoints = Mathf.CeilToInt(10 * size);
             actorClass.resourceConsumption = resourceConsumption;
             actorClass.steepNavigation = 1;
             actorClass.ruggedLandNavigation = 1;
@@ -108,7 +108,7 @@ namespace Sandbox
             float limbLength = GetGeneValue(CreatureGeneKeys.LimbLength) * 0.01f;
             float limbThickness = GetGeneValue(CreatureGeneKeys.LimbThickness) * 0.01f;
 
-            actorClass.maxHitpoints += size * ( 1 + (limbThickness) * 0.2f); // Add health for thick legs
+            actorClass.maxHitpoints += size * (1 + (limbThickness) * 0.2f); // Add health for thick legs
             actorClass.speed *= Mathf.Sqrt(1 + limbLength); // Add speed for long legs
 
             actorClass.resourceConsumption += Mathf.Pow(1 + limbLength + limbThickness, 1.5f) * size * 0.25f;
@@ -123,7 +123,7 @@ namespace Sandbox
             actorClass.plantConsumptionEfficiency = 0.5f;
 
 
-            actorClass.visibility = 0.35f + height * 0.2f;
+            actorClass.visibility = 0.35f + height * 0.5f;
             actorClass.noise = 0.1f;
             actorClass.odor = 0.1f;
 
@@ -148,7 +148,7 @@ namespace Sandbox
                     break;
                 case 1: // Webbed feet
                     actorClass.noise += 0.2f;
-                    actorClass.speed *= 0.7f;
+                    actorClass.speed *= 0.5f;
                     actorClass.swimmingSpeed = 8f + size;
                     actorClass.softLandNavigation = 10f * limbThickness;
                     actorClass.ruggedLandNavigation = 2f * Mathf.Sqrt(0.5f + limbLength);
@@ -206,8 +206,8 @@ namespace Sandbox
                 case 0: // Fur 
                     actorClass.noise *= 0.75f;
                     actorClass.odor *= 1.5f;
-                    actorClass.heatLimit = -5;
-                    actorClass.coldLimit = -15;
+                    actorClass.heatLimit -= 5;
+                    actorClass.coldLimit -= 15;
                     actorClass.softLandNavigation *= 0.6f;
                     actorClass.swimmingSpeed *= 0.75f;
                     description += "Fur";
@@ -217,25 +217,26 @@ namespace Sandbox
                     resistancePiercing = 0.1f;
                     resistanceSlash = 0.3f;
 
-                    actorClass.resourceConsumption *= 1.2f;
+                    actorClass.resourceConsumption *= 1.25f;
                     break;
                 case 1: // Skin
-                    actorClass.heatLimit = +5;
-                    actorClass.coldLimit = +5;
+                    actorClass.heatLimit += 5;
+                    actorClass.coldLimit += 5;
                     description += "Skin";
                     break;
                 case 2: // Wet scales
-                    actorClass.heatLimit = +5;
-                    actorClass.coldLimit = -5;
-
+                    actorClass.heatLimit += 5;
+                    actorClass.coldLimit -= 5;
+                    actorClass.divingSkill += 2;
                     actorClass.swimmingSpeed *= 1.25f;
+                    actorClass.resourceConsumption *= 1.35f;
 
                     description += "Small Scales";
                     break;
 
                 case 3: // Armor scales
-                    actorClass.heatLimit = +10;
-                    actorClass.coldLimit = +10;
+                    actorClass.heatLimit += 10;
+                    actorClass.coldLimit += 10;
 
                     actorClass.speed *= 0.6f;
                     actorClass.swimmingSpeed *= 0.25f;
@@ -244,27 +245,28 @@ namespace Sandbox
                     resistanceFire = 0.5f;
                     resistancePiercing = 0.1f;
                     resistanceSlash = 0.5f;
-                    actorClass.resourceConsumption *= 1.3f;
+                    actorClass.resourceConsumption *= 1.5f;
                     description += "Armor Scales";
                     break;
                 case 4: // Feathers
-                    actorClass.swimmingSpeed *= 1.35f;
-
+                    actorClass.swimmingSpeed *= 1.3f;
+                    actorClass.resourceConsumption *= 1.25f;
                     kickDamage = 0.75f;
                     description += "Feathers";
 
                     resistanceCrush = 0.2f;
                     break;
+
                 case 5: // Magic scales
-                    actorClass.heatLimit = +10;
-                    actorClass.coldLimit = -10;
+                    actorClass.heatLimit += 10;
+                    actorClass.coldLimit -= 10;
 
                     resistanceCrush = 0.2f;
                     resistanceFire = 1f;
                     resistancePiercing = 0.2f;
                     resistanceSlash = 0.4f;
 
-                    actorClass.resourceConsumption *= 3f;
+                    actorClass.resourceConsumption *= 2.5f;
 
                     description += "Magic Scales";
                     break;
@@ -311,12 +313,12 @@ namespace Sandbox
                 case 1: // Ear hole
                     actorClass.hearing = 0.25f;
                     actorClass.resourceConsumption += size * 0.05f;
-                    description += "Large ears";
+                    description += "Ear hole";
                     break;
                 case 2: // Large ear
                     actorClass.visibility += 0.3f;
                     actorClass.heatLimit += 10;
-                    actorClass.coldLimit += 10;
+                    actorClass.coldLimit += 15;
                     actorClass.hearing = 0.5f;
                     actorClass.tracking += 0.35f;
                     actorClass.resourceConsumption += size * 0.2f;
@@ -358,6 +360,7 @@ namespace Sandbox
                     break;
                 case 1: // Trunk
                     description += "Trunk";
+                    actorClass.evasion -= 10;
                     actorClass.observationRange += 0.25f;
                     actorClass.smellSense = 0.25f;
                     actorClass.diggingSpeed += 2f;
@@ -378,6 +381,7 @@ namespace Sandbox
                     actorClass.smellSense = 0.2f;
                     actorClass.meatConsumptionEfficiency += 0.2f;
                     actorClass.plantConsumptionEfficiency -= 0.33f;
+                    actorClass.evasion -= 6;
                     biteCrush *= 0.25f;
                     bitePiercing *= 1f;
                     actorClass.resourceConsumption += size * 0.3f;
@@ -388,18 +392,18 @@ namespace Sandbox
                     break;
                 case 3: // Fangs
                     description += "Fangs";
-                    actorClass.smellSense = 0.3f;
+                    actorClass.smellSense = 0.5f;
                     actorClass.observationRange += 0.25f;
                     actorClass.meatConsumptionEfficiency += 0.5f;
                     actorClass.plantConsumptionEfficiency -= 0.5f;
-                    biteCrush *= 0.65f;
-                    bitePiercing *= 0.65f;
+                    biteCrush *= 0.75f;
+                    bitePiercing *= 0.75f;
                     break;
 
             }
 
             Attack bite = new Attack("Bite", biteAttackBonus, DamageTypes.Crushing, Mathf.CeilToInt(biteCrush), Mathf.CeilToInt(biteCrush));
-            
+
             bite.AddDamage(new Attack.Damage(DamageTypes.Piercing, Mathf.CeilToInt(bitePiercing), Mathf.CeilToInt(bitePiercing)));
 
             actorClass.AddAttacks(bite);
@@ -502,6 +506,17 @@ namespace Sandbox
             }
         }
 
+        public CreatureGene(CreatureGene original)
+        {
+            Min = original.Min;
+            Max = original.Max;
+            Value = original.Value;
+
+            Range = original.Range;
+            Ratio = original.Ratio;
+
+        }
+
         public int RandomValue()
         {
             return UnityEngine.Random.Range(Min, Max + 1);
@@ -514,6 +529,15 @@ namespace Sandbox
             int minMutation = Mathf.Clamp(Value - Amount, Min, Max);
 
             Value = UnityEngine.Random.Range(minMutation, maxMutation + 1);
+
+            if (Range == 0)
+            {
+                Ratio = 1;
+            }
+            else
+            {
+                Ratio = (Value - Min) / (float)Range;
+            }
         }
 
         public override string ToString()
