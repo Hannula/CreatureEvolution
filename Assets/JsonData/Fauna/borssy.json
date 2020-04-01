@@ -1,0 +1,77 @@
+{
+    "name": "Börssy",
+    "baseColor": {
+        "r": 0.35,
+        "g": 0.6,
+        "b": 0.4,
+        "a": 1.0
+    },
+    "patternColor": {
+        "r": 0.35,
+        "g": 0.6,
+        "b": 0.5,
+        "a": 0
+    },
+    "maxHitpoints": 70,
+    "speed": 7,
+    "evasion": 50,
+    "size": 3,
+    "meatAmount" : 80,
+    "resistances":[
+    ],
+    "height" : 1.6,
+    "swimmingSpeed" : 15,
+    "softLandNavigation" : 8,
+    "ruggedLandNavigation" : 5,
+    "crampedNavigation" : 5,
+    "steepNavigation" : 4,
+    "divingSkill" : 2,
+
+    "visibility" : 1.4,
+
+    "observationRange" : 3.5,
+    "lightVision" : 0.5,
+    "darkVision" : 0.4,
+    "smellSense" : 0.24,
+    "hearing": 0.66, 
+    "odor" : 0.5,
+    "noise" : 0.4,
+    "tracking" : 2,
+
+    "heatLimit" : 30,
+    "coldLimit" : 0,
+
+    "resourceConsumption" : 57,
+    "resourceConsumptionEnergyCost" : 1,
+    "meatConsumptionEfficiency" : 1,
+
+    "attacks": [
+        {
+            "name" : "Bite",
+            "attackBonus" : -5,
+            "damage" : [
+                {
+                    "damageType" : 2,
+                    "damageRoll" : 5,
+                    "damageBonus" : 5
+                },
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 3,
+                    "damageBonus" : 3
+                }
+            ]
+        },
+        {
+            "name" : "Punch",
+            "attackBonus" : 10,
+            "damage" : [
+                {
+                    "damageType" : 1,
+                    "damageRoll" : 7,
+                    "damageBonus" : 7
+                }
+            ]
+        }
+    ]
+}

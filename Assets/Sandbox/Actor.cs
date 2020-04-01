@@ -509,8 +509,10 @@ namespace Sandbox
             {
                 float targetVisibility = Mathf.Pow(1 + target.ActorClass.GetVisibilityValue(target.CurrentTile.terrain), 2);
                 float targetEvasionPenalty = Mathf.Pow(1 + target.ActorClass.GetTerrainMovementCost(target.CurrentTile.terrain), 2);
+                float attackPenalty = Mathf.Pow(1 + ActorClass.GetTerrainMovementCost(CurrentTile.terrain), 2);
+
                 // Attack didn't miss but no critical hit
-                int toHit = attackRoll + attack.attackBonus + Mathf.CeilToInt(targetVisibility);
+                int toHit = attackRoll + attack.attackBonus + Mathf.CeilToInt(targetVisibility) - Mathf.CeilToInt(attackPenalty);
 
                 // Compare toHit -value to target's evasion
                 if (toHit >= target.ActorClass.evasion - targetEvasionPenalty)

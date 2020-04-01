@@ -1,9 +1,9 @@
 {
-    "PopulationSize": 20,
-    "EliteProportion": 4,
+    "PopulationSize": 30,
+    "EliteProportion": 3,
     "FitnessPower" : 1,
     
-    "MapFilePath": "largeSwamp.json",
+    "MapFilePath": "tinySea.json",
     "TerrainLayerName" : "Terrain",
     "ActorLayerName" : "Fauna",
     "ResourceLayerName" : "Flora",
@@ -12,7 +12,7 @@
     "TemperatureLayerName" : "Temperature",
     "GlobalHungerRate" : 0.5,
     "GlobalResourceAmountMultiplier" : 0.5,
-    "GlobalObservationDifficulty" : 1,
+    "GlobalObservationDifficulty" : 2,
     "GlobalMemoryLength" : 500,
     "EvolutionCreatureID": 26,
     "ElevationStartID" : 77,
@@ -63,7 +63,8 @@
         {"Key" : 41, "Value" : "Fauna/wolf.json"},
         {"Key" : 42, "Value" : "Fauna/rabbit.json"},
         {"Key" : 43, "Value" : "Fauna/lion.json"},
-        {"Key" : 44, "Value" : "Fauna/elephant.json"}
+        {"Key" : 44, "Value" : "Fauna/elephant.json"},
+        {"Key" : 45, "Value" : "Fauna/borssy.json"}
     ],
     "ResourceClassFilePaths" :[
         {"Key" : 52, "Value" : "Flora/berryBush.json"},
@@ -75,14 +76,14 @@
     "GeneLimits" :
     [
         { "Key": "Size", "Min":10, "Max":100 },
-        { "Key": "SkinType", "Min":0, "Max":5},
+        { "Key": "SkinType", "Min":0, "Max":4},
         { "Key": "HeadSize", "Min":10, "Max":100},
         { "Key": "EyeNumber", "Min":0, "Max":6},
         { "Key": "EyeSize", "Min":10, "Max":100},
         { "Key": "MouthType", "Min":0, "Max":3},
         { "Key": "EarType", "Min":0, "Max":4},
         { "Key": "LimbLength", "Min":15, "Max":200},
-        { "Key": "LimbThickness", "Min":1, "Max":50},
+        { "Key": "LimbThickness", "Min":1, "Max":100},
         { "Key": "BaseColorRed", "Min":0, "Max":255},
         { "Key": "BaseColorGreen", "Min":0, "Max":255},
         { "Key": "BaseColorBlue", "Min":0, "Max":255},

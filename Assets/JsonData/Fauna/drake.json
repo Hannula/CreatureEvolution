@@ -38,7 +38,7 @@
     "tracking" : 3.5,
 
     "heatLimit" : 100,
-    "coldLimit" : 20,
+    "coldLimit" : -50,
 
     "resourceConsumption" : 7,
     "resourceConsumptionEnergyCost" : 1,

@@ -1,5 +1,5 @@
 {
-    "name": "Polar Bear",
+    "name": "Killer Whale",
     "baseColor": {
         "r": 0,
         "g": 0,
@@ -14,7 +14,7 @@
     },
     "maxHitpoints": 200,
     "speed": 0,
-    "evasion": 50,
+    "evasion": 60,
     "size": 13,
     "meatAmount" : 220,
     "resistances":[

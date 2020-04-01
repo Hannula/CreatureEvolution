@@ -58,13 +58,13 @@ public class CreatureEvolution
 
     public static CreatureChromosome Mutate(CreatureChromosome x)
     {
-        // Select random genes to mutate
-        for (int i = 0; i < UnityEngine.Random.Range(1, 2); i++)
+        // Select random gene to mutate
+        for (int i = 0; i < UnityEngine.Random.Range(0, 1); i++)
         {
             int geneIndex = UnityEngine.Random.Range(0, x.Genes.Length);
             CreatureGene gene = x.Genes[geneIndex];
             CreatureGene newGene = new CreatureGene(gene);
-            newGene.Mutate(1f);
+            newGene.Mutate(0.25f);
 
             x.Genes[geneIndex] = newGene;
         }

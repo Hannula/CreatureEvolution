@@ -16,7 +16,7 @@
     "speed": 10,
     "evasion" : 50,
     "size": 1,
-    "meatAmount" : 40,
+    "meatAmount" : 70,
     "resistances":[
     ],
     "height" : 0.25,

@@ -14,7 +14,7 @@
     },
     "maxHitpoints": 80,
     "speed": 18,
-    "evasion": 60,
+    "evasion": 75,
     "size": 5,
     "meatAmount" : 90,
     "resistances":[

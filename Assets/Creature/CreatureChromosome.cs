@@ -81,7 +81,7 @@ namespace Sandbox
             ActorClass actorClass = new ActorClass("Creature");
             actorClass.size = size;
             actorClass.height = size;
-            actorClass.meatAmount = height * 6;
+            actorClass.meatAmount = size * 15;
             actorClass.maxHitpoints = Mathf.CeilToInt(10 * size);
             actorClass.resourceConsumption = resourceConsumption;
             actorClass.steepNavigation = 1;
@@ -92,7 +92,6 @@ namespace Sandbox
             actorClass.diggingSpeed = 0;
             actorClass.divingSkill = 0;
             actorClass.climbingSpeed = 0;
-            actorClass.evasion = Mathf.FloorToInt(50f - headSize * 10f); // Reduced evasion for having bigger head
 
             actorClass.coldLimit = 5;
             actorClass.heatLimit = 25;
@@ -108,8 +107,9 @@ namespace Sandbox
 
             float limbLength = GetGeneValue(CreatureGeneKeys.LimbLength) * 0.01f;
             float limbThickness = GetGeneValue(CreatureGeneKeys.LimbThickness) * 0.01f;
+            actorClass.height += size * limbLength * 0.3f;
 
-            actorClass.maxHitpoints += size * (1 + (limbThickness) * 0.2f); // Add health for thick legs
+            actorClass.maxHitpoints += size * (1 + (limbThickness) * 0.4f); // Add health for thick legs
             actorClass.speed *= Mathf.Sqrt(1 + limbLength); // Add speed for long legs
 
             actorClass.resourceConsumption += Mathf.Pow(1 + limbLength + limbThickness, 1.5f) * size * 0.25f;
@@ -123,7 +123,7 @@ namespace Sandbox
             actorClass.meatConsumptionEfficiency = 0.5f;
             actorClass.plantConsumptionEfficiency = 0.5f;
 
-
+            actorClass.evasion = 50 - Mathf.CeilToInt(height); // Reduced evasion for being tall
             actorClass.visibility = 0.35f + height * 0.5f;
             actorClass.noise = 0.5f;
             actorClass.odor = 0.5f;
@@ -364,9 +364,9 @@ namespace Sandbox
             #region Mouth
             int mouthType = GetGeneValue(CreatureGeneKeys.MouthType);
             description += "\nMouth type: ";
-            float biteCrush = (4 + size * headSize * 0.65f);
-            float bitePiercing = (4 + size * headSize * 0.65f);
-            int biteAttackBonus = -10;
+            float biteCrush = (4 + size * (1 + headSize));
+            float bitePiercing = (4 + size * (1 + headSize));
+            int biteAttackBonus = -5;
             switch (mouthType)
             {
                 case 0: // Snout
