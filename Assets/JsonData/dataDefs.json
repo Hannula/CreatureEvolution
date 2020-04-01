@@ -3,7 +3,7 @@
     "EliteProportion": 3,
     "FitnessPower" : 1,
     
-    "MapFilePath": "tinySea.json",
+    "MapFilePath": "largeRiver.json",
     "TerrainLayerName" : "Terrain",
     "ActorLayerName" : "Fauna",
     "ResourceLayerName" : "Flora",
